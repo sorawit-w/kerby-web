@@ -5,7 +5,7 @@
       "id": "swe",
       "version": "2.3.0",
       "origin": "builtin",
-      "path_or_url": "/Users/kiang/.claude/skills/kerby/rulebooks/swe",
+      "path_or_url": null,
       "sha256": null
     }
   }
