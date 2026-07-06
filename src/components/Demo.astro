@@ -1,26 +1,65 @@
 ---
-// The No — terminal demo panel shell (P1). Transcripts land in P2; the
-// animation layer in P3. CLS-0 technique: all transcripts share one grid
-// cell, so the tallest defines the panel height with no JS measurement.
+// The No — terminal demo panel. Transcripts are BYTE-COPIED from the kerby
+// README ("What it looks like when kerby says no") — never edit them here;
+// scripts/check-copy.ts diffs the rendered output against the source.
+//
+// Layout: the visual panel grid-stacks all three transcripts in one cell, so
+// the tallest sets the panel height with no JS measurement (CLS 0). Only the
+// first is visible statically; P3's script cycles them. The whole visual
+// panel is aria-hidden — the .sr-transcripts block is the accessible text.
+// Under prefers-reduced-motion the visual stack unfolds to a plain list.
+
+const TRANSCRIPTS = [
+  `BLOCKED: git push --force / -f
+Reason: destructive git command — data loss is hard or impossible to undo.
+If you really need this, run it yourself in a terminal.
+See kerby guardrails (hooks/protect-git.sh).`,
+  `BLOCKED: Do not edit .env files directly. Use environment variables and
+document required vars in DEVELOPER_TODO.md. See kerby guardrails.`,
+  `WARNING: gitleaks detected possible secrets in staged changes.
+Output suppressed so the secret isn't echoed here — inspect locally with
+'gitleaks stdin --redact', or allowlist a false positive in the scanner's config.`,
+];
+
+// Split the leading BLOCKED:/WARNING: keyword for the single color mark.
+const parts = TRANSCRIPTS.map((t) => {
+  const m = t.match(/^(BLOCKED:|WARNING:)([\s\S]*)$/);
+  return m ? { kw: m[1], rest: m[2] } : { kw: '', rest: t };
+});
 ---
 
 <section id="demo" aria-labelledby="demo-heading">
+  <p class="intro">This is not prose about the product. This is the product.</p>
   <h2 id="demo-heading" class="visually-hidden">What it looks like when kerby says no</h2>
-  <div class="terminal" role="group" aria-label="kerby verdict examples">
+
+  <div class="terminal" aria-hidden="true">
     <div class="transcripts">
-      <slot />
+      {parts.map((p) => (
+        <pre class="transcript"><span class="kw">{p.kw}</span>{p.rest}</pre>
+      ))}
     </div>
   </div>
+
+  <div class="visually-hidden sr-transcripts">
+    {TRANSCRIPTS.map((t) => (
+      <pre>{t}</pre>
+    ))}
+  </div>
+
+  <p class="underline-note">No tone to argue with. The gate is open or it isn't.</p>
 </section>
 
 <style>
+  .intro {
+    color: var(--secondary);
+  }
+
   .terminal {
     background: var(--panel-bg);
     color: var(--panel-text);
     border: 1px solid var(--structure);
     border-radius: 6px;
     padding: 1.25rem 1.5rem;
-    font-family: var(--font-mono);
     font-size: 0.875rem;
     line-height: 1.55;
     overflow-x: auto;
@@ -30,8 +69,41 @@
     display: grid;
   }
 
-  .transcripts > :global(*) {
+  .transcript {
     grid-area: 1 / 1;
+    margin: 0;
+    font-family: var(--font-mono);
+    white-space: pre;
+    visibility: hidden;
+  }
+
+  .transcript:first-child {
+    visibility: visible;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* No typing, no cycling — the three verdicts read as a plain list. */
+    .transcripts {
+      display: block;
+    }
+
+    .transcript {
+      visibility: visible;
+    }
+
+    .transcript + .transcript {
+      margin-top: 1.25rem;
+    }
+  }
+
+  .kw {
+    color: var(--accent-on-dark);
+    font-weight: 700;
+  }
+
+  .underline-note {
+    color: var(--muted);
+    font-size: 0.95rem;
   }
 
   .visually-hidden {

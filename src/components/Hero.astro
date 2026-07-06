@@ -1,0 +1,94 @@
+---
+import { Image } from 'astro:assets';
+import heroArt from '../assets/kerby-hero.png';
+
+const REPO = 'https://github.com/sorawit-w/kerby';
+---
+
+<header class="section hero">
+  <p class="eyebrow mono">OPEN SOURCE · MIT · WORKS WITH CLAUDE CODE AND CODEX</p>
+  <Image
+    src={heroArt}
+    alt="kerby — the gate guardian for agentic work"
+    width={280}
+    densities={[1, 2]}
+    format="webp"
+    loading="eager"
+  />
+  <h1>kerby</h1>
+  <p class="tagline">The gate guardian for agentic work. Nothing unproven passes.</p>
+  <p class="support">
+    kerby stands between an AI agent's action and your project and decides what gets through.
+  </p>
+  <p class="ctas">
+    <a class="cta" href={REPO}>View on GitHub →</a>
+    <a class="cta cta-secondary" href="#install">Install ↓</a>
+  </p>
+</header>
+
+<style>
+  .hero {
+    text-align: center;
+  }
+
+  .eyebrow {
+    color: var(--structure);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+  }
+
+  .hero img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  h1 {
+    font-size: 3.25rem;
+    margin: 0.5rem 0 0;
+  }
+
+  .tagline {
+    font-size: 1.35rem;
+    font-family: var(--font-display);
+    color: var(--text);
+    margin: 0.75rem 0 0.25rem;
+  }
+
+  .support {
+    color: var(--secondary);
+    max-width: 34rem;
+    margin-inline: auto;
+  }
+
+  .ctas {
+    margin-top: 1.75rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .cta {
+    border: 1px solid var(--structure);
+    border-radius: 6px;
+    padding: 0.6rem 1.2rem;
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .cta:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+  }
+
+  .cta-secondary {
+    border-color: var(--border);
+    color: var(--secondary);
+  }
+
+  .mono {
+    font-family: var(--font-mono);
+  }
+</style>

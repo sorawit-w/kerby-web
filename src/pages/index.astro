@@ -1,21 +1,21 @@
 ---
-// P1: layout + panel shell wired. Content sections land in P2.
 import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
 import Demo from '../components/Demo.astro';
+import WhatItIs from '../components/WhatItIs.astro';
+import Install from '../components/Install.astro';
+import Footer from '../components/Footer.astro';
 ---
 
 <Base
   title="kerby — the gate guardian for agentic work"
-  description="kerby stands between an AI agent's action and your project and decides what gets through."
+  description="kerby stands between an AI agent's action and your project and decides what gets through. Nothing unproven passes."
 >
-  <header class="section">
-    <h1>kerby</h1>
-    <p>The gate guardian for agentic work. Nothing unproven passes.</p>
-  </header>
+  <Hero />
   <main>
-    <Demo>
-      <pre>placeholder — transcripts land in P2</pre>
-    </Demo>
+    <Demo />
+    <WhatItIs />
+    <Install />
   </main>
-  <footer class="section"></footer>
+  <Footer />
 </Base>
