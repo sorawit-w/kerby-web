@@ -1,0 +1,45 @@
+---
+const LINKS = [
+  ['GitHub', 'https://github.com/sorawit-w/kerby'],
+  ['Changelog', 'https://github.com/sorawit-w/kerby/blob/main/CHANGELOG.md'],
+  ['MIT', 'https://github.com/sorawit-w/kerby-web/blob/main/LICENSE'],
+  ['sorawit.com', 'https://sorawit.com'],
+] as const;
+---
+
+<footer class="section" aria-label="Site footer">
+  <p class="links">
+    {LINKS.map(([label, href], i) => (
+      <>
+        {i > 0 && <span class="sep" aria-hidden="true">·</span>}
+        <a href={href}>{label}</a>
+      </>
+    ))}
+  </p>
+  <p class="note">Not affiliated with Apache Kerby, the Apache Directory Kerberos library.</p>
+  <p class="note">This site shipped through kerby's gate.</p>
+</footer>
+
+<style>
+  footer {
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .links {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .sep {
+    color: var(--muted);
+  }
+
+  .note {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin: 0.35rem 0 0;
+  }
+</style>

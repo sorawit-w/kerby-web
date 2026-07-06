@@ -111,3 +111,20 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Astro
+.astro/
+dist/
+
+# IDE / OS
+.idea/
+.DS_Store
+
+# Playwright MCP artifacts
+.playwright-mcp/
+
+# kerby per-machine hook bindings (absolute paths into the local install)
+.claude/settings.local.json
+
+# kerby byte-copy source, checked out only in CI (check:copy)
+.kerby-src/

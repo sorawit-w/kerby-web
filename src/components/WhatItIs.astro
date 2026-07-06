@@ -1,0 +1,111 @@
+---
+import GateMotion from '../assets/gate-motion.svg';
+
+const RULEBOOKS = [
+  {
+    name: 'base',
+    line: 'The floor under every rulebook: no secrets staged, no irreversible action without approval, no claim without evidence.',
+  },
+  {
+    name: 'swe',
+    line: 'Software engineering: no claim without a fresh test behind it, no commit on a protected branch, no secret in the diff.',
+  },
+  {
+    name: 'skill-authoring',
+    line: 'For repos that write agent skills: nothing ships as verified without a fresh evaluation of the exact text being shipped.',
+  },
+];
+
+const AUTHORING = 'https://github.com/sorawit-w/kerby/blob/main/docs/AUTHORING-RULEBOOKS.md';
+---
+
+<section id="what" aria-labelledby="what-heading">
+  <h2 id="what-heading">One motion. Any work.</h2>
+
+  <GateMotion class="gate-motion" />
+
+  <ol class="steps mono">
+    <li>GATE — an action arrives and stops at the threshold.</li>
+    <li>WEIGH — kerby checks it against the evidence: tests, diffs, approvals.</li>
+    <li>VERDICT — it passes, or it doesn't. There is no third option.</li>
+  </ol>
+
+  <p>
+    The engine is domain-blind. It loads a rulebook, watches the work, and renders verdicts. It
+    doesn't know what coding is.
+  </p>
+  <p>
+    A rulebook is a folder: the rules for one kind of work, plus the checks that enforce them. Load
+    the one that fits. Write your own when it doesn't. Rulebooks from outside your machine pass a
+    one-time trust review before they can run.
+  </p>
+
+  <ul class="cards">
+    {RULEBOOKS.map((r) => (
+      <li class="card">
+        <span class="card-name mono">{r.name}</span>
+        <span class="card-line">{r.line}</span>
+      </li>
+    ))}
+  </ul>
+
+  <p class="closing">
+    The engine is finished machinery. The next rulebook is a folder you write.
+    {' '}<a href={AUTHORING}>Write a rulebook →</a>
+  </p>
+</section>
+
+<style>
+  .gate-motion {
+    width: 100%;
+    height: auto;
+  }
+
+  .steps {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+    color: var(--structure);
+    font-size: 0.9rem;
+  }
+
+  .cards {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  @media (min-width: 720px) {
+    .cards {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.1rem;
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+  }
+
+  .card-name {
+    color: var(--structure);
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  .card-line {
+    color: var(--secondary);
+    font-size: 0.95rem;
+  }
+
+  .mono {
+    font-family: var(--font-mono);
+  }
+</style>
