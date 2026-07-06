@@ -142,7 +142,10 @@ const parts = TRANSCRIPTS.map((t, i) => {
     }
   }
 
-  .kw {
+  /* Scoped through .terminal (:global) so it also styles the keyword spans
+     verdicts.js creates at runtime — not just the server-rendered ones.
+     This is the page's single color mark; it must hold during the cycle. */
+  .terminal :global(.kw) {
     color: var(--accent-on-dark);
     font-weight: 700;
   }
