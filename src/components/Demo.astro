@@ -1,0 +1,46 @@
+---
+// The No — terminal demo panel shell (P1). Transcripts land in P2; the
+// animation layer in P3. CLS-0 technique: all transcripts share one grid
+// cell, so the tallest defines the panel height with no JS measurement.
+---
+
+<section id="demo" aria-labelledby="demo-heading">
+  <h2 id="demo-heading" class="visually-hidden">What it looks like when kerby says no</h2>
+  <div class="terminal" role="group" aria-label="kerby verdict examples">
+    <div class="transcripts">
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .terminal {
+    background: var(--panel-bg);
+    color: var(--panel-text);
+    border: 1px solid var(--structure);
+    border-radius: 6px;
+    padding: 1.25rem 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1.55;
+    overflow-x: auto;
+  }
+
+  .transcripts {
+    display: grid;
+  }
+
+  .transcripts > :global(*) {
+    grid-area: 1 / 1;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+</style>

@@ -1,0 +1,23 @@
+/* Design tokens — locked per the kerby-web brief §5. Accent is a mark, never
+   a fill. Flat: no gradients, no shadows. Background never pure white. */
+:root {
+  --bg: #FAF8F4;
+  --surface: #FFFDF9;
+  --text: #1A1A1A;
+  --secondary: #3D3A36;
+  --muted: #71695B;
+  --accent: #B0532F;
+  --structure: #4A4F5A;
+  --border: #E6DFD4;
+
+  /* The single sanctioned dark element: the terminal demo panel. */
+  --panel-bg: #1F2022;
+  --panel-text: #ECECEE;
+  /* Terracotta lightened until it clears AA (>=4.5:1) on --panel-bg;
+     final value verified by scripts/check-contrast.ts. */
+  --accent-on-dark: #E5936B;
+
+  --font-display: 'Schibsted Grotesk Variable', sans-serif;
+  --font-body: 'Geist', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', monospace;
+}

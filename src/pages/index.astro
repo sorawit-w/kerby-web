@@ -1,20 +1,21 @@
 ---
-// P0 placeholder — replaced by the full page in P1–P4.
-const base = import.meta.env.BASE_URL;
+// P1: layout + panel shell wired. Content sections land in P2.
+import Base from '../layouts/Base.astro';
+import Demo from '../components/Demo.astro';
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
-    <title>kerby — the gate guardian for agentic work</title>
-  </head>
-  <body>
-    <main>
-      <h1>kerby</h1>
-      <p>The gate guardian for agentic work. Nothing unproven passes.</p>
-    </main>
-  </body>
-</html>
+<Base
+  title="kerby — the gate guardian for agentic work"
+  description="kerby stands between an AI agent's action and your project and decides what gets through."
+>
+  <header class="section">
+    <h1>kerby</h1>
+    <p>The gate guardian for agentic work. Nothing unproven passes.</p>
+  </header>
+  <main>
+    <Demo>
+      <pre>placeholder — transcripts land in P2</pre>
+    </Demo>
+  </main>
+  <footer class="section"></footer>
+</Base>
