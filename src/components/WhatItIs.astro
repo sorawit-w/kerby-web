@@ -1,11 +1,9 @@
 ---
 import GateMotion from '../assets/gate-motion.svg';
 
+// `base` (the universal floor) is intentionally not surfaced here — it's
+// merged under every rulebook implicitly, not a rulebook a user selects.
 const RULEBOOKS = [
-  {
-    name: 'base',
-    line: 'The floor under every rulebook: no secrets staged, no irreversible action without approval, no claim without evidence.',
-  },
   {
     name: 'swe',
     line: 'Software engineering: no claim without a fresh test behind it, no commit on a protected branch, no secret in the diff.',
@@ -80,7 +78,7 @@ const AUTHORING = 'https://github.com/sorawit-w/kerby/blob/main/docs/AUTHORING-R
 
   @media (min-width: 720px) {
     .cards {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 
