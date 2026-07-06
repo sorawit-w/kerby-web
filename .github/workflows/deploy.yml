@@ -19,8 +19,13 @@ jobs:
       # Detects Bun from the committed bun.lock (L5). Fallback if detection
       # misbehaves: oven-sh/setup-bun + bun install && bun run build +
       # actions/upload-pages-artifact — never switch to npm.
-      - name: Build with Astro
+      # build-cmd runs `bun run check` = build + contrast/discipline/copy
+      # gates, so a regression fails CI before the artifact is uploaded.
+      # (check:copy skips cleanly in CI — the kerby source clone isn't present.)
+      - name: Build and gate with Astro
         uses: withastro/action@v6
+        with:
+          build-cmd: bun run check
 
   deploy:
     needs: build

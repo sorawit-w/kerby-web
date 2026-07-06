@@ -122,3 +122,6 @@ dist/
 
 # Playwright MCP artifacts
 .playwright-mcp/
+
+# kerby per-machine hook bindings (absolute paths into the local install)
+.claude/settings.local.json
