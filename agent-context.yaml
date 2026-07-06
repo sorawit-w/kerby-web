@@ -1,0 +1,25 @@
+# Shared agent context — versioned, read by kerby at session start.
+project:
+  name: kerby-web
+  description: One-page static promo site for kerby, deployed to GitHub Pages.
+
+runtime:
+  primary: bun
+  language: typescript
+  target: astro
+
+entryPoints:
+  - src/pages/index.astro
+
+directories:
+  source: src
+  public: public
+  distribution: dist
+
+commands:
+  build: bun run build
+  lint: bun run check
+  test: bun run check
+
+ai:
+  planThreshold: 4

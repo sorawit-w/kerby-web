@@ -111,3 +111,11 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Astro
+.astro/
+dist/
+
+# IDE / OS
+.idea/
+.DS_Store
