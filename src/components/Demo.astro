@@ -9,6 +9,10 @@
 // panel is aria-hidden — the .sr-transcripts block is the accessible text.
 // Under prefers-reduced-motion the visual stack unfolds to a plain list.
 
+// Animation chrome (aria-hidden panel only, never in the accessible copy):
+// the command each verdict answers, typed by P3's script. Deadpan, minimal.
+const COMMANDS = ['git push --force', 'vim .env', 'git commit'];
+
 const TRANSCRIPTS = [
   `BLOCKED: git push --force / -f
 Reason: destructive git command — data loss is hard or impossible to undo.
@@ -22,9 +26,9 @@ Output suppressed so the secret isn't echoed here — inspect locally with
 ];
 
 // Split the leading BLOCKED:/WARNING: keyword for the single color mark.
-const parts = TRANSCRIPTS.map((t) => {
+const parts = TRANSCRIPTS.map((t, i) => {
   const m = t.match(/^(BLOCKED:|WARNING:)([\s\S]*)$/);
-  return m ? { kw: m[1], rest: m[2] } : { kw: '', rest: t };
+  return { cmd: COMMANDS[i], kw: m ? m[1] : '', rest: m ? m[2] : t };
 });
 ---
 
@@ -35,7 +39,11 @@ const parts = TRANSCRIPTS.map((t) => {
   <div class="terminal" aria-hidden="true">
     <div class="transcripts">
       {parts.map((p) => (
-        <pre class="transcript"><span class="kw">{p.kw}</span>{p.rest}</pre>
+        <pre
+          class="transcript"
+          data-cmd={p.cmd}
+          data-kw={p.kw}
+        ><span class="cmd">$ {p.cmd}{'\n'}</span><span class="kw">{p.kw}</span>{p.rest}</pre>
       ))}
     </div>
   </div>
@@ -49,9 +57,16 @@ const parts = TRANSCRIPTS.map((t) => {
   <p class="underline-note">No tone to argue with. The gate is open or it isn't.</p>
 </section>
 
+<script src="../scripts/verdicts.js"></script>
+
 <style>
+  section {
+    padding-top: 0.5rem;
+  }
+
   .intro {
     color: var(--secondary);
+    margin-top: 0;
   }
 
   .terminal {
@@ -79,6 +94,37 @@ const parts = TRANSCRIPTS.map((t) => {
 
   .transcript:first-child {
     visibility: visible;
+  }
+
+  /* While the script animates, the statics only hold the height. */
+  .transcripts.animating .transcript {
+    visibility: hidden;
+  }
+
+  .transcripts :global(.anim) {
+    grid-area: 1 / 1;
+    margin: 0;
+    font-family: var(--font-mono);
+    white-space: pre;
+  }
+
+  .terminal :global(.cmd) {
+    color: var(--panel-dim);
+  }
+
+  /* Opacity-only reveal + painted block cursor (no layout writes → CLS 0). */
+  .terminal :global(.off) {
+    opacity: 0;
+  }
+
+  .terminal :global(.ch) {
+    transition: none;
+  }
+
+  .terminal :global(.cursor) {
+    opacity: 1;
+    color: transparent;
+    background: var(--panel-dim);
   }
 
   @media (prefers-reduced-motion: reduce) {

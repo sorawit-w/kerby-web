@@ -16,6 +16,8 @@
   /* Terracotta lightened until it clears AA (>=4.5:1) on --panel-bg;
      final value verified by scripts/check-contrast.ts. */
   --accent-on-dark: #E5936B;
+  /* Dimmed terminal chrome (typed command line). */
+  --panel-dim: #B8B8BD;
 
   --font-display: 'Schibsted Grotesk Variable', sans-serif;
   --font-body: 'Geist', sans-serif;
