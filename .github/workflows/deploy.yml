@@ -13,15 +13,28 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # KERBY_REPO points check:copy at the byte-copy source so the gate
+    # actually runs in CI (it skips when unset). Pinned to the exact kerby
+    # commit the transcripts were copied from — CI validates against that
+    # precise source; bumping this SHA is the deliberate "re-copy" moment.
+    env:
+      KERBY_REPO: ${{ github.workspace }}/.kerby-src
+      KERBY_REF: 86612ead5a75ae1baf5c5353524ae735b95562e1
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Checkout kerby (byte-copy source)
+        uses: actions/checkout@v4
+        with:
+          repository: sorawit-w/kerby
+          ref: ${{ env.KERBY_REF }}
+          path: .kerby-src
       # Detects Bun from the committed bun.lock (L5). Fallback if detection
       # misbehaves: oven-sh/setup-bun + bun install && bun run build +
       # actions/upload-pages-artifact — never switch to npm.
       # build-cmd runs `bun run check` = build + contrast/discipline/copy
-      # gates, so a regression fails CI before the artifact is uploaded.
-      # (check:copy skips cleanly in CI — the kerby source clone isn't present.)
+      # gates (incl. byte-copy against .kerby-src), so a regression fails CI
+      # before the artifact is uploaded.
       - name: Build and gate with Astro
         uses: withastro/action@v6
         with:
