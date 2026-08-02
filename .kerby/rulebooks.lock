@@ -1,11 +1,21 @@
 {
-  "selected": ["swe"],
+  "selected": [
+    "swe",
+    "codex-review"
+  ],
   "rulebooks": {
     "swe": {
       "id": "swe",
       "version": "2.3.0",
       "origin": "builtin",
       "path_or_url": null,
+      "sha256": null
+    },
+    "codex-review": {
+      "id": "codex-review",
+      "version": "0.1.0",
+      "origin": "builtin",
+      "path_or_url": "/Users/kiang/.claude/skills/kerby/rulebooks/codex-review",
       "sha256": null
     }
   }

@@ -128,3 +128,6 @@ dist/
 
 # kerby byte-copy source, checked out only in CI (check:copy)
 .kerby-src/
+/.kerby/
+/.laney/
+/workflows/
