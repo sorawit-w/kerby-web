@@ -2,7 +2,7 @@
 
 The promo page for [kerby](https://github.com/sorawit-w/kerby) — one static page,
 built with Bun + Astro, deployed to GitHub Pages at
-<https://sorawit-w.github.io/kerby-web/>.
+<https://kerby.sorawit.com/>.
 
 ## Develop
 
