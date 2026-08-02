@@ -3,8 +3,14 @@
 // totals from dist/. Non-zero exit on any violation.
 import { readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import astroConfig from '../astro.config.mjs';
 
 const ROOT = new URL('..', import.meta.url).pathname;
+
+// Base path actually configured for this deploy (custom domain → '/', GitHub
+// Pages project page → '/kerby-web'). Root-absolute URLs are only a bug when
+// they escape this base.
+const BASE = (astroConfig.base ?? '/').replace(/\/$/, '');
 
 function walk(dir: string, out: string[] = []): string[] {
   for (const name of readdirSync(dir)) {
@@ -16,11 +22,18 @@ function walk(dir: string, out: string[] = []): string[] {
 }
 
 const FORBIDDEN: [RegExp, string][] = [
-  [/(?:href|src)="\/(?!kerby-web\/)[^"]/, 'root-absolute URL (must be base-aware)'],
   [/linear-gradient|radial-gradient|conic-gradient/, 'gradient (flat only)'],
   [/box-shadow(?!:\s*none)/, 'box-shadow (flat only)'],
   [/text-shadow(?!:\s*none)/, 'text-shadow (flat only)'],
 ];
+// Root-absolute URLs are only a bug when they escape the configured base —
+// with BASE === '' (site served from domain root) there's nothing to escape.
+if (BASE) {
+  FORBIDDEN.unshift([
+    new RegExp(`(?:href|src)="/(?!${BASE.slice(1)}/)[^"]`),
+    'root-absolute URL (must be base-aware)',
+  ]);
+}
 
 const TEXT_EXT = /\.(astro|css|html|js|ts|mjs)$/;
 let violations = 0;
