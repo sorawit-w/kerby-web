@@ -50,6 +50,7 @@ spacing:                    # anchors observed in the CSS; see Layout for the of
   xs: 4px
   sm: 8px
   md: 16px
+  md-lg: 20px               # 1.25rem — the most-used gap and the horizontal section padding
   lg: 24px
   xl: 32px
   "2xl": 56px
@@ -60,7 +61,8 @@ spacing:                    # anchors observed in the CSS; see Layout for the of
 
 Transcribed from the shipped site: `src/styles/tokens.css`, `src/styles/global.css`, and
 the component style blocks. The YAML front matter is the token authority for UI work;
-`tokens.css` implements it. If the two disagree, either fix the CSS to match or amend this
+the shipped CSS (`tokens.css` for colors and families, `global.css` and the component
+styles for sizes, spacing, and radius) implements it. If the two disagree, either fix the CSS to match or amend this
 file on purpose, never a downstream consumer.
 
 ## Overview
@@ -116,9 +118,9 @@ horizontal padding; vertical padding grows to 4.5rem at 720px and wider. Two sec
 override that: the hero is tightened to 2rem top and 1.25rem bottom so the first lines of
 the transcript land in the first desktop screenful, and the demo section sits at 0.5rem
 top so it reads as the hero's continuation. Supporting hero copy narrows to 34rem. Cards go
-two-up at 720px. There is no formal spacing scale: the front matter lists the anchors that
-recur (0.25, 0.5, 1, 1.5, 2, 3.5, 4.5rem), and components also use 0.35, 0.6, 0.75, 1.1,
-1.2, and 1.75rem where the layout needed it.
+two-up at 720px. There is no formal spacing scale: the front matter lists the values that recur or set
+the section rhythm (0.25, 0.5, 1, 1.25, 1.5, 2, 3.5, 4.5rem), and components also use
+0.35, 0.6, 0.75, 1.1, 1.2, and 1.75rem where the layout needed it.
 
 ## Shapes
 
