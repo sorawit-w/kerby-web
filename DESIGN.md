@@ -4,14 +4,14 @@ name: kerby
 description: Quiet, flat, warm off-white page with one terracotta mark; the dark terminal panel is the only proof the page makes.
 colors:
   primary: "#B0532F"        # --accent — terracotta. A mark, never a fill. Shipped uses: link color, CTA hover underline
-  secondary: "#4A4F5A"      # --structure — mono labels, eyebrow, CTA borders, panel border
+  secondary: "#4A4F5A"      # --structure — mono labels, eyebrow, the primary CTA border, panel border
   tertiary: "#E5936B"       # --accent-on-dark — the BLOCKED/WARNING keyword inside the dark panel; the only keyword color
   neutral: "#FAF8F4"        # --bg — page ground, never pure white
   surface: "#FFFDF9"        # --surface — cards, install block
   on-surface: "#1A1A1A"     # --text — body and headings
   text-secondary: "#3D3A36" # --secondary — supporting copy
   text-muted: "#71695B"     # --muted — footnotes, separators
-  border: "#E6DFD4"         # --border — card and footer rules
+  border: "#E6DFD4"         # --border — card and footer rules, the secondary CTA border
   panel-bg: "#1F2022"       # --panel-bg — the single sanctioned dark element
   panel-text: "#ECECEE"     # --panel-text
   panel-dim: "#B8B8BD"      # --panel-dim — typed command chrome and cursor
@@ -86,12 +86,13 @@ contrast. The mark-not-fill rule itself is a design rule held by review, not by 
 - **Primary (#B0532F):** Terracotta. Shipped uses are link color and the CTA hover
   underline. The discipline (CONTEXT.md, accent-as-mark) also permits a keyword color or
   one status dot. Never a button fill, never a background, never a border wash.
-- **Secondary (#4A4F5A):** Structure gray. Mono labels, the eyebrow line, CTA borders, and
-  the terminal panel's border.
+- **Secondary (#4A4F5A):** Structure gray. Mono labels, the eyebrow line, the primary CTA
+  border, and the terminal panel's border.
 - **Tertiary (#E5936B):** Terracotta lightened until it clears AA on the dark panel.
   The BLOCKED and WARNING keywords inside the transcript, in bold. Nowhere else.
 - **Neutral (#FAF8F4):** Page background. Never pure white.
-- **Surface (#FFFDF9):** Cards and the install block, with a 1px `border` rule.
+- **Surface (#FFFDF9):** Cards and the install block, with a 1px `border` rule. The
+  secondary CTA takes the same `border` color, which is what separates it from the primary.
 - **Text (#1A1A1A / #3D3A36 / #71695B):** Body, supporting copy, muted footnotes.
 - **Panel (#1F2022 / #ECECEE / #B8B8BD):** The terminal demo is the single sanctioned
   dark element. Panel text, and a dimmed tone for the typed command chrome and cursor.
