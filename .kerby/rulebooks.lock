@@ -1,19 +1,11 @@
 {
   "selected": [
-    "swe",
-    "codex-review"
+    "swe"
   ],
   "rulebooks": {
     "swe": {
       "id": "swe",
       "version": "2.12.0",
-      "origin": "builtin",
-      "path_or_url": null,
-      "sha256": null
-    },
-    "codex-review": {
-      "id": "codex-review",
-      "version": "0.5.0",
       "origin": "builtin",
       "path_or_url": null,
       "sha256": null
