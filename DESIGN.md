@@ -78,9 +78,11 @@ unhurried. Nothing decorative. If something is colored, it is because it carries
 ## Colors
 
 Warm neutrals carry the page. Terracotta is the one color, and it is a mark, never a fill.
-Every foreground/background pairing the page uses is enumerated in
+Every text foreground/background pairing the page uses is enumerated in
 `scripts/check-contrast.ts` and must clear WCAG AA (4.5:1); that script is the gate for
-contrast. The mark-not-fill rule itself is a design rule held by review, not by a script:
+contrast. One pairing is decorative and exempt: `border` on `neutral` (the card, footer,
+and secondary CTA rule) is held only to a 1.2:1 advisory floor, so a border must never be
+the sole carrier of meaning or text. The mark-not-fill rule itself is a design rule held by review, not by a script:
 `check:discipline` rejects gradients and shadows, not an accent used as a fill.
 
 - **Primary (#B0532F):** Terracotta. Shipped uses are link color and the CTA hover
