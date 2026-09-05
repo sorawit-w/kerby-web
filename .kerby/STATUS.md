@@ -25,6 +25,8 @@ AC can run. Offered: I'll do the post-flip verification (zero-404, Lighthouse �
 when you're back.
 
 ## Notes
+- `DESIGN.md` at the repo root is the token authority for UI work — transcribed from
+  `src/styles/tokens.css`; the CSS remains the source of truth. Design skills execute within it.
 - LICENSE ships in the repo, so GitHub will detect MIT once main is public.
 - The first deploy run before the flip fails at `deploy-pages` (Pages not enabled) —
   expected, not a code failure.

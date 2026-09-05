@@ -10,6 +10,7 @@ Status legend: [ ] planned · [~] in progress · [x] done
 - [x] Design tokens (`src/styles/tokens.css`), self-hosted fonts (Fontsource, latin subsets)
 - [x] Base layout with semantic landmarks; terminal panel shell (grid-cell stacking)
 - [x] Check scripts: `check:contrast`, `check:discipline`
+- [x] `DESIGN.md` token authority at repo root (transcribed from `tokens.css`; CSS stays source of truth)
 
 ### Phase 2 — Content
 - [x] Four sections + footer per copy pack (byte-copy transcripts from kerby README)
