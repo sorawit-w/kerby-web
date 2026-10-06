@@ -1,18 +1,21 @@
-// Replay only on request. Exact readable source remains present without JS.
+// Animate once per opening when visible; retain readable source without JS.
 const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
 for (const details of document.querySelectorAll('#demo details')) {
   const button = details.querySelector('.replay');
   const output = details.querySelector('pre');
   const original = output.innerHTML;
   let timer;
+  let played = false;
   function finish() {
     clearInterval(timer);
+    timer = undefined;
     output.innerHTML = original;
     button.textContent = 'Replay output';
   }
   button.hidden = motion.matches;
-  button.addEventListener('click', () => {
-    if (timer) { finish(); timer = undefined; return; }
+  function play() {
+    if (motion.matches || !details.open || timer) return;
+    played = true;
     const walker = document.createTreeWalker(output, NodeFilter.SHOW_TEXT);
     const nodes = [];
     while (walker.nextNode()) nodes.push(walker.currentNode);
@@ -34,13 +37,28 @@ for (const details of document.querySelectorAll('#demo details')) {
     timer = setInterval(() => {
       if (document.hidden) return;
       if (next < words.length) words[next++].style.opacity = '1';
-      else { finish(); timer = undefined; }
+      else finish();
     }, 35);
+  }
+  function playWhenVisible() {
+    if (played || motion.matches || !details.open) return;
+    const rect = output.getBoundingClientRect();
+    if (rect.bottom > 0 && rect.top < window.innerHeight) play();
+  }
+  const observer = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting) playWhenVisible();
+    else if (timer) finish();
+  });
+  observer.observe(output);
+  button.addEventListener('click', () => {
+    if (timer) finish();
+    else play();
   });
   details.addEventListener('toggle', () => {
-    if (!details.open) { finish(); timer = undefined; }
+    if (!details.open) { finish(); played = false; }
+    else playWhenVisible();
   });
   motion.addEventListener('change', () => {
-    finish(); timer = undefined; button.hidden = motion.matches;
+    finish(); button.hidden = motion.matches;
   });
 }
