@@ -7,39 +7,47 @@ const LINKS = [
 ] as const;
 ---
 
-<footer class="section" aria-label="Site footer">
-  <p class="links">
-    {LINKS.map(([label, href], i) => (
-      <>
-        {i > 0 && <span class="sep" aria-hidden="true">·</span>}
-        <a href={href}>{label}</a>
-      </>
-    ))}
-  </p>
+<footer class="section site-footer" aria-label="Site footer">
+  <div class="footer-row">
+    <p class="identity"><strong>kerby</strong><span>Rulebooks for agentic work. Conditions before completion.</span></p>
+    <nav aria-label="Footer links"><ul class="links">
+      {LINKS.map(([label, href]) => <li><a href={href}>{label}</a></li>)}
+    </ul></nav>
+  </div>
   <p class="note">Not affiliated with Apache Kerby, the Apache Directory Kerberos library.</p>
-  <p class="note">kerby · Rulebooks for agentic work. Conditions before completion.</p>
 </footer>
 
 <style>
-  footer {
+  .site-footer {
     border-top: 1px solid var(--border);
-    text-align: center;
+    padding-block: 2rem;
   }
-
+  .footer-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+  .identity { margin: 0; max-width: 32rem; }
+  .identity strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    line-height: 1.2;
+    margin-bottom: .5rem;
+  }
+  .identity span, .note { color: var(--muted); font-size: .85rem; }
   .links {
     display: flex;
-    gap: 0.6rem;
-    justify-content: center;
+    gap: .75rem 1.5rem;
     flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: .9rem;
   }
-
-  .sep {
-    color: var(--muted);
-  }
-
-  .note {
-    color: var(--muted);
-    font-size: 0.85rem;
-    margin: 0.35rem 0 0;
+  .note { margin: 1.5rem 0 0; max-width: none; }
+  @media (max-width: 959px) {
+    .footer-row { flex-direction: column; gap: 1.5rem; }
   }
 </style>
