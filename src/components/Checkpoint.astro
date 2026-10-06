@@ -19,7 +19,7 @@ const { checkpoint, index } = Astro.props;
   <div class="checkpoint-body">
     <p class="checkpoint-condition"><strong>Condition to advance</strong>{checkpoint.condition}</p>
     <p>{checkpoint.action}</p>
-    <div class="evidence">
+    <div class="checkpoint-evidence">
       <h3>Illustrative evidence</h3>
       <ul>{checkpoint.evidence.map((item) => <li>{item}</li>)}</ul>
     </div>
@@ -43,10 +43,10 @@ const { checkpoint, index } = Astro.props;
   h2 { margin: 0; }
   .checkpoint-condition { font-size: 1.2rem; line-height: 1.5; }
   .checkpoint-condition strong, .checkpoint-held strong { display: block; font-size: .85rem; margin-bottom: .4rem; }
-  .evidence { border-left: 2px solid var(--structure); padding: .2rem 0 .2rem 1.3rem; margin: 1.5rem 0; }
-  .evidence h3 { margin: 0 0 .5rem; font-size: 1rem; }
-  .evidence ul { margin: 0; padding-left: 1.1rem; }
-  .evidence li + li { margin-top: .7rem; }
+  .checkpoint-evidence { border: 1px solid var(--border); border-left: 2px solid var(--structure); padding: 1.25rem; background: var(--surface); margin: 1.5rem 0; }
+  .checkpoint-evidence h3 { margin: 0 0 .5rem; font-size: 1rem; }
+  .checkpoint-evidence ul { margin: 0; padding-left: 1.1rem; }
+  .checkpoint-evidence li + li { margin-top: .7rem; }
   .checkpoint-held { padding-top: 1rem; border-top: 1px solid var(--border); }
   .checkpoint-sources { font-size: .8rem; margin-top: 1.5rem; color: var(--muted); }
   @media (min-width: 1100px) {
