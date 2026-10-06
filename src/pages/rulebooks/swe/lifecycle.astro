@@ -39,14 +39,18 @@ const PHASES = STEPS.reduce<{ name: string; steps: number[] }[]>((acc, step, i) 
       <a href={url('rulebooks/swe/bug-walkthrough/')}>six-stage bug walkthrough</a> is a simplified reading of this method.
     </p>
 
-    <div class="checkpoint">
-      <h2>Setup once. Load each session. Work in loops.</h2>
+  </section>
+
+  <section aria-labelledby="setup-heading">
+      <h2 id="setup-heading">Setup once. Load each session. Work in loops.</h2>
       <p>Installation establishes the configuration; loading and reading the project establish session context. Task execution then moves through Decide, Build, and Finish.</p>
       <p class="state">If a check fails → return to investigation.</p>
       <p>Understand the cause, make a focused change, and rerun the relevant check. Do not treat a warning, a completed edit, or a successful commit as proof that the intended behavior works.</p>
       <p class="small">These are editorial summaries of the source rules below, not literal Kerby output.</p>
-    </div>
-    <h2 class="steps-h" id="who">Who acts at each step</h2>
+  </section>
+
+  <section aria-labelledby="who">
+    <h2 id="who">Who acts at each step</h2>
     <p>
       swe is not only rules for the agent. kerby itself acts at some steps, hooks act at others, and some
       decisions are yours. A filled dot means that part acts in the step. A ring means it acts only
@@ -90,7 +94,10 @@ const PHASES = STEPS.reduce<{ name: string; steps: number[] }[]>((acc, step, i) 
       <li><strong>You</strong> run install, approve a plan graded {swe.numbers.approvalGrade} or higher, and review and merge the work.</li>
     </ul>
 
-    <h2 class="steps-h">The {STEPS.length} steps</h2>
+  </section>
+
+  <section aria-labelledby="steps-heading">
+    <h2 id="steps-heading">The {STEPS.length} steps</h2>
     <div class="stepper">
       <nav class="stepnav" aria-label="Steps" data-stepnav>
         {PHASES.map((phase) => (
@@ -144,9 +151,6 @@ const PHASES = STEPS.reduce<{ name: string; steps: number[] }[]>((acc, step, i) 
 
 <style>
   .source-file { margin-inline-start: 0.5rem; }
-  .steps-h {
-    margin-top: 2rem;
-  }
 
   /* Swimlane: a real table, so screen readers get rows and columns for free. */
   .swim {
