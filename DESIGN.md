@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: kerby
-description: Quiet, flat, warm off-white page with one terracotta mark; the dark terminal panel is the only proof the page makes.
+description: Quiet, flat, warm off-white pages with one terracotta mark; on the landing page the dark terminal panel is the only proof the page makes.
 colors:
   primary: "#B0532F"        # --accent — terracotta. A mark, never a fill. Shipped uses: link color, CTA hover underline
   secondary: "#4A4F5A"      # --structure — mono labels, eyebrow, the primary CTA border, panel border
@@ -12,7 +12,7 @@ colors:
   text-secondary: "#3D3A36" # --secondary — supporting copy
   text-muted: "#71695B"     # --muted — footnotes, separators
   border: "#E6DFD4"         # --border — card and footer rules, the secondary CTA border
-  panel-bg: "#1F2022"       # --panel-bg — the single sanctioned dark element
+  panel-bg: "#1F2022"       # --panel-bg — the landing terminal panel; on guide pages, swe line-format panels
   panel-text: "#ECECEE"     # --panel-text
   panel-dim: "#B8B8BD"      # --panel-dim — typed command chrome and cursor
 typography:
@@ -70,7 +70,9 @@ file on purpose, never a downstream consumer.
 kerby is a gate that stands between an AI agent's action and your project. The page
 that sells it has one job: demonstrate before you assert. So the visual identity is
 quiet and flat, warm off-white, with a single terracotta mark, and the proof is a real
-terminal transcript in the page's only dark element.
+terminal transcript in the landing page's only dark element. The swe guide pages
+(`/rulebooks/swe/`) are Read-mode documentation on the same system; they may use more
+than one dark panel, and only for kerby output or swe line formats.
 
 Audience: developers running Claude Code or Codex. The page should feel calm, exact, and
 unhurried. Nothing decorative. If something is colored, it is because it carries meaning.
@@ -96,8 +98,10 @@ the sole carrier of meaning or text. The mark-not-fill rule itself is a design r
 - **Surface (#FFFDF9):** Cards and the install block, with a 1px `border` rule. The
   secondary CTA takes the same `border` color, which is what separates it from the primary.
 - **Text (#1A1A1A / #3D3A36 / #71695B):** Body, supporting copy, muted footnotes.
-- **Panel (#1F2022 / #ECECEE / #B8B8BD):** The terminal demo is the single sanctioned
-  dark element. Panel text, and a dimmed tone for the typed command chrome and cursor.
+- **Panel (#1F2022 / #ECECEE / #B8B8BD):** On the landing page, the terminal demo is the
+  single sanctioned dark element. On guide pages, line-format and example panels use the
+  same tokens. Panel text, and a dimmed tone for the typed command chrome, the cursor, and
+  the `<placeholders>` in a line format.
 
 ## Typography
 
@@ -128,13 +132,19 @@ the section rhythm (0.25, 0.5, 1, 1.25, 1.5, 2, 3.5, 4.5rem), and components als
 ## Shapes
 
 One radius: 6px, on CTAs, cards, the install block, and the terminal panel. No other
-radius exists on the page. Borders are 1px. No shadows, no gradients.
+radius exists on the page. The one exception is a status dot, which is a circle: the
+terracotta "hook-enforced" dot and the hooks-switch knob on the guide pages. Borders are
+1px; a few guide controls use 1.5px to mark the active state. No shadows, no gradients.
+
+Browser surfaces: keyboard focus is a 2px terracotta outline at 2px offset (a mark, not a
+fill). Selected text sits on the `border` color with `on-surface` text.
 
 ## Do's and Don'ts
 
 - Do keep terracotta a mark: keyword, underline, or dot. Never a fill.
 - Do keep the page flat. `check:discipline` rejects any gradient or shadow in `src/` or `dist/`.
-- Do keep exactly one dark element, the terminal panel.
+- Do keep exactly one dark element on the landing page, the terminal panel. Guide pages may
+  use more, only for kerby output or swe line formats.
 - Do add any new fg/bg pairing to `scripts/check-contrast.ts` before shipping it.
 - Do write every internal URL base-aware; when Astro's `base` is set, `check:discipline`
   rejects root-absolute paths that escape it.
@@ -148,3 +158,6 @@ radius exists on the page. Borders are 1px. No shadows, no gradients.
 - Plain words; keep the tool's own terms (verdict, gate, transcript, BLOCKED).
 - Real output only. Anything shown as kerby output is byte-copied from a real session,
   never paraphrased.
+- Filled examples say so. A panel that fills swe's line formats with made-up values carries
+  the label "example" on the panel itself. Line formats are rendered from anchored quotes
+  in `src/data/swe.json`, never retyped.

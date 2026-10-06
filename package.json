@@ -11,7 +11,9 @@
     "check:contrast": "bun scripts/check-contrast.ts",
     "check:discipline": "bun scripts/check-discipline.ts",
     "check:copy": "bun scripts/check-copy.ts",
-    "check": "bun run build && bun run check:contrast && bun run check:discipline && bun run check:copy"
+    "sync:swe": "bun scripts/sync-swe.ts",
+    "check:swe": "bun scripts/sync-swe.ts --check",
+    "check": "bun run build && bun run check:contrast && bun run check:discipline && bun run check:copy && bun run check:swe"
   },
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "^5.2.8",

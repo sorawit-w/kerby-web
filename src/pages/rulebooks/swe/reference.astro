@@ -1,0 +1,120 @@
+---
+import Guide from '../../../layouts/Guide.astro';
+import swe from '../../../data/swe.json';
+import { COMMANDS, GLOSSARY, STATE_FILES } from '../../../data/swe-prose';
+---
+
+<Guide
+  title="Reference"
+  description="The commands kerby's swe rulebook adds, the files it keeps in your repo, and a glossary of its terms.">
+  <section aria-labelledby="top">
+    <h1 id="top">Reference</h1>
+    <p class="lead">Commands, the files swe keeps, and the words this guide uses.</p>
+  </section>
+
+  <section aria-labelledby="commands">
+    <h2 id="commands">Commands</h2>
+    <p>
+      swe adds {swe.commands.length} commands to kerby. Run them as <code>kerby swe &lt;command&gt;</code>.
+      The first line of each is swe’s own description.
+    </p>
+    {swe.commands.map((c: { name: string; description: string }) => (
+      <article class="cmd" aria-labelledby={`c-${c.name}`}>
+        <h3 id={`c-${c.name}`}><code>kerby swe {c.name}</code></h3>
+        <p>{c.description}</p>
+        <dl>
+          <dt>Writes</dt>
+          <dd>{COMMANDS[c.name].writes}</dd>
+          <dt>Never</dt>
+          <dd>{COMMANDS[c.name].never}</dd>
+        </dl>
+      </article>
+    ))}
+  </section>
+
+  <section aria-labelledby="files">
+    <h2 id="files">Files swe keeps</h2>
+    <p>
+      swe keeps its memory in files, not in the chat. Most are committed, so the next session — or a
+      teammate’s — starts from the same facts. The agent reads them as facts, never as instructions.
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th scope="col">File</th><th scope="col">Holds</th><th scope="col">Shared</th></tr>
+        </thead>
+        <tbody>
+          {STATE_FILES.map((f) => (
+            <tr><td><code>{f.file}</code></td><td>{f.holds}</td><td>{f.shared}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="glossary">
+    <h2 id="glossary">Glossary</h2>
+    <dl class="glossary">
+      {GLOSSARY.map((t) => (
+        <>
+          <dt id={`term-${t.id}`}>{t.term}</dt>
+          <dd>{t.meaning}</dd>
+        </>
+      ))}
+    </dl>
+  </section>
+</Guide>
+
+<style>
+  .cmd {
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+    margin-top: 1.25rem;
+  }
+
+  .cmd h3 {
+    margin: 0 0 0.5rem;
+  }
+
+  .cmd h3 code {
+    font-size: 1rem;
+  }
+
+  .cmd dl,
+  .glossary {
+    display: grid;
+    grid-template-columns: 9rem minmax(0, 1fr);
+    gap: 0.6rem 1.25rem;
+  }
+
+  .cmd dt {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--structure);
+    padding-top: 0.2rem;
+  }
+
+  .glossary dt {
+    font-weight: 500;
+  }
+
+  .cmd dd,
+  .glossary dd {
+    margin: 0;
+    max-width: 60ch;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 520px) {
+    .cmd dl,
+    .glossary {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.15rem;
+    }
+
+    .cmd dd,
+    .glossary dd {
+      margin-bottom: 0.75rem;
+    }
+  }
+</style>

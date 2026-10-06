@@ -1,0 +1,453 @@
+{
+  "source_repo": "sorawit-w/kerby",
+  "source_sha": "3c750e205dda90fc242c6063a1323ce8ff94bc29",
+  "version": "2.13.2",
+  "kerby_version": "10.2.2",
+  "description": "Coding guardrails: clarity over cleverness, safety over speed, never leave the repo broken — nothing unproven passes the gate.",
+  "numbers": {
+    "planThreshold": 4,
+    "approvalGrade": 7,
+    "recentCommits": 20,
+    "costlyNewFiles": 3,
+    "costlyEditedFiles": 5,
+    "maxGrade": 10
+  },
+  "routes": [
+    "investigate",
+    "new-project",
+    "adopt-existing",
+    "feature",
+    "bugfix",
+    "quick-task"
+  ],
+  "checks": [
+    {
+      "id": "operating-rules",
+      "kind": "prose",
+      "body": "BOOTSTRAP.md",
+      "enforcement": "behavioral",
+      "severity": "block",
+      "token_cost": "medium"
+    },
+    {
+      "id": "quality-gate-tiers",
+      "kind": "prose",
+      "body": "references/quality-gates.md",
+      "enforcement": "behavioral",
+      "severity": "block",
+      "token_cost": "medium"
+    },
+    {
+      "id": "verification-before-completion",
+      "kind": "prose",
+      "body": "references/validation.md",
+      "enforcement": "behavioral",
+      "severity": "block",
+      "token_cost": "high"
+    },
+    {
+      "id": "security-lens",
+      "kind": "prose",
+      "body": "references/validation.md",
+      "enforcement": "behavioral",
+      "severity": "block",
+      "token_cost": "high"
+    },
+    {
+      "id": "guardrails-scope-security",
+      "kind": "prose",
+      "body": "references/guardrails.md",
+      "enforcement": "behavioral",
+      "severity": "block",
+      "token_cost": "high"
+    },
+    {
+      "id": "intent-gate-on-behavior-change",
+      "kind": "prose",
+      "body": "references/intent-gate.md",
+      "enforcement": "behavioral",
+      "severity": "block",
+      "token_cost": "low"
+    },
+    {
+      "id": "destructive-git",
+      "kind": "code",
+      "needs": [
+        "branch"
+      ],
+      "enforcement": "hard",
+      "enforcer": "hooks/protect-git.sh",
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "severity": "block",
+      "floor": true
+    },
+    {
+      "id": "protected-branch-commit",
+      "kind": "code",
+      "needs": [
+        "branch",
+        "install_state"
+      ],
+      "enforcement": "hard",
+      "enforcer": "hooks/protect-git.sh",
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "severity": "block",
+      "override": "authorized-scoped"
+    },
+    {
+      "id": "protect-env",
+      "kind": "code",
+      "needs": [
+        "changed_files"
+      ],
+      "enforcement": "hard",
+      "enforcer": "hooks/protect-env.sh",
+      "event": "PreToolUse",
+      "matcher": "Edit|Write",
+      "severity": "block"
+    },
+    {
+      "id": "env-read-warning",
+      "kind": "code",
+      "needs": [
+        "changed_files"
+      ],
+      "enforcement": "partial",
+      "enforcer": "hooks/warn-env-read.sh",
+      "event": "PreToolUse",
+      "matcher": "Read",
+      "gap": "Bash cat .env not caught; Read-tool only",
+      "severity": "warn"
+    },
+    {
+      "id": "high-stakes-routing",
+      "kind": "code",
+      "needs": [
+        "changed_files"
+      ],
+      "enforcement": "partial",
+      "enforcer": "hooks/route-high-stakes.sh",
+      "event": "PreToolUse",
+      "matcher": "Edit|Write",
+      "gap": "prose-only production-traffic-shaping category un-globbable",
+      "severity": "warn"
+    },
+    {
+      "id": "hollow-test-heuristic",
+      "kind": "code",
+      "needs": [
+        "added_lines"
+      ],
+      "enforcement": "partial",
+      "enforcer": "hooks/hollow-test-check.sh",
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "gap": "runtime fakes (0-match runs, gates over stubs) stay agent-judged",
+      "severity": "warn"
+    },
+    {
+      "id": "status-provenance",
+      "kind": "code",
+      "needs": [
+        "staged_content"
+      ],
+      "enforcement": "partial",
+      "enforcer": "hooks/status-provenance-check.sh",
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "gap": "fails open, visibly, when the guard script is missing; `git commit` reached through `git -C` or `cd … &&` is not recognised",
+      "severity": "block"
+    }
+  ],
+  "hooks": [
+    {
+      "script": "protect-git.sh",
+      "enforcer": "hooks/protect-git.sh",
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "tier": "locked",
+      "blocks": true,
+      "checks": [
+        "destructive-git",
+        "protected-branch-commit"
+      ]
+    },
+    {
+      "script": "protect-env.sh",
+      "enforcer": "hooks/protect-env.sh",
+      "event": "PreToolUse",
+      "matcher": "Edit|Write",
+      "tier": "recommended",
+      "blocks": true,
+      "checks": [
+        "protect-env"
+      ]
+    },
+    {
+      "script": "warn-env-read.sh",
+      "enforcer": "hooks/warn-env-read.sh",
+      "event": "PreToolUse",
+      "matcher": "Read",
+      "tier": "optional",
+      "blocks": false,
+      "checks": [
+        "env-read-warning"
+      ]
+    },
+    {
+      "script": "route-high-stakes.sh",
+      "enforcer": "hooks/route-high-stakes.sh",
+      "event": "PreToolUse",
+      "matcher": "Edit|Write",
+      "tier": "optional",
+      "blocks": false,
+      "checks": [
+        "high-stakes-routing"
+      ]
+    },
+    {
+      "script": "hollow-test-check.sh",
+      "enforcer": "hooks/hollow-test-check.sh",
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "tier": "optional",
+      "blocks": false,
+      "checks": [
+        "hollow-test-heuristic"
+      ]
+    },
+    {
+      "script": "status-provenance-check.sh",
+      "enforcer": "hooks/status-provenance-check.sh",
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "tier": "recommended",
+      "blocks": true,
+      "checks": [
+        "status-provenance"
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "name": "audit",
+      "body": "commands/audit.md",
+      "description": "Static conformance audit of the project against the loaded corpus; writes a report under .kerby/audits/."
+    },
+    {
+      "name": "prepare",
+      "body": "commands/prepare.md",
+      "description": "Onboard an existing repo: populate kerby's context artifacts from code and git history, diff-and-confirm on every write."
+    }
+  ],
+  "base": {
+    "version": "1.3.0",
+    "hooks": [
+      {
+        "script": "pre-commit-check.sh",
+        "enforcer": "hooks/pre-commit-check.sh",
+        "event": "PreToolUse",
+        "matcher": "Bash",
+        "tier": "locked",
+        "blocks": true,
+        "checks": [
+          "secrets-staged"
+        ]
+      }
+    ]
+  },
+  "anchors": [
+    {
+      "id": "format-complexity",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "complexity: <N> (trigger: <≤8-word reason>) → route: <investigate | new-project | adopt-existing | feature | bugfix | quick-task>"
+    },
+    {
+      "id": "format-rung",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "rung: <N> — <≤8-word reason>"
+    },
+    {
+      "id": "format-plan",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "plan: <files> — <change> — <check>"
+    },
+    {
+      "id": "format-plan-waived",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "plan: <files> — <change> — <check> (full plan waived: user opt-out \"<quoted phrase>\")"
+    },
+    {
+      "id": "format-intent",
+      "file": "skills/kerby/rulebooks/swe/references/intent-gate.md",
+      "quote": "INTENT: code does <X>; the failing check/task expects <Y>; the spec (README/docs/docstring) says <Z>"
+    },
+    {
+      "id": "format-skipped",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "skipped: <what you did not build> — add when <trigger>"
+    },
+    {
+      "id": "skipped-none",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "`skipped: none`"
+    },
+    {
+      "id": "format-outcome",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "outcome: <case> — match | mismatch | not exercised"
+    },
+    {
+      "id": "format-smallest",
+      "file": "skills/kerby/rulebooks/swe/workflows/feature.md",
+      "quote": "smallest: <the least you can build that fully satisfies the request>"
+    },
+    {
+      "id": "format-deferring",
+      "file": "skills/kerby/rulebooks/swe/workflows/feature.md",
+      "quote": "deferring: <items, comma-separated> | none"
+    },
+    {
+      "id": "format-worktree",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "creating worktree at .worktrees/<branch-name> — trigger: <which>"
+    },
+    {
+      "id": "plan-threshold",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "use the default **4**"
+    },
+    {
+      "id": "approval-grade",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "**Grade ≥ 7:** after the plan, **STOP and get user approval**"
+    },
+    {
+      "id": "protected-branches",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "main, master, dev, develop, staging, release/*, trunk"
+    },
+    {
+      "id": "ladder-low",
+      "file": "skills/kerby/rulebooks/swe/workflows/feature.md",
+      "quote": "| Low (1–3) | Single file, config, typo | Handle directly. Self-review when done. |"
+    },
+    {
+      "id": "ladder-med",
+      "file": "skills/kerby/rulebooks/swe/workflows/feature.md",
+      "quote": "| Med (4–6) | Multiple related files, moderate logic | **Plan + Expected Outcomes** (below), then implement. Self-check when done. |"
+    },
+    {
+      "id": "ladder-high",
+      "file": "skills/kerby/rulebooks/swe/workflows/feature.md",
+      "quote": "| High (7–8) | Multi-file, design decisions, new patterns | **Plan + Expected Outcomes, get user approval before starting.** QA sub-agent when done. |"
+    },
+    {
+      "id": "ladder-critical",
+      "file": "skills/kerby/rulebooks/swe/workflows/feature.md",
+      "quote": "| Critical (9–10) | Cross-cutting, architectural, breaking | Plan + approval + staged rollout. QA sub-agent when done. |"
+    },
+    {
+      "id": "gates-quick",
+      "file": "skills/kerby/rulebooks/swe/references/quality-gates.md",
+      "quote": "| **Quick** | Single-file edits, config, docs, comments, formatting — none of which any gate reads | `{lint_command}` only |"
+    },
+    {
+      "id": "gates-standard",
+      "file": "skills/kerby/rulebooks/swe/references/quality-gates.md",
+      "quote": "| **Standard** | Multi-file changes, logic changes, new functions | `{build_command} && {lint_command} && {test_command}` |"
+    },
+    {
+      "id": "gates-full",
+      "file": "skills/kerby/rulebooks/swe/references/quality-gates.md",
+      "quote": "| **Full** | Cross-cutting changes, dependency updates, public API changes | Standard + E2E (if applicable) + manual spot-check |"
+    },
+    {
+      "id": "warning-opinionated",
+      "file": "skills/kerby/rulebooks/swe/README.md",
+      "quote": "This rulebook is **deliberately, aggressively opinionated.**"
+    },
+    {
+      "id": "warning-token-cost",
+      "file": "skills/kerby/rulebooks/swe/README.md",
+      "quote": "there is a real input-token cost"
+    },
+    {
+      "id": "format-rulebook",
+      "file": "skills/kerby/SKILL.md",
+      "quote": "rulebook: <id>@<version> (<origin>) — source: explicit | pinned | intent | detected | chosen"
+    },
+    {
+      "id": "prime-directive",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "Clarity over cleverness. Safety over speed. Never leave the repo broken."
+    },
+    {
+      "id": "iron-law",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "No completion claims without fresh evidence."
+    },
+    {
+      "id": "do-not-merge",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "Do NOT merge — leave for human review"
+    },
+    {
+      "id": "commit-types",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "one of `feat` `fix` `chore` `docs` `refactor` `test` `perf` `build` `ci`"
+    },
+    {
+      "id": "quick-task-fit",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "no new logic/refactor, ≤~50 LOC, no schema/contract changes"
+    },
+    {
+      "id": "high-stakes-migrations",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "**Schema migrations:**"
+    },
+    {
+      "id": "high-stakes-auth",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "**Authentication / authorization:**"
+    },
+    {
+      "id": "high-stakes-payments",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "**Payments / billing:**"
+    },
+    {
+      "id": "high-stakes-infra",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "**Infrastructure:**"
+    },
+    {
+      "id": "high-stakes-ci",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "**CI/CD:**"
+    },
+    {
+      "id": "high-stakes-traffic",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "**Production-traffic-shaping values:**"
+    },
+    {
+      "id": "recent-commits",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "`git log --oneline -20`"
+    },
+    {
+      "id": "costly-new-files",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "Creating >3 new files"
+    },
+    {
+      "id": "costly-edited-files",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "Modifying >5 existing files in one pass"
+    }
+  ]
+}

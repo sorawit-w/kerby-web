@@ -1,0 +1,56 @@
+---
+import Guide from '../../../layouts/Guide.astro';
+import Lines from '../../../components/guide/Lines.astro';
+import Tag from '../../../components/guide/Tag.astro';
+import { STEPS } from '../../../data/lifecycle';
+import swe from '../../../data/swe.json';
+import { url } from '../../../lib/url';
+
+---
+
+<Guide
+  title="Lifecycle"
+  description={`What kerby's swe rulebook does at each of ${STEPS.length} steps of a coding agent's work, from install to the final report.`}>
+  <section aria-labelledby="top">
+    <h1 id="top">Lifecycle</h1>
+    <p class="lead">What swe asks of the agent at each step, from install to the final report.</p>
+    <p>
+      There are {STEPS.length} steps in four phases. Each step shows what swe asks for, the line the
+      agent must write, and whether a hook checks it. Use Next and Back, the numbered buttons, or the
+      arrow keys.
+    </p>
+
+    <h2 class="steps-h">The {STEPS.length} steps</h2>
+    <div class="stepper" data-stepper>
+      <ol class="steps">
+        {STEPS.map((s, i) => (
+          <li class="step" data-step data-title={s.title} data-phase={s.phase} id={`step-${i + 1}`}>
+            <h3>
+              <span class="num">{i + 1}</span>
+              {s.title}
+              {s.tag && <Tag kind={s.tag} />}
+            </h3>
+            <p class="phase">{s.phase}</p>
+            {s.body.map((p) => <p>{p}</p>)}
+            {s.lines && <Lines kind="format" ids={s.lines} caption={s.caption} />}
+            <p class="small">Source: {s.source}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section aria-labelledby="next-h">
+    <h2 id="next-h">Read next</h2>
+    <ul class="next">
+      <li><a href={url('rulebooks/swe/workflows/')}><strong>Workflows</strong><span>Which route your kind of task takes, and the 1–{swe.numbers.maxGrade} grade.</span></a></li>
+      <li><a href={url('rulebooks/swe/hooks/')}><strong>Hooks</strong><span>The steps a hook checks, in detail.</span></a></li>
+    </ul>
+  </section>
+</Guide>
+
+<style>
+  .steps-h {
+    margin-top: 2rem;
+  }
+</style>

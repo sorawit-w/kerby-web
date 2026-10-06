@@ -7,17 +7,13 @@ import '@fontsource/geist/latin-500.css';
 import '@fontsource-variable/jetbrains-mono/wght.css';
 import '../styles/tokens.css';
 import '../styles/global.css';
+import { url as asset } from '../lib/url';
 
 interface Props {
   title: string;
   description: string;
 }
 const { title, description } = Astro.props;
-// Join the base path to an asset with exactly one slash — survives the
-// custom-domain migration (README runbook) where BASE_URL becomes "/",
-// which would otherwise make `${base}/x` a protocol-relative `//x`.
-const asset = (p: string) =>
-  `${import.meta.env.BASE_URL.replace(/\/$/, '')}/${p.replace(/^\//, '')}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 

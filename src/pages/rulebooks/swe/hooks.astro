@@ -1,0 +1,163 @@
+---
+import Guide from '../../../layouts/Guide.astro';
+import swe from '../../../data/swe.json';
+import { HOOKS, WHEN } from '../../../data/swe-prose';
+import { url } from '../../../lib/url';
+
+// Base's floor hook first: it runs under every rulebook. Then swe's, by tier.
+const ORDER = { locked: 0, recommended: 1, optional: 2 } as const;
+const all = [
+  ...swe.base.hooks.map((h) => ({ ...h, from: 'base' })),
+  ...swe.hooks.map((h) => ({ ...h, from: 'swe' })),
+].sort((a, b) => (a.from === b.from ? ORDER[a.tier as keyof typeof ORDER] - ORDER[b.tier as keyof typeof ORDER] : a.from === 'base' ? -1 : 1));
+
+const count = (tier: string) => all.filter((h) => h.tier === tier).length;
+---
+
+<Guide
+  title="Hooks"
+  description="Every hook in kerby's swe rulebook: when it runs, what it blocks or warns about, what it misses, and how to turn it off.">
+  <section aria-labelledby="top">
+    <h1 id="top">Hooks</h1>
+    <p class="lead">The few rules that a script checks, not just the agent.</p>
+    <p>
+      A hook is a small script your agent tool runs at a fixed moment, such as before a shell command.
+      A hook reads the command, not the conversation. That makes it hard to skip, and also limits what it
+      can see. swe ships {swe.hooks.length} hooks, and the base floor adds {swe.base.hooks.length} more.
+    </p>
+  </section>
+
+  <section aria-labelledby="install">
+    <h2 id="install">How install offers them</h2>
+    <p>
+      kerby install shows every hook in a table, then asks: all, choose, or none. Each hook has a tier.
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th scope="col">Tier</th><th scope="col">Hooks</th><th scope="col">What it means</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>locked</td><td>{count('locked')}</td><td>Comes with any hook install. You cannot skip it on its own — only by choosing none.</td></tr>
+          <tr><td>recommended</td><td>{count('recommended')}</td><td>Blocks an action. You can skip it, and kerby status keeps telling you it is not enforcing.</td></tr>
+          <tr><td>optional</td><td>{count('optional')}</td><td>Only warns. You can skip it.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      A hook works only after install and only where your tool runs it. Claude Code runs them. Codex
+      does not. Run <code>kerby status</code> to see which hooks are really enforcing, and
+      {' '}<code>kerby hooks</code> to see what install would add, without changing anything.
+    </p>
+  </section>
+
+  <section aria-labelledby="list">
+    <h2 id="list">Every hook</h2>
+    {all.map((h) => {
+      const p = HOOKS[h.script!];
+      return (
+        <article class="hook" aria-labelledby={`h-${h.script}`}>
+          <h3 id={`h-${h.script}`}>
+            {p.name}
+            <span class="chip">{h.script}</span>
+          </h3>
+          <dl>
+            <dt>Runs</dt>
+            <dd>{WHEN[h.matcher as string]}{h.from === 'base' && ' — from the base floor, under every rulebook'}</dd>
+            <dt>Result</dt>
+            <dd>{h.blocks ? 'Blocks the action' : 'Warns only, never blocks'} · tier {h.tier}</dd>
+            <dt>Checks</dt>
+            <dd>{h.checks.map((c) => <code>{c}</code>).reduce((acc: unknown[], c, i) => (i ? [...acc, ' ', c] : [c]), [])}</dd>
+            <dt>What it does</dt>
+            <dd>{p.does}</dd>
+            <dt>What it misses</dt>
+            <dd>{p.gaps}</dd>
+            <dt>Turn it off</dt>
+            <dd>{p.off}</dd>
+          </dl>
+        </article>
+      );
+    })}
+  </section>
+
+  <section aria-labelledby="git">
+    <h2 id="git">The git pre-commit hook</h2>
+    <p>
+      The secret scan above runs before the agent’s commit command, so it reads the command text. It
+      cannot see <code>git add x && git commit</code> in one command, an alias, or a path in a variable.
+    </p>
+    <p>
+      kerby install also offers the same scan as a git pre-commit hook. git hands that hook the real
+      staged files, so those cases are covered. It lives in your clone only — git never shares hooks with
+      teammates — and <code>git commit --no-verify</code> skips it for one commit.
+    </p>
+  </section>
+
+  <section aria-labelledby="blind">
+    <h2 id="blind">What no hook can see</h2>
+    <p>Hooks run at the tool call. Some rules live in the conversation, where no hook can look:</p>
+    <ul class="blind">
+      <li>a secret printed into the chat;</li>
+      <li>instructions hidden in a file the agent reads;</li>
+      <li>a test run that reaches a production system;</li>
+      <li>whether the agent really ran the quality gate before it said “done”.</li>
+    </ul>
+    <p>
+      These rules are instructions only. When the hooks are not installed, every rule is. The
+      <a href={url('rulebooks/swe/#map')}>map on the overview</a> shows the difference.
+    </p>
+  </section>
+</Guide>
+
+<style>
+  .hook {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 0 0.5rem;
+  }
+
+  .hook h3 {
+    margin: 0 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.75rem;
+  }
+
+  .hook dl {
+    display: grid;
+    grid-template-columns: 9rem minmax(0, 1fr);
+    gap: 0.6rem 1.25rem;
+    margin: 0;
+  }
+
+  .hook dt {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--structure);
+    padding-top: 0.2rem;
+  }
+
+  .hook dd {
+    margin: 0;
+    max-width: 60ch;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 520px) {
+    .hook dl {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.15rem;
+    }
+
+    .hook dd {
+      margin-bottom: 0.6rem;
+    }
+  }
+
+  .blind {
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.35rem;
+  }
+</style>

@@ -38,6 +38,18 @@ pre,
   font-family: var(--font-mono);
 }
 
+/* Browser surfaces carry the design too: a terracotta focus ring (a mark,
+   not a fill) and a warm selection instead of the system blue. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--border);
+  color: var(--text);
+}
+
 main > section,
 .section {
   max-width: 44rem;
