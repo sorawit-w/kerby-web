@@ -6,14 +6,14 @@ const descriptions = ['Save a setting, refresh, and observe the reset.', 'Trace 
 ---
 <section class="hero" aria-labelledby="hero-title">
   <div class="hero-copy">
-    <p class="eyebrow">KERBY / SWE RULEBOOK</p>
-    <h1 id="hero-title">See how your <br />agent gets to done.</h1>
-    <p class="lead">A guarded path through investigating, planning, changing, and verifying your code.</p>
-    <div class="ctas"><a class="cta" href={url('rulebooks/swe/bug-walkthrough/')}>Follow a bug fix <span class="direction-arrow" aria-hidden="true">→</span></a><a class="secondary-link" href={url('rulebooks/swe/')}>Explore SWE</a></div>
-    <p class="judgment">For coding agents. Built around your judgment.</p>
+    <p class="eyebrow">KERBY / RULEBOOK ENGINE</p>
+    <h1 id="hero-title">Give your agent <br />a rulebook.</h1>
+    <p class="lead">Kerby loads rulebooks into your agent’s session. They define how work should proceed, what evidence it needs, and when to stop.</p>
+    <div class="ctas"><a class="cta" href={url('rulebooks/swe/bug-walkthrough/')}>See SWE in action <span class="direction-arrow" aria-hidden="true">→</span></a><a class="secondary-link" href={url('#install')}>Install Kerby</a></div>
+    <p class="judgment">SWE is the included rulebook for software engineering.</p>
   </div>
   <aside class="story" aria-label="Illustrative settings bug">
-    <p class="eyebrow">ILLUSTRATIVE EXAMPLE</p>
+    <p class="eyebrow">SWE EXAMPLE · ILLUSTRATIVE</p>
     <blockquote>“{SCENARIO}”</blockquote>
     <ol>{preview.map((step, i) => <li><span class="number" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><div><a href={url(`rulebooks/swe/bug-walkthrough/#${step.id}`)}>{i === 0 ? 'Reproduce' : step.stage}</a><p>{descriptions[i]}</p></div></li>)}</ol>
   </aside>

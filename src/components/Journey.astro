@@ -4,16 +4,16 @@ import { url } from '../lib/url';
 const verify = CHECKPOINTS.find(step => step.id === 'verify')!;
 ---
 <section class="journey" aria-labelledby="journey-title">
-  <p class="eyebrow">FOLLOW ONE CHANGE</p>
+  <p class="eyebrow">WITH THE SWE RULEBOOK</p>
   <h2 id="journey-title">The fix is only part of the work.</h2>
-  <p class="intro">See the reasoning and checks that lead to the result.</p>
+  <p class="intro">For a settings bug, SWE guides the agent from understanding the failure to checking the result.</p>
   <ol class="path">{CHECKPOINTS.map((step, i) => <li class:list={{ featured: step.id === 'verify' }}><a href={url(`rulebooks/swe/bug-walkthrough/#${step.id}`)} title={step.condition}><span class="number">{String(i + 1).padStart(2,'0')}</span><span class="stage">{step.stage}</span></a></li>)}</ol>
   <div class="return" id="arrow"><span class="return-tip" aria-hidden="true">↑</span><p>Check fails → investigate again</p></div>
   <div class="verification">
     <div><p class="eyebrow">05 / VERIFY · ILLUSTRATIVE EXAMPLE</p><h3>Does the setting survive a refresh?</h3><p>The agent repeats the original failure case and runs the relevant checks.</p><p class="responsibility">{verify.responsibility}</p></div>
     <div class="evidence-needed"><p class="eyebrow">WHAT YOU SHOULD SEE</p><ul><li>A regression check for saved settings</li><li>Results from the relevant project checks</li></ul><p class="condition"><strong>Condition to advance</strong><br />{verify.condition}</p><p class="unmet"><strong>Held if the check fails.</strong> Return to investigation.</p></div>
   </div>
-  <p class="source-note">A simplified view of SWE, not a live run. <a href={url('rulebooks/swe/bug-walkthrough/#verify')}>Follow the complete example →</a></p>
+  <p class="source-note">A simplified view of SWE, not a live run. <a href={url('rulebooks/swe/bug-walkthrough/#verify')}>Read the settings-bug walkthrough →</a></p>
 </section>
 <style>
 .journey { border-top:1px solid var(--border); padding-block:2.5rem; }

@@ -67,11 +67,11 @@ file on purpose, never a downstream consumer.
 
 ## Overview
 
-The site explains a guarded path to completion for SWE adopters. A reader should understand how their agent works differently, what permits advancement, who checks a condition, and what happens when it is unmet. The current head-and-neck pixel mascot remains the guardian identity; the interface explains the conditions.
+The homepage introduces Kerby as the rulebook engine, with SWE as its featured software-engineering rulebook. The SWE guides explain a guarded path to completion. A reader should understand how their agent works differently, what permits advancement, who checks a condition, and what happens when it is unmet. The current head-and-neck pixel mascot remains the guardian identity; the interface explains the conditions.
 
 The supplied homepage mockup governs the compact composition: a split hero with an editorial quote and three-step preview, a connected six-stage path with a verification detail, compact icon-led responsibilities, and a single-row portrait footer. Required transcript and installation sections continue below this core narrative.
 
-The approved redesign replaces the previous transcript-first single-column design. The homepage introduces the method through one illustrative settings bug; all guide pages use the same responsibility and checkpoint language.
+The approved redesign replaces the previous transcript-first single-column design. The homepage labels the illustrative settings bug and six-stage path as SWE examples; all guide pages use the same responsibility and checkpoint language.
 
 ## Layout and hierarchy
 
