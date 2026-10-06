@@ -77,6 +77,7 @@ The approved redesign replaces the previous transcript-first single-column desig
 - Reading measure: 65ch; wide diagrams and tables can use the available column.
 - Homepage split hero: desktop two columns, stacked below 960px.
 - Guide shell: 12rem left navigation rail, 4rem gap, flexible reading column; in-flow navigation below 960px.
+- Guide section dividers and lifecycle step dividers share 3rem of vertical padding. Inset checkpoint dividers share a 1.5rem gap before their first heading or label, with no additional first-child top margin. Section separators use pale borders; checkpoint boundaries use a 1px slate line. These rules live in `guide.css`, not page-local overrides.
 - Checkpoints: condition, agent action, evidence, unmet-condition response and linked rulebook sources.
 - Workflow paths become vertical on narrow screens. Setup is distinguished from task execution.
 - Fluid homepage heading 2.5–4.6rem; guide heading 2.25–3.25rem. Body 17px / 1.6. Explicit hierarchy comes from space, type and rules.

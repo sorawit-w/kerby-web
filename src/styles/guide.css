@@ -40,9 +40,20 @@
 .guide-rail nav a:hover { text-decoration: underline; }
 .rail-note { font-size: .95rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 1.25rem; margin-top: 2rem; }
 .rail-source { font-size: .8rem; }
-.guide { min-width: 0; }
-.guide > section { padding: 3rem 0; }
+.guide {
+  min-width: 0;
+  --guide-section-space: 3rem;
+  --guide-checkpoint-space: 1.5rem;
+}
+.guide > section { padding: var(--guide-section-space) 0; }
+/* Section dividers use the page rhythm; inset checkpoints use a compact rhythm.
+   Keep these shared so a heading's default margin cannot set the divider gap. */
 .guide .checkpoint { border-top: 1px solid var(--structure); }
+.guide .checkpoint:not(section) {
+  margin-block: 2rem;
+  padding-top: var(--guide-checkpoint-space);
+}
+.guide .checkpoint > :first-child { margin-top: 0; }
 @media(max-width: 959px) { .guide-shell { display: block; } .guide-rail { position: static; padding-top: 1.5rem; } .guide-rail ul { display: flex; flex-wrap: wrap; gap: .25rem .8rem; } .guide-rail nav a { padding: .45rem 0; border-left: 0; border-bottom: 2px solid transparent; } .guide-rail .eyebrow { margin-bottom: .5rem; } .rail-note, .rail-source { display: none; } }
 @media(max-width: 600px) { .guide-shell { padding-inline: 1.25rem; } }
 
@@ -405,7 +416,7 @@
 
 .stepper .step {
   border-top: 1px solid var(--border);
-  padding: 1.5rem 0;
+  padding: var(--guide-section-space) 0;
   max-width: none;
   /* A jump to #step-N lands below the pinned nav; guide.js measures it. */
   scroll-margin-top: calc(var(--stepnav-h, 5rem) + 0.75rem);
