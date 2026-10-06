@@ -1,11 +1,13 @@
 // swe guide enhancements. The HTML is complete without this script: every
 // lifecycle step is rendered top-down, the step nav is plain #step-N links,
-// and every task is rendered as a list. This script adds two things:
+// every task is rendered as a list, and every command is selectable text.
+// This script adds three things:
 //   - stepnav: marks the step you are reading in the sticky step nav, and
 //     keeps that number in view when the nav scrolls sideways on a phone. It
 //     runs under reduced motion too: a position mark is not an animation.
 //   - picker: turns the task list into one-at-a-time choices. Under
 //     prefers-reduced-motion it does nothing; the full list is that rendering.
+//   - copyRows: a Copy button on each command row.
 // The hooks switch is CSS only (:has) and needs no script.
 
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -106,5 +108,40 @@ function picker(root) {
   pick(0, false);
 }
 
+// Copy buttons for command rows (components/guide/Command.astro). Only where
+// the clipboard API exists; otherwise the command stays plain, selectable text.
+function copyRows(rows) {
+  if (!rows.length || !window.isSecureContext || !navigator.clipboard?.writeText) return;
+  const live = el('p', { class: 'visually-hidden', 'aria-live': 'polite' });
+  document.body.append(live);
+  rows.forEach((row) => {
+    const code = row.querySelector('code');
+    const text = code.textContent.trim();
+    const button = el('button', { type: 'button', class: 'copy', 'aria-label': `Copy ${text}` }, 'Copy');
+    let timer;
+    button.addEventListener('click', async () => {
+      clearTimeout(timer);
+      try {
+        await navigator.clipboard.writeText(text);
+        button.textContent = 'Copied';
+        button.setAttribute('data-copied', '');
+        live.textContent = `Copied ${text}`;
+      } catch {
+        // Clipboard refused: select the command so the reader can copy it by hand.
+        window.getSelection().selectAllChildren(code);
+        button.textContent = 'Selected';
+        live.textContent = `${text} is selected. Copy it with your keyboard.`;
+      }
+      timer = setTimeout(() => {
+        button.textContent = 'Copy';
+        button.removeAttribute('data-copied');
+        live.textContent = '';
+      }, 1600);
+    });
+    row.append(button);
+  });
+}
+
 document.querySelectorAll('[data-stepnav]').forEach(stepnav);
+copyRows([...document.querySelectorAll('[data-copy-row]')]);
 if (!reduce) document.querySelectorAll('[data-picker]').forEach(picker);

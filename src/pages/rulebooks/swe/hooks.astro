@@ -1,5 +1,6 @@
 ---
 import Guide from '../../../layouts/Guide.astro';
+import Command from '../../../components/guide/Command.astro';
 import swe from '../../../data/swe.json';
 import { HOOKS, WHEN } from '../../../data/swe-prose';
 import { url } from '../../../lib/url';
@@ -30,7 +31,7 @@ const count = (tier: string) => all.filter((h) => h.tier === tier).length;
   <section aria-labelledby="install">
     <h2 id="install">How install offers them</h2>
     <p>
-      kerby install shows every hook in a table, then asks: all, choose, or none. Each hook has a tier.
+      /kerby install shows every hook in a table, then asks: all, choose, or none. Each hook has a tier.
     </p>
     <div class="table-wrap">
       <table>
@@ -39,16 +40,17 @@ const count = (tier: string) => all.filter((h) => h.tier === tier).length;
         </thead>
         <tbody>
           <tr><td>locked</td><td>{count('locked')}</td><td>Comes with any hook install. You cannot skip it on its own — only by choosing none.</td></tr>
-          <tr><td>recommended</td><td>{count('recommended')}</td><td>Blocks an action. You can skip it, and kerby status keeps telling you it is not enforcing.</td></tr>
+          <tr><td>recommended</td><td>{count('recommended')}</td><td>Blocks an action. You can skip it, and /kerby status keeps telling you it is not enforcing.</td></tr>
           <tr><td>optional</td><td>{count('optional')}</td><td>Only warns. You can skip it.</td></tr>
         </tbody>
       </table>
     </div>
     <p>
       A hook works only after install and only where your tool runs it. Claude Code runs them. Codex
-      does not. Run <code>kerby status</code> to see which hooks are really enforcing, and
-      {' '}<code>kerby hooks</code> to see what install would add, without changing anything.
+      does not. Use status to see which hooks are really enforcing, and hooks to see what install would
+      add, without changing anything.
     </p>
+    <Command title="In your agent:" ids={['cmd-install', 'cmd-status', 'cmd-hooks']} />
   </section>
 
   <section aria-labelledby="list">
@@ -87,7 +89,7 @@ const count = (tier: string) => all.filter((h) => h.tier === tier).length;
       cannot see <code>git add x && git commit</code> in one command, an alias, or a path in a variable.
     </p>
     <p>
-      kerby install also offers the same scan as a git pre-commit hook. git hands that hook the real
+      /kerby install also offers the same scan as a git pre-commit hook. git hands that hook the real
       staged files, so those cases are covered. It lives in your clone only — git never shares hooks with
       teammates — and <code>git commit --no-verify</code> skips it for one commit.
     </p>

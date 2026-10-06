@@ -1,5 +1,6 @@
 ---
 import Guide from '../../../layouts/Guide.astro';
+import Command from '../../../components/guide/Command.astro';
 import swe from '../../../data/swe.json';
 import { COMMANDS, GLOSSARY, STATE_FILES } from '../../../data/swe-prose';
 ---
@@ -15,13 +16,14 @@ import { COMMANDS, GLOSSARY, STATE_FILES } from '../../../data/swe-prose';
   <section aria-labelledby="commands">
     <h2 id="commands">Commands</h2>
     <p>
-      swe adds {swe.commands.length} commands to kerby. Run them as <code>kerby swe &lt;command&gt;</code>.
-      The first line of each is swe’s own description.
+      swe adds {swe.commands.length} commands to kerby. Run them in your agent. The first line of each is
+      swe’s own description.
     </p>
     {swe.commands.map((c: { name: string; description: string }) => (
       <article class="cmd" aria-labelledby={`c-${c.name}`}>
-        <h3 id={`c-${c.name}`}><code>kerby swe {c.name}</code></h3>
+        <h3 id={`c-${c.name}`}>{c.name}</h3>
         <p>{c.description}</p>
+        <Command ids={[`cmd-${c.name}`]} />
         <dl>
           <dt>Writes</dt>
           <dd>{COMMANDS[c.name].writes}</dd>
@@ -74,10 +76,6 @@ import { COMMANDS, GLOSSARY, STATE_FILES } from '../../../data/swe-prose';
 
   .cmd h3 {
     margin: 0 0 0.5rem;
-  }
-
-  .cmd h3 code {
-    font-size: 1rem;
   }
 
   .cmd dl,

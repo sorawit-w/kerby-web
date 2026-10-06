@@ -1,0 +1,98 @@
+---
+// Commands a reader pastes into their agent, one per row, each read from an
+// anchored line in kerby's READMEs (check:swe fails if one changes upstream).
+// One row per command, never a multi-line block: pasting two slash commands
+// as one message would not run both. Styled like the landing install block —
+// light surface, because these are the reader's input, not kerby's output.
+// scripts/guide.js adds a Copy button to each row when the clipboard API
+// exists; without it the command is plain, selectable text.
+import { command } from '../../data/swe-prose';
+
+interface Props {
+  ids: string[];
+  title?: string;
+}
+const { ids, title } = Astro.props;
+---
+
+<div class="command">
+  {title && <p class="command-title">{title}</p>}
+  <ul>
+    {ids.map((id) => (
+      <li data-copy-row>
+        <code>{command(id)}</code>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .command {
+    margin: 1rem 0;
+  }
+
+  .command-title {
+    margin: 0 0 0.4rem;
+    font-size: 0.9rem;
+    color: var(--secondary);
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0.6rem 0.55rem 1.1rem;
+    max-width: none;
+  }
+
+  li + li {
+    border-top: 1px solid var(--border);
+  }
+
+  /* .command raises this above guide.css's inline-code rule (.guide :not(pre) > code). */
+  .command code {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    white-space: pre;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--text);
+    background: none;
+    border: 0;
+    border-radius: 0;
+    padding: 0.25rem 0;
+  }
+
+  li :global(.copy) {
+    flex: none;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--secondary);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.3rem 0.7rem;
+    cursor: pointer;
+  }
+
+  li :global(.copy:hover) {
+    color: var(--text);
+    border-color: var(--structure);
+  }
+
+  li :global(.copy[data-copied]) {
+    color: var(--text);
+    border-color: var(--accent);
+  }
+</style>
