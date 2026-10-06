@@ -1,7 +1,7 @@
 ---
 interface Props { text: string }
 const { text } = Astro.props;
-const parts = text.split(/(\b(?:BLOCKED|WARNING|INTENT)\b)/g);
+const parts = text.split(/(\b(?:BLOCKED|WARNING)\b:?)/g);
 ---
-{parts.map(part => /^(BLOCKED|WARNING|INTENT)$/.test(part) ? <span class="console-keyword">{part}</span> : part)}
+{parts.map(part => /^(BLOCKED|WARNING):?$/.test(part) ? <span class="console-keyword">{part}</span> : part)}
 <style>.console-keyword { color: var(--accent-on-dark); font-weight: 600; }</style>

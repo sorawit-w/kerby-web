@@ -104,7 +104,7 @@ Schibsted Grotesk for headings, Geist for body, JetBrains Mono for labels and co
 
 ## Interaction and accessibility
 
-No autoplay demos. Genuine console transcripts offer an optional replay, with a show-full-output control; reduced motion keeps static output. Highlight BLOCKED, WARNING, and INTENT with the AA-safe panel accent. Use native links, details, checkboxes and buttons. All substantive content is available without JavaScript. Selectable examples honor URL fragments; reduced motion disables movement, not functionality. Keyboard focus is a 2px terracotta outline with adequate offset. Sticky navigation must not obscure jump targets. Tables and code can scroll within their own bounds, never force page overflow.
+No autoplay demos. Genuine console transcripts offer an optional replay, with a show-full-output control; reduced motion keeps static output. Highlight status prefixes BLOCKED: and WARNING: with the AA-safe panel accent. Structured field labels (including INTENT:) use consistent medium-weight neutral text, with the colon included. Separate logical format entries with spacing; preserve their source text and newlines. Use native links, details, checkboxes and buttons. All substantive content is available without JavaScript. Selectable examples honor URL fragments; reduced motion disables movement, not functionality. Keyboard focus is a 2px terracotta outline with adequate offset. Sticky navigation must not obscure jump targets. Tables and code can scroll within their own bounds, never force page overflow.
 
 ## Content provenance
 

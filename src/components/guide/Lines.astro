@@ -25,16 +25,19 @@ const head =
   props.kind === 'format' ? `format · copied from ${sources.join(', ')}` : 'example · the values are made up';
 
 // Split each line into text and <placeholder> runs so placeholders can dim.
+const fieldLabel = (line: string) => line.match(/^([A-Za-z][\w -]*:)/)?.[0] ?? '';
 const runs = (line: string) => line.split(/(<[^<>]+>)/g).filter(Boolean);
 ---
 
 <figure class={`lines ${props.kind}`}>
   <figcaption class="head">{head}</figcaption>
-  <pre>{lines.map((line, i) => (
-    <>{i > 0 && '\n'}{props.kind === 'format'
-      ? runs(line).map((r) => (r.startsWith('<') ? <span class="ph">{r}</span> : <ConsoleText text={r} />))
-      : <ConsoleText text={line} />}</>
-  ))}</pre>
+  <pre>{lines.map((line, i) => {
+    const label = fieldLabel(line);
+    const body = line.slice(label.length);
+    return <>{i > 0 && '\n'}<span class="entry">{label && <span class="field-label">{label}</span>}{props.kind === 'format'
+      ? runs(body).map((r) => (r.startsWith('<') ? <span class="ph">{r}</span> : <ConsoleText text={r} />))
+      : <ConsoleText text={body} />}</span></>;
+  })}</pre>
   {props.caption && <p class="caption">{props.caption}</p>}
 </figure>
 
@@ -62,8 +65,20 @@ const runs = (line: string) => line.split(/(<[^<>]+>)/g).filter(Boolean);
     padding: 1rem 1.1rem;
     font-size: 0.875rem;
     line-height: 1.55;
-    white-space: pre-wrap;
+    white-space: normal;
     overflow-wrap: anywhere;
+  }
+
+  .entry {
+    display: block;
+    white-space: pre-wrap;
+  }
+
+  .entry + .entry { margin-top: 0.65rem; }
+
+  .field-label {
+    color: var(--panel-text);
+    font-weight: 500;
   }
 
   .ph {
