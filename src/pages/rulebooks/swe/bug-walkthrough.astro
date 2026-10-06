@@ -1,0 +1,129 @@
+---
+import Guide from '../../../layouts/Guide.astro';
+import Checkpoint from '../../../components/Checkpoint.astro';
+import Lines from '../../../components/guide/Lines.astro';
+import { CHECKPOINTS, EXAMPLE_GRADE, SCENARIO } from '../../../data/bug-walkthrough';
+import { fill } from '../../../data/swe-prose';
+import swe from '../../../data/swe.json';
+import { url } from '../../../lib/url';
+
+const planLine = fill('format-plan', [
+  'SettingsForm.tsx, SettingsForm.test.tsx',
+  'persist the preference before reporting success',
+  'save, recreate the page, and read the saved value',
+]);
+const intentLine = fill('format-intent', [
+  'update memory without saving the preference',
+  'the saved preference to survive refresh',
+  'saved settings survive refresh',
+]);
+---
+
+<Guide title="Bug walkthrough" description="Follow an illustrative settings bug from reproduction to handoff: the conditions, evidence, and return paths of an agent following SWE.">
+  <section aria-labelledby="top">
+    <p class="eyebrow">One bug · a guarded path</p>
+    <h1 id="top">What makes a fix ready?</h1>
+    <p class="lead">“{SCENARIO}”</p>
+    <p>
+      Follow an agent using SWE from that report to a reviewable change. Each checkpoint explains
+      what must be true before the work advances—and what happens when it is not.
+    </p>
+    <aside class="example-note" aria-label="About this example">
+      <strong>Illustrative example, not a captured run.</strong>
+      The app, filenames, grade, and evidence below are made up. The method and format shapes
+      are linked to the pinned rulebook. No commands or tests were executed for this story.
+    </aside>
+    <nav class="story-path" aria-label="Walkthrough stages">
+      <ol>{CHECKPOINTS.map((checkpoint) => <li><a href={`#${checkpoint.id}`}>{checkpoint.stage}</a></li>)}</ol>
+    </nav>
+  </section>
+
+  <section aria-labelledby="responsibility">
+    <h2 id="responsibility">The agent does the work. SWE sets the method.</h2>
+    <p>
+      These checkpoints are <strong>Agent instructions</strong>. They do not imply that a script
+      can decide whether this bug is fixed. A <strong>Hook check</strong> can block or warn about a
+      specific supported action when installed; it does not certify the whole result.
+      <strong> Your decision</strong> is needed when intent is unclear, approval is required, or the change is ready for review.
+    </p>
+    <p class="small">
+      “Held” and “Condition satisfied” describe this story’s progress. They are editorial labels,
+      not literal Kerby output. <a href={url('rulebooks/swe/hooks/')}>See what hooks actually check.</a>
+    </p>
+  </section>
+
+  {CHECKPOINTS.map((checkpoint, index) => (
+    <Checkpoint checkpoint={checkpoint} index={index}>
+      {checkpoint.id === 'explain' && <>
+        <figure class="code-example">
+          <figcaption>Illustrative filename: SettingsForm.tsx · the missing persistence step</figcaption>
+          <pre tabindex="0" aria-label="Illustrative persistence code"><code>{`function save(nextPreference) {\n  setPreference(nextPreference); // memory only\n  setMessage('Saved');\n}\n\n// On a fresh page, the unchanged stored value wins.\nconst initialPreference = preferencesStore.read();`}</code></pre>
+        </figure>
+        <Lines kind="example" lines={[intentLine]} caption="An illustrative intent statement using SWE’s source-derived format." />
+      </>}
+      {checkpoint.id === 'plan' && <>
+        <Lines kind="example" lines={[planLine]} caption="An illustrative plan line; these filenames are not part of Kerby." />
+        <p class="small">
+          Grade {EXAMPLE_GRADE} is an example judgment for a focused change using an existing store.
+          The default full-plan threshold is {swe.numbers.planThreshold}; the grade-based approval stop is
+          {' '}{swe.numbers.approvalGrade}. This example does not introduce a mandatory approval pause.
+          <a href={url('rulebooks/swe/workflows/#grade')}> Read how scope and risk change the route.</a>
+        </p>
+      </>}
+      {checkpoint.id === 'fix' && <div class="test-pair" aria-label="Illustrative regression check before and after the fix">
+        <div><p class="eyebrow">Before the fix</p><h3>Failure captured</h3><p>The test saves “off,” recreates the page, and observes “on.” It catches the original problem.</p></div>
+        <div><p class="eyebrow">After the fix</p><h3>Condition satisfied</h3><p>The same test observes “off.” Continue to broader checks and the actual refresh behavior.</p></div>
+      </div>}
+      {checkpoint.id === 'verify' && <aside class="return-path" aria-labelledby="held-heading">
+        <span class="return-arrow" aria-hidden="true">↶</span>
+        <div><p class="eyebrow">Held · example failure branch</p><h3 id="held-heading">Not ready to call this fixed.</h3>
+          <p>If the setting still disappears after refresh, preserve that failed observation. Investigate the persistence path again; do not treat a passing isolated check as completion.</p>
+          <a href="#explain">Return to Explain: investigate the cause</a>
+        </div>
+      </aside>}
+    </Checkpoint>
+  ))}
+
+  <section aria-labelledby="handoff">
+    <p class="eyebrow">Your decision</p>
+    <h2 id="handoff">Ready for review is a visible handoff.</h2>
+    <p>
+      In real work, the agent includes fresh verification results and manual instructions, records the
+      required project state, and leaves the committed change ready for review. You can examine both
+      the change and its evidence before deciding what happens next. This story has no real commit,
+      test run, or shipped fix behind it.
+    </p>
+    <p>
+      <a href={`https://github.com/${swe.source_repo}/blob/${swe.source_sha}/skills/kerby/rulebooks/swe/workflows/bugfix.md#6-finish`}>Read the source workflow’s finish requirements</a>.
+    </p>
+  </section>
+  <section aria-labelledby="next-h">
+    <h2 id="next-h">Read next</h2>
+    <ul class="next">
+      <li><a href={url('rulebooks/swe/workflows/')}><strong>Workflows</strong><span>How other tasks change the route and planning.</span></a></li>
+      <li><a href={url('rulebooks/swe/hooks/')}><strong>Hooks</strong><span>The actions a supported hook can check.</span></a></li>
+    </ul>
+  </section>
+</Guide>
+
+<style>
+  .example-note { border-left: 2px solid var(--structure); padding: .8rem 1.2rem; margin: 1.8rem 0; color: var(--secondary); }
+  .example-note strong { display: block; margin-bottom: .4rem; }
+  .story-path ol { display: flex; flex-wrap: wrap; gap: .7rem 1.7rem; padding: 1rem 0 1rem 1.3rem; }
+  .story-path li { padding-left: .1rem; }
+  .code-example { margin: 1.5rem 0; border: 1px solid var(--structure); }
+  .code-example figcaption { padding: .7rem 1rem; border-bottom: 1px solid var(--border); font-size: .8rem; }
+  .code-example pre { padding: 1rem; margin: 0; overflow-x: auto; font-size: .85rem; }
+  .test-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.8rem 0; }
+  .test-pair > div { border-top: 1px solid var(--structure); padding-top: 1rem; }
+  .test-pair h3 { margin: .5rem 0; }
+  .return-path { display: flex; gap: 1rem; padding: 1.3rem 0; margin-top: 1.5rem; border-block: 2px solid var(--structure); }
+  .return-path .eyebrow { color: var(--accent); }
+  .return-path h3 { margin: .4rem 0; }
+  .return-arrow { font-size: 2rem; color: var(--structure); }
+  @media (max-width: 600px) {
+    .test-pair { grid-template-columns: 1fr; }
+    .story-path ol { display: grid; gap: .8rem; }
+    .return-arrow { display: none; }
+  }
+</style>

@@ -30,65 +30,21 @@
   top: 1rem;
 }
 
-.guide-head {
-  max-width: 44rem;
-  margin-inline: auto;
-  padding: 1.5rem 1.25rem 0;
-}
-
-.guide-head .bar {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.1rem;
-}
-
-.guide-head .bar a {
-  color: var(--text);
-  text-decoration: none;
-}
-
-.guide-head .bar a:hover {
-  text-decoration: underline;
-}
-
-.guide-head .slash {
-  color: var(--muted);
-  font-weight: 400;
-}
-
-.guide-head nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 1rem 0 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem 1.25rem;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 0.75rem;
-}
-
-.guide-head nav a {
-  color: var(--secondary);
-  text-decoration: none;
-  font-size: 0.95rem;
-}
-
-.guide-head nav a:hover {
-  color: var(--text);
-  text-decoration: underline;
-}
-
-.guide-head nav a[aria-current='page'] {
-  color: var(--text);
-  font-weight: 500;
-  text-decoration: underline;
-  text-decoration-color: var(--accent);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.4em;
-}
+/* Desktop rail is separate from the reading column; mobile nav stays in flow. */
+.guide-shell { max-width: 76rem; margin: auto; padding: 0 2rem; display: grid; grid-template-columns: 12rem minmax(0,1fr); gap: 4rem; }
+.guide-rail { align-self: start; position: sticky; top: 2rem; padding-top: 3rem; }
+.guide-rail ul { list-style: none; padding: 0; margin: 0; }
+.guide-rail li { margin: .2rem 0; }
+.guide-rail nav a { display: block; padding: .55rem .75rem; border-left: 2px solid transparent; color: var(--secondary); text-decoration: none; font-size: .95rem; }
+.guide-rail nav a[aria-current] { border-color: var(--accent); color: var(--text); font-weight: 500; }
+.guide-rail nav a:hover { text-decoration: underline; }
+.rail-note { font-size: .95rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 1.25rem; margin-top: 2rem; }
+.rail-source { font-size: .8rem; }
+.guide { min-width: 0; }
+.guide > section { padding: 3rem 0; }
+.guide .checkpoint { border-top: 1px solid var(--structure); }
+@media(max-width: 959px) { .guide-shell { display: block; } .guide-rail { position: static; padding-top: 1.5rem; } .guide-rail ul { display: flex; flex-wrap: wrap; gap: .25rem .8rem; } .guide-rail nav a { padding: .45rem 0; border-left: 0; border-bottom: 2px solid transparent; } .guide-rail .eyebrow { margin-bottom: .5rem; } .rail-note, .rail-source { display: none; } }
+@media(max-width: 600px) { .guide-shell { padding-inline: 1.25rem; } }
 
 .stamp {
   border-top: 1px solid var(--border);
@@ -135,7 +91,7 @@
 
 .guide p,
 .guide li {
-  max-width: 68ch;
+  max-width: 65ch;
 }
 
 .guide .lead {

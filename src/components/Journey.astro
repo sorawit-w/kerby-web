@@ -1,0 +1,26 @@
+---
+import { CHECKPOINTS } from '../data/bug-walkthrough';
+import { url } from '../lib/url';
+---
+<section class="journey" aria-labelledby="journey-title">
+  <p class="eyebrow">FOLLOW ONE CHANGE</p>
+  <div class="section-intro"><h2 id="journey-title">The fix is only part<br />of the work.</h2><p>At each checkpoint, a condition, the evidence for it, and a next step. This is a simplified view of the SWE method.</p></div>
+  <ol class="path">{CHECKPOINTS.map((step, i) => <li><a href={url(`rulebooks/swe/bug-walkthrough/#${step.id}`)}><span class="number">{String(i + 1).padStart(2,'0')}</span><strong>{step.stage}</strong><span class="condition">{step.condition}</span></a></li>)}</ol>
+  <p class="return" id="arrow"><span aria-hidden="true">↶</span> Check fails? Return to investigation. The condition still needs evidence.</p>
+  <a href={url('rulebooks/swe/lifecycle/')}>See the full lifecycle →</a>
+</section>
+<style>
+.journey { border-top:1px solid var(--border); }
+.section-intro { display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center; margin-bottom:2.5rem; }
+h2 { margin:0; }.section-intro p { color:var(--secondary); }
+.path { list-style:none; padding:0; margin:0; display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); }
+.path li { border-top:1px solid var(--structure); padding:1.25rem 1rem 0 0; }
+.path a { color:var(--text); text-decoration:none; display:grid; gap:.8rem; }
+.path a:hover strong { text-decoration:underline; text-decoration-color:var(--accent); }
+.number { font-family:var(--font-mono); font-size:.8rem; color:var(--muted); }
+.condition { font-size:.85rem; color:var(--secondary); line-height:1.5; }
+.return { margin:2rem 0 1rem; border-left:2px solid var(--structure); padding:.5rem 1rem; font-size:.95rem; }
+.return span { font-size:1.5rem; margin-right:.5rem; }
+@media(max-width:959px) { .section-intro { grid-template-columns:1fr; gap:.5rem; } .path { grid-template-columns:repeat(3,minmax(0,1fr)); gap:1.5rem 0; } }
+@media(max-width:600px) { .path { grid-template-columns:1fr; gap:0; } .path li { border-top:0; border-left:1px solid var(--structure); padding:0 0 1.5rem 1.25rem; } .path a { grid-template-columns:2rem 1fr; gap:.25rem .5rem; } .condition { grid-column:2; } }
+</style>

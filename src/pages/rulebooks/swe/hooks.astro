@@ -13,6 +13,7 @@ const all = [
   ...swe.hooks.map((h) => ({ ...h, from: 'swe' })),
 ].sort((a, b) => (a.from === b.from ? ORDER[a.tier as keyof typeof ORDER] - ORDER[b.tier as keyof typeof ORDER] : a.from === 'base' ? -1 : 1));
 
+const sourceRoot = `https://github.com/${swe.source_repo}/blob/${swe.source_sha}/skills/kerby/rulebooks/`;
 const count = (tier: string) => all.filter((h) => h.tier === tier).length;
 ---
 
@@ -20,13 +21,21 @@ const count = (tier: string) => all.filter((h) => h.tier === tier).length;
   title="Hooks"
   description="Every hook in kerby's swe rulebook: when it runs, what it blocks or warns about, what it misses, and how to turn it off.">
   <section aria-labelledby="top">
-    <h1 id="top">Hooks</h1>
+    <p class="eyebrow">SWE / executable boundaries</p>
+    <h1 id="top">Know what can actually stop.</h1>
     <p class="lead">The few rules that a script checks, not just the agent.</p>
     <p>
       A hook is a small script your agent tool runs at a fixed moment, such as before a shell command.
-      A hook reads the command, not the conversation. That makes it hard to skip, and also limits what it
-      can see. swe ships {swe.hooks.length} hooks, and the base floor adds {swe.base.hooks.length} more.
+      A hook inspects tool-call input rather than the conversation. Its trigger and parser limit what
+      it can detect. swe ships {swe.hooks.length} hooks, and the base floor adds {swe.base.hooks.length} more.
     </p>
+    <div class="checkpoint">
+      <p class="responsibility">Hook check</p>
+      <h2>A configured script checks a matching action</h2>
+      <p><strong>Blocked:</strong> a blocking hook detects a violation and stops that action. <strong>Warning:</strong> an advisory hook returns a reminder and allows the action to continue.</p>
+      <p>Neither result tells you whether the whole task is correct. The agent still owes you evidence for its completion claims.</p>
+      <p><a href="#list">Inspect every hook ↓</a> · <a href="#git">Separate Git pre-commit check ↓</a></p>
+    </div>
   </section>
 
   <section aria-labelledby="install">
@@ -34,7 +43,7 @@ const count = (tier: string) => all.filter((h) => h.tier === tier).length;
     <p>
       /kerby install shows every hook in a table, then asks: all, choose, or none. Each hook has a tier.
     </p>
-    <div class="table-wrap">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable reference table">
       <table>
         <thead>
           <tr><th scope="col">Tier</th><th scope="col">Hooks</th><th scope="col">What it means</th></tr>
@@ -80,7 +89,9 @@ const count = (tier: string) => all.filter((h) => h.tier === tier).length;
             <span class="chip">{h.script}</span>
           </h3>
           <dl>
-            <dt>Runs</dt>
+            <dt>Responsibility</dt>
+            <dd>Hook check · agent-tool integration in Claude Code, after installation</dd>
+            <dt>Trigger</dt>
             <dd>{WHEN[h.matcher as string]}{h.from === 'base' && ' — from the base floor, under every rulebook'}</dd>
             <dt>Result</dt>
             <dd>{h.blocks ? 'Blocks the action' : 'Warns only, never blocks'} · tier {h.tier}</dd>
@@ -90,9 +101,12 @@ const count = (tier: string) => all.filter((h) => h.tier === tier).length;
             <dd>{p.does}</dd>
             <dt>What it misses</dt>
             <dd>{p.gaps}</dd>
+            <dt>If triggered</dt>
+            <dd>{h.blocks ? 'Read the reason and resolve the violation before retrying. A blocked action is not completed work.' : 'Read the warning and follow the applicable rule. The action itself is not stopped.'}</dd>
             <dt>Turn it off</dt>
             <dd>{p.off}</dd>
           </dl>
+          <p class="small">Source: <a href={`${sourceRoot}${h.from}/hooks/${h.script}`}>{h.from}/hooks/{h.script}</a></p>
         </article>
       );
     })}
@@ -121,15 +135,24 @@ const count = (tier: string) => all.filter((h) => h.tier === tier).length;
       <li>whether the agent really ran the quality gate before it said “done”.</li>
     </ul>
     <p>
-      These rules are instructions only. When the hooks are not installed, every rule is. The
+      These rules are agent instructions. Without agent hooks, no agent-tool check runs; a separately
+      installed Git pre-commit hook may still scan commits. The
       <a href={url('rulebooks/swe/#map')}>map on the overview</a> shows the difference.
     </p>
+  </section>
+
+  <section aria-labelledby="next-h">
+    <h2 id="next-h">Read next</h2>
+    <ul class="next">
+      <li><a href={url('rulebooks/swe/bug-walkthrough/')}><strong>Bug walkthrough</strong><span>What evidence the agent must provide beyond hook checks.</span></a></li>
+      <li><a href={url('rulebooks/swe/reference/')}><strong>Reference</strong><span>Commands, state files, formats, and definitions.</span></a></li>
+    </ul>
   </section>
 </Guide>
 
 <style>
   .hook {
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--structure);
     padding: 1.5rem 0 0.5rem;
   }
 

@@ -13,11 +13,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # KERBY_REPO points check:copy at the byte-copy source so the gate
-    # actually runs in CI (it skips when unset). Pinned to the exact kerby
-    # commit the transcripts were copied from — CI validates against that
-    # precise source; bumping this SHA is the deliberate "re-copy" moment.
+    # One pinned source revision governs transcripts and SWE facts.
     env:
+      REQUIRE_KERBY_SOURCE: '1'
       KERBY_REPO: ${{ github.workspace }}/.kerby-src
       KERBY_REF: 3c750e205dda90fc242c6063a1323ce8ff94bc29
     steps:

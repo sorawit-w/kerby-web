@@ -11,6 +11,9 @@ export type Step = {
   title: string;
   tag?: 'hook' | 'partly' | 'instructions';
   body: string[];
+  condition: string;
+  evidence: string;
+  ifUnmet: string;
   lines?: string[];
   caption?: string;
   commands?: { title: string; ids: string[] }[];
@@ -37,6 +40,9 @@ export const STEPS: Step[] = [
   {
     phase: 'Set up',
     title: 'Install',
+    condition: "Approve the proposed installation changes.",
+    evidence: "The installation summary and /kerby status describe the configured rules and hooks.",
+    ifUnmet: "Decline or choose a smaller installation; hook checks require a supported, configured tool.",
     lanes: { you: 'always', kerby: 'always' },
     body: [
       'Add kerby to your agent once per machine. Then run /kerby install once in each repo. It asks before every change it makes.',
@@ -52,6 +58,9 @@ export const STEPS: Step[] = [
   {
     phase: 'Set up',
     title: 'Load',
+    condition: "Resolve a valid rulebook selection and any required trust approval.",
+    evidence: "The rulebook line identifies what was loaded.",
+    ifUnmet: "Invalid or missing rulebook files leave work HELD for a decision; a failed load is not a pass.",
     lanes: { kerby: 'always' },
     body: [
       'At the start of each session, kerby picks the rulebook and reads its rules into the agent’s context.',
@@ -65,6 +74,9 @@ export const STEPS: Step[] = [
   {
     phase: 'Set up',
     title: 'Read the project',
+    condition: "Read the existing project context before acting.",
+    evidence: "The plan uses the project’s actual commands, constraints, and current status.",
+    ifUnmet: "Read missing context or establish it before relying on assumptions.",
     lanes: { agent: 'always' },
     tag: 'instructions',
     body: [
@@ -76,6 +88,9 @@ export const STEPS: Step[] = [
   {
     phase: 'Decide',
     title: 'Grade and route',
+    condition: "Choose a route and complexity grade that reflect task type and risk.",
+    evidence: "The complexity and decision-rung lines make the choice visible.",
+    ifUnmet: "Reassess the route when new facts or high-stakes files change the scope.",
     lanes: { agent: 'always' },
     tag: 'partly',
     body: [
@@ -89,6 +104,9 @@ export const STEPS: Step[] = [
   {
     phase: 'Decide',
     title: 'Plan',
+    condition: "State files, intended changes, and verification before editing; obtain approval when required.",
+    evidence: "A plan line or full plan, with explicit approval at the approval threshold.",
+    ifUnmet: "Hold implementation until the planning and applicable approval condition is satisfied.",
     lanes: { agent: 'always', you: 'sometimes' },
     tag: 'instructions',
     body: [
@@ -102,6 +120,9 @@ export const STEPS: Step[] = [
   {
     phase: 'Decide',
     title: 'Intent',
+    condition: "Establish intended behavior and resolve disagreement using the stated authority order.",
+    evidence: "The INTENT line names current code, task or test expectations, and an opened spec source.",
+    ifUnmet: "Surface the contradiction. Ask when the authority order cannot settle it, or when consequential behavior has no spec.",
     lanes: { agent: 'always' },
     tag: 'instructions',
     body: [
@@ -114,6 +135,9 @@ export const STEPS: Step[] = [
   {
     phase: 'Build',
     title: 'Branch',
+    condition: "Use a working branch outside the protected set.",
+    evidence: "The current branch and, if used, the stated reason for a worktree.",
+    ifUnmet: "Move the work to an appropriate branch; an installed hook blocks recognized protected-branch commits.",
     lanes: { agent: 'always' },
     tag: 'partly',
     body: [
@@ -126,7 +150,10 @@ export const STEPS: Step[] = [
   {
     phase: 'Build',
     title: 'Build in small steps',
-    lanes: { agent: 'always', hooks: 'always' },
+    condition: "Make a focused change supported by an understood cause.",
+    evidence: "A cited cause, a focused diff, and checks for the piece being changed.",
+    ifUnmet: "Return to the cause in the code before changing another thing.",
+    lanes: { agent: 'always', hooks: 'sometimes' },
     tag: 'instructions',
     body: [
       'The agent works in a loop: pick one piece, do it, check it, commit it, log it, repeat. It prefers to write the test first.',
@@ -137,6 +164,9 @@ export const STEPS: Step[] = [
   {
     phase: 'Build',
     title: 'Check',
+    condition: "Run the quality gate appropriate to the staged changes and inspect its result.",
+    evidence: "Fresh command output, plus manual verification where the selected gate requires it.",
+    ifUnmet: "Investigate a failure and rerun the relevant checks. A reminder is not proof that a gate passed.",
     lanes: { agent: 'always' },
     tag: 'instructions',
     body: [
@@ -148,17 +178,23 @@ export const STEPS: Step[] = [
   {
     phase: 'Build',
     title: 'Commit',
-    lanes: { agent: 'always', hooks: 'always' },
+    condition: "Finish and check a focused piece; satisfy applicable installed commit checks.",
+    evidence: "The scoped diff, verification output, and successful commit result.",
+    ifUnmet: "Read any blocking reason and address the violation before trying again.",
+    lanes: { agent: 'always', hooks: 'sometimes' },
     tag: 'partly',
     body: [
       `After each finished piece, the agent commits only the files it changed. The message starts with a type, ${plain('commit-types')}.`,
-      'At this moment the hooks check three things: no secret is staged, the branch is not protected, and STATUS.md states no version, SHA or PR number.',
+      'When installed in a supported tool, matching commit hooks check three things: no secret is staged, the branch is not protected, and STATUS.md states no version, SHA or PR number.',
     ],
     source: 'BOOTSTRAP.md § 4 Commit Discipline',
   },
   {
     phase: 'Build',
     title: 'Log',
+    condition: "Record the completed piece and observed facts.",
+    evidence: "An appended memory-log entry that links the task, files, and commit.",
+    ifUnmet: "Record missing facts so the next session can recover the work accurately.",
     lanes: { agent: 'always' },
     tag: 'instructions',
     body: [
@@ -170,6 +206,9 @@ export const STEPS: Step[] = [
   {
     phase: 'Finish',
     title: 'Report',
+    condition: "Match claims to verification and give the user manual checks.",
+    evidence: "A final report with results, the skipped-work line, and plan outcomes when applicable.",
+    ifUnmet: "Name unresolved or unexercised outcomes; do not present them as verified success.",
     lanes: { agent: 'always', you: 'always' },
     tag: 'instructions',
     body: [
@@ -182,6 +221,9 @@ export const STEPS: Step[] = [
   {
     phase: 'Finish',
     title: 'Save and resume',
+    condition: "Preserve current state before context is lost and restore rules when needed.",
+    evidence: "Updated status and log, and a status check or reload in the resumed session.",
+    ifUnmet: "Re-read project state and reload the rules before continuing from incomplete context.",
     lanes: { agent: 'always', kerby: 'sometimes' },
     tag: 'partly',
     body: [

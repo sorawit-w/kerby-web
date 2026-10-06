@@ -1,65 +1,36 @@
-/* Global layout — flat, light, quiet. The terminal panel is the page's single
-   dark element (see Demo component). */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-body);
-  font-size: 1.0625rem;
-  line-height: 1.6;
-}
-
-h1,
-h2,
-h3 {
-  font-family: var(--font-display);
-  line-height: 1.15;
-  color: var(--text);
-}
-
-a {
-  color: var(--accent);
-  text-underline-offset: 0.15em;
-}
-
-a:hover {
-  text-decoration-thickness: 2px;
-}
-
-code,
-pre,
-.mono {
-  font-family: var(--font-mono);
-}
-
-/* Browser surfaces carry the design too: a terracotta focus ring (a mark,
-   not a fill) and a warm selection instead of the system blue. */
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-::selection {
-  background: var(--border);
-  color: var(--text);
-}
-
-main > section,
-.section {
-  max-width: 44rem;
-  margin-inline: auto;
-  padding: 3.5rem 1.25rem;
-}
-
-@media (min-width: 720px) {
-  main > section,
-  .section {
-    padding-block: 4.5rem;
-  }
-}
+/* Guarded path: open editorial space, explicit boundaries and evidence. */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.6; }
+h1,h2,h3 { font-family: var(--font-display); line-height: 1.12; color: var(--text); text-wrap: balance; }
+h1 { font-size: clamp(2.5rem, 5.2vw, 4.6rem); letter-spacing: -.045em; }
+h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); letter-spacing: -.03em; }
+h3 { font-size: 1.25rem; letter-spacing: -.015em; }
+p { max-width: 65ch; }
+a { color: var(--accent); text-underline-offset: .2em; }
+a:hover { text-decoration-thickness: 2px; }
+code,pre,.mono { font-family: var(--font-mono); }
+img { max-width: 100%; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+::selection { background: var(--border); color: var(--text); }
+[id] { scroll-margin-top: 1.5rem; }
+main > section, .section { width: 100%; max-width: 76rem; margin-inline: auto; padding: 4rem 2rem; }
+.eyebrow { font-family: var(--font-mono); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--structure); margin: 0 0 1.25rem; }
+.lead { font-size: 1.35rem; line-height: 1.5; color: var(--secondary); }
+.ctas { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; margin: 2rem 0; }
+.cta { display: inline-block; border: 1px solid var(--structure); border-radius: 6px; padding: .75rem 1.2rem; color: var(--text); text-decoration: none; font-weight: 500; }
+.cta:hover { text-decoration: underline; text-decoration-color: var(--accent); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.skip { position: absolute; left: 1rem; top: -5rem; padding: .5rem 1rem; background: var(--surface); z-index: 10; }
+.skip:focus { top: 1rem; }
+.site-header { max-width: 76rem; margin: auto; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; border-bottom: 1px solid var(--border); }
+.brand { display: inline-flex; align-items: center; gap: .7rem; color: var(--text); font-family: var(--font-display); font-size: 1.7rem; font-weight: 700; letter-spacing: -.04em; text-decoration: none; }
+.site-header ul { list-style: none; display: flex; align-items: center; gap: 1.7rem; padding: 0; margin: 0; flex-wrap: wrap; }
+.site-header nav a { color: var(--secondary); font-size: .9rem; text-decoration: none; padding-block: .5rem; }
+.site-header nav a:hover, .site-header nav a[aria-current] { text-decoration: underline; text-decoration-color: var(--accent); }
+.state { display: inline-flex; gap: .5rem; align-items: center; font-weight: 500; color: var(--text); }
+.state.held { color: var(--accent); }
+.responsibility { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .025em; color: var(--structure); }
+.evidence { border-block: 1px solid var(--structure); padding: 1.25rem 0; }
+@media(max-width: 959px) { main > section, .section { padding-block: 3rem; } }
+@media(max-width: 600px) { main > section, .section { padding: 2.5rem 1.25rem; } .site-header { padding: 1rem 1.25rem; align-items: flex-start; flex-direction: column; gap: .6rem; } .site-header ul { gap: .4rem 1.1rem; } .site-header nav a { font-size: .85rem; } }
+@media(prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; } }

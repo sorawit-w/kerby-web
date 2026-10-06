@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: kerby
-description: Quiet, flat, warm off-white pages with one terracotta mark; on the landing page the dark terminal panel is the only proof the page makes.
+description: A guarded path to completion. Warm editorial pages make conditions, evidence, responsibility and next actions visible.
 colors:
   primary: "#B0532F"        # --accent — terracotta. A mark, never a fill. Shipped uses: link color, CTA hover underline
   secondary: "#4A4F5A"      # --structure — mono labels, eyebrow, the primary CTA border, panel border
@@ -67,98 +67,47 @@ file on purpose, never a downstream consumer.
 
 ## Overview
 
-kerby is a gate that stands between an AI agent's action and your project. The page
-that sells it has one job: demonstrate before you assert. So the visual identity is
-quiet and flat, warm off-white, with a single terracotta mark, and the proof is a real
-terminal transcript in the landing page's only dark element. The swe guide pages
-(`/rulebooks/swe/`) are Read-mode documentation on the same system; they may use more
-than one dark panel, and only for kerby output or swe line formats.
+The site explains a guarded path to completion for SWE adopters. A reader should understand how their agent works differently, what permits advancement, who checks a condition, and what happens when it is unmet. The current head-and-neck pixel mascot remains the guardian identity; the interface explains the conditions.
 
-Audience: developers running Claude Code or Codex. The page should feel calm, exact, and
-unhurried. Nothing decorative. If something is colored, it is because it carries meaning.
+The approved redesign replaces the previous transcript-first single-column design. The homepage introduces the method through one illustrative settings bug; all guide pages use the same responsibility and checkpoint language.
 
-## Colors
+## Layout and hierarchy
 
-Warm neutrals carry the page. Terracotta is the one color, and it is a mark, never a fill.
-Every text foreground/background pairing the page uses is enumerated in
-`scripts/check-contrast.ts` and must clear WCAG AA (4.5:1); that script is the gate for
-contrast. One pairing is decorative and exempt: `border` on `neutral` (the card, footer,
-and secondary CTA rule) is held only to a 1.2:1 advisory floor, so a border must never be
-the sole carrier of meaning or text. The mark-not-fill rule itself is a design rule held by review, not by a script:
-`check:discipline` rejects gradients and shadows, not an accent used as a fill.
+- Site width: 76rem including 2rem horizontal padding (1.25rem below 600px).
+- Reading measure: 65ch; wide diagrams and tables can use the available column.
+- Homepage split hero: desktop two columns, stacked below 960px.
+- Guide shell: 12rem left navigation rail, 4rem gap, flexible reading column; in-flow navigation below 960px.
+- Checkpoints: condition, agent action, evidence, unmet-condition response and linked rulebook sources.
+- Workflow paths become vertical on narrow screens. Setup is distinguished from task execution.
+- Fluid homepage heading 2.5–4.6rem; guide heading 2.25–3.25rem. Body 17px / 1.6. Explicit hierarchy comes from space, type and rules.
 
-- **Primary (#B0532F):** Terracotta. Shipped uses are link color and the CTA hover
-  underline. The discipline (CONTEXT.md, accent-as-mark) also permits a keyword color or
-  one status dot. Never a button fill, never a background, never a border wash.
-- **Secondary (#4A4F5A):** Structure gray. Mono labels, the eyebrow line, the primary CTA
-  border, and the terminal panel's border.
-- **Tertiary (#E5936B):** Terracotta lightened until it clears AA on the dark panel.
-  The BLOCKED and WARNING keywords inside the transcript, in bold. Nowhere else.
-- **Neutral (#FAF8F4):** Page background. Never pure white.
-- **Surface (#FFFDF9):** Cards and the install block, with a 1px `border` rule. The
-  secondary CTA takes the same `border` color, which is what separates it from the primary.
-- **Text (#1A1A1A / #3D3A36 / #71695B):** Body, supporting copy, muted footnotes.
-- **Panel (#1F2022 / #ECECEE / #B8B8BD):** On the landing page, the terminal demo is the
-  single sanctioned dark element. On guide pages, line-format and example panels use the
-  same tokens. Panel text, and a dimmed tone for the typed command chrome, the cursor, and
-  the `<placeholders>` in a line format.
+## Color and shape
 
-## Typography
+The front-matter palette remains canonical. Warm stone and charcoal dominate; terracotta is a mark, never a button or block fill. Slate boundary lines carry structure. Pale borders are decorative only. Use no gradients or shadows. Radius remains 6px. Dark panels are reserved for genuine transcripts or explicitly labeled source-format examples; no dark-panel count requirement remains.
 
-Three families, each with one role. Sizes are declared in rem against the 16px root;
-pixel values above are the resolved sizes.
+Normal text pairings must pass AA 4.5:1; meaningful non-text indicators and focus boundaries must pass 3:1. A state always has a written label. Accent usage stays restrained rather than washing every checkpoint in color.
 
-- **Display (h1, h2, tagline):** Schibsted Grotesk Variable. h1 at 3.25rem, 1.15 leading.
-  h2 takes the browser default size. Neither heading declares a weight, so both render at
-  the browser default bold. The tagline uses the display face at 1.35rem.
-- **Body (body-md, body-sm):** Geist at 1.0625rem, 1.6 leading. Only the 400 and 500 files
-  are loaded; the only explicit weight declarations are 500 on CTA labels and 700 on
-  card names and panel keywords.
-- **Mono (label-sm, mono-panel):** JetBrains Mono Variable. The eyebrow label at 12px
-  with 0.08em tracking. The transcript at 14px with 1.55 leading. Keywords inside the
-  panel are bold.
+## Typography and imagery
 
-## Layout
+Schibsted Grotesk for headings, Geist for body, JetBrains Mono for labels and code. Keep current font assets and their existing budget. Use the original mascot only: existing favicon in navigation, original portrait at moderate size in the homepage introduction. No generated replacements. Preserve intrinsic image sizes to prevent layout shifts.
 
-Single column, 44rem max width, centered. Sections carry 3.5rem vertical and 1.25rem
-horizontal padding; vertical padding grows to 4.5rem at 720px and wider. Two sections
-override that: the hero is tightened to 2rem top and 1.25rem bottom so the first lines of
-the transcript land in the first desktop screenful, and the demo section sits at 0.5rem
-top so it reads as the hero's continuation. Supporting hero copy narrows to 34rem. Cards go
-two-up at 720px. There is no formal spacing scale: the front matter lists the values that recur or set
-the section rhythm (0.25, 0.5, 1, 1.25, 1.5, 2, 3.5, 4.5rem), and components also use
-0.35, 0.6, 0.75, 1.1, 1.2, and 1.75rem where the layout needed it.
+## Responsibility and state vocabulary
 
-## Shapes
+- **Agent instruction:** the agent is instructed to satisfy the condition; a script does not certify the result.
+- **Hook check:** a supported, installed hook checks a specific action. Its result can block or warn; describe which.
+- **Your decision:** a person supplies intent, review or approval where required.
+- **Held:** editorial progress state for missing evidence; never present it as a captured output unless it is one.
+- **Blocked / Warning:** preserve literal output when quoting; do not imply a warning always blocks.
+- **Condition satisfied:** scoped to the named condition, not proof that the entire task is correct.
 
-One radius: 6px, on CTAs, cards, the install block, and the terminal panel. No other
-radius exists on the page. The one exception is a status dot, which is a circle: the
-terracotta "hook-enforced" dot, the hooks-switch knob, and the swimlane marks on the guide pages
-(terracotta in the hooks lane, `secondary` elsewhere; a ring means "sometimes"). Borders are
-1px; a few guide controls use 1.5px to mark the active state. No shadows, no gradients.
+## Interaction and accessibility
 
-Browser surfaces: keyboard focus is a 2px terracotta outline at 2px offset (a mark, not a
-fill). Selected text sits on the `border` color with `on-surface` text.
+No autoplay demos. Use native links, details, checkboxes and buttons. All substantive content is available without JavaScript. Selectable examples honor URL fragments; reduced motion disables movement, not functionality. Keyboard focus is a 2px terracotta outline with adequate offset. Sticky navigation must not obscure jump targets. Tables and code can scroll within their own bounds, never force page overflow.
 
-## Do's and Don'ts
+## Content provenance
 
-- Do keep terracotta a mark: keyword, underline, or dot. Never a fill.
-- Do keep the page flat. `check:discipline` rejects any gradient or shadow in `src/` or `dist/`.
-- Do keep exactly one dark element on the landing page, the terminal panel. Guide pages may
-  use more, only for kerby output or swe line formats.
-- Do add any new fg/bg pairing to `scripts/check-contrast.ts` before shipping it.
-- Do write every internal URL base-aware; when Astro's `base` is set, `check:discipline`
-  rejects root-absolute paths that escape it.
-- Don't introduce a second accent, a second radius, or a third body weight.
-- Don't stage product output that is not real; transcripts are byte-copied from the kerby README.
+Facts, inventories and formats come from the pinned source. Explanations are editorial and linked to supporting sources. Invented examples say “illustrative” at the point of use and claim no actual execution results. Real transcripts remain byte-identical, selected by stable data-transcript IDs. Checks must not freeze marketing slogans.
 
-## Voice
+## Validation
 
-- Demonstrate before you assert. The transcript comes first; the claim follows it.
-- Short declaratives. "Nothing unproven passes." is the register.
-- Plain words; keep the tool's own terms (verdict, gate, transcript, BLOCKED).
-- Real output only. Anything shown as kerby output is byte-copied from a real session,
-  never paraphrased.
-- Filled examples say so. A panel that fills swe's line formats with made-up values carries
-  the label "example" on the panel itself. Line formats are rendered from anchored quotes
-  in `src/data/swe.json`, never retyped.
+Keep check:contrast, check:discipline, check:copy, check:swe and check:site passing. Fonts remain within 120KB of Latin transfer and shipped images within 250KB. Every internal link uses the base-aware URL helper. Verify all seven routes on mobile/tablet/desktop, keyboard access, no-JavaScript output, reduced motion and preserved anchors.

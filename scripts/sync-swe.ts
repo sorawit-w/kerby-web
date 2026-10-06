@@ -9,7 +9,7 @@
 // The pin: $KERBY_REF if set (CI and drift.yml set it), else the KERBY_REF:
 // line in .github/workflows/deploy.yml — one pin for check:copy and this.
 // The repo: $KERBY_REPO, else ~/projects/kerby (same default as check-copy).
-// --check skips LOUDLY when the repo or the commit is missing, like check-copy.
+// --check fails when source is missing in CI; local missing-source checks are explicit skips.
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
@@ -26,6 +26,9 @@ const BASE = 'skills/kerby/rulebooks/base';
 // whitespace collapsed). Pages render these strings; they never retype them.
 // Add an anchor here when a page needs a new number, format or quotation.
 const ANCHORS: { id: string; file: string; quote: string }[] = [
+  { id: 'walkthrough-reproduce', file: `${SWE}/workflows/bugfix.md`, quote: 'Document the reproduction: what you did, what happened, what should have happened.' },
+  { id: 'walkthrough-regression', file: `${SWE}/workflows/bugfix.md`, quote: 'Write a failing test that captures the bug (the test MUST fail before your fix)' },
+  { id: 'walkthrough-finish', file: `${SWE}/workflows/bugfix.md`, quote: '**Manual verification instructions provided**' },
   { id: 'format-complexity', file: `${SWE}/BOOTSTRAP.md`, quote: 'complexity: <N> (trigger: <≤8-word reason>) → route: <investigate | new-project | adopt-existing | feature | bugfix | quick-task>' },
   { id: 'format-rung', file: `${SWE}/BOOTSTRAP.md`, quote: 'rung: <N> — <≤8-word reason>' },
   { id: 'format-plan', file: `${SWE}/BOOTSTRAP.md`, quote: 'plan: <files> — <change> — <check>' },
@@ -97,6 +100,10 @@ const ANCHORS: { id: string; file: string; quote: string }[] = [
 ];
 
 function skip(why: string): never {
+  if (process.env.CI || process.env.REQUIRE_KERBY_SOURCE === '1') {
+    console.error(`check:swe — FAILED: ${why} Source validation is required.`);
+    process.exit(1);
+  }
   console.error(`check:swe — SKIPPED: ${why}\n  Set KERBY_REPO to a kerby checkout that has the pinned commit to run this gate.`);
   process.exit(0);
 }

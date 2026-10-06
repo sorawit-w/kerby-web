@@ -20,7 +20,7 @@ const { ids, title } = Astro.props;
   <ul>
     {ids.map((id) => (
       <li data-copy-row>
-        <code>{command(id)}</code>
+        <code tabindex="0" aria-label="Selectable command">{command(id)}</code>
       </li>
     ))}
   </ul>

@@ -1,7 +1,7 @@
 # Shared agent context — versioned, read by kerby at session start.
 project:
   name: kerby-web
-  description: One-page static promo site for kerby, deployed to GitHub Pages.
+  description: Static Kerby website and SWE field guide, deployed to GitHub Pages.
 
 runtime:
   primary: bun

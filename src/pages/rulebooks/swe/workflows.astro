@@ -6,6 +6,7 @@ import { ROUTES, anchor, fill, plain } from '../../../data/swe-prose';
 import { url } from '../../../lib/url';
 import { STEPS } from '../../../data/lifecycle';
 
+const sourceRoot = `https://github.com/${swe.source_repo}/blob/${swe.source_sha}/skills/kerby/rulebooks/swe/`;
 const { planThreshold, approvalGrade, maxGrade } = swe.numbers;
 
 // The canonical complexity ladder, parsed from its anchored table rows.
@@ -134,7 +135,8 @@ const EXAMPLE_FORMATS = [
   title="Workflows"
   description={`The ${swe.routes.length} routes in kerby's swe rulebook, the 1–${maxGrade} complexity grade, and what happens to a typo, a bug, an auth change and a feature.`}>
   <section aria-labelledby="top">
-    <h1 id="top">Workflows</h1>
+    <p class="eyebrow">SWE / choose the right amount of process</p>
+    <h1 id="top">Different tasks. Different paths.</h1>
     <p class="lead">Every task gets a grade and a route. The two together decide how much process it gets.</p>
     <p>
       The <strong>route</strong> comes from the kind of task. The <strong>grade</strong>, from 1 to {maxGrade},
@@ -143,9 +145,49 @@ const EXAMPLE_FORMATS = [
     </p>
   </section>
 
+  <section aria-labelledby="tasks">
+    <h2 id="tasks">Start with the work</h2>
+    <p class="eyebrow">Illustrative examples · agent instruction</p>
+    <p>
+      Four example tasks and what swe does with each. The lines follow swe’s real formats. The grades and
+      file names are made up. A “…” marks the work between the first lines and the final report.
+    </p>
+
+
+    <div class="picker" data-picker="Example tasks">
+      {SCENARIOS.map((s) => {
+        const planned = s.grade >= planThreshold;
+        const stops = s.grade >= approvalGrade;
+        return (
+          <div class="choice" data-choice data-label={s.label} id={s.id}>
+            <h3>{s.label}</h3>
+            <p>{s.why}</p>
+            <dl class="facts">
+              <dt>route</dt>
+              <dd><span class="chip">{s.route}</span></dd>
+              <dt>grade</dt>
+              <dd>{s.grade} (example)</dd>
+              <dt>planning</dt>
+              <dd>{planned ? 'A full plan with expected results and test cases' : 'One plan line'}</dd>
+              <dt>approval</dt>
+              <dd>{stops ? 'Stops and waits for your yes' : `No stop (below ${approvalGrade})`}</dd>
+            </dl>
+            <Lines
+              kind="example"
+              lines={s.lines}
+            />
+            <p>{s.after}</p>
+            {s.id === 'task-bug' && <p><a href={url('rulebooks/swe/bug-walkthrough/')}>Follow a complete settings bug: conditions, evidence, and the return path when verification fails →</a></p>}
+          </div>
+        );
+      })}
+    </div>
+  </section>
+
   <section aria-labelledby="routes">
     <h2 id="routes">The {swe.routes.length} routes</h2>
-    <div class="table-wrap">
+    <p class="small">Source: <a href={`${sourceRoot}BOOTSTRAP.md`}>task routing and high-stakes rules</a>.</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable reference table">
       <table>
         <thead>
           <tr><th scope="col">Route</th><th scope="col">When</th><th scope="col">What happens</th></tr>
@@ -179,6 +221,7 @@ const EXAMPLE_FORMATS = [
 
   <section aria-labelledby="grade">
     <h2 id="grade">The 1–{maxGrade} grade</h2>
+    <p class="small">Source: <a href={`${sourceRoot}workflows/feature.md`}>complexity ladder</a> and <a href={`${sourceRoot}BOOTSTRAP.md`}>plan and approval gates</a>.</p>
     <p>
       From grade {planThreshold}, the agent writes a full plan with expected results. From grade
       {' '}{approvalGrade}, it stops and waits for your approval. A project can move the plan line in
@@ -203,7 +246,7 @@ const EXAMPLE_FORMATS = [
       </div>
     </div>
 
-    <div class="table-wrap">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable reference table">
       <table>
         <caption class="small">The grade table, copied from workflows/feature.md</caption>
         <thead>
@@ -218,48 +261,16 @@ const EXAMPLE_FORMATS = [
     </div>
   </section>
 
-  <section aria-labelledby="tasks">
-    <h2 id="tasks">Pick a task</h2>
-    <p>
-      Four example tasks and what swe does with each. The lines follow swe’s real formats. The grades and
-      file names are made up. A “…” marks the work between the first lines and the final report.
-    </p>
-
-    <Lines kind="format" ids={EXAMPLE_FORMATS} caption="Each example below fills these formats." />
-
-    <div class="picker" data-picker="Example tasks">
-      {SCENARIOS.map((s) => {
-        const planned = s.grade >= planThreshold;
-        const stops = s.grade >= approvalGrade;
-        return (
-          <div class="choice" data-choice data-label={s.label} id={s.id}>
-            <h3>{s.label}</h3>
-            <p>{s.why}</p>
-            <dl class="facts">
-              <dt>route</dt>
-              <dd><span class="chip">{s.route}</span></dd>
-              <dt>grade</dt>
-              <dd>{s.grade} (example)</dd>
-              <dt>planning</dt>
-              <dd>{planned ? 'A full plan with expected results and test cases' : 'One plan line'}</dd>
-              <dt>approval</dt>
-              <dd>{stops ? 'Stops and waits for your yes' : `No stop (below ${approvalGrade})`}</dd>
-            </dl>
-            <Lines
-              kind="example"
-              lines={s.lines}
-            />
-            <p>{s.after}</p>
-          </div>
-        );
-      })}
-    </div>
+  <section aria-labelledby="formats">
+    <h2 id="formats">The source formats behind the examples</h2>
+    <p>These are the rulebook’s exact line shapes. The examples above fill them with invented values.</p>
+    <Lines kind="format" ids={EXAMPLE_FORMATS} />
   </section>
 
   <section aria-labelledby="next-h">
     <h2 id="next-h">Read next</h2>
     <ul class="next">
-      <li><a href={url('rulebooks/swe/lifecycle/')}><strong>Lifecycle</strong><span>The {STEPS.length} steps every route passes through.</span></a></li>
+      <li><a href={url('rulebooks/swe/lifecycle/')}><strong>Lifecycle</strong><span>Setup and the detailed working lifecycle; routes apply different steps.</span></a></li>
       <li><a href={url('rulebooks/swe/hooks/')}><strong>Hooks</strong><span>The few rules a hook can enforce.</span></a></li>
     </ul>
   </section>

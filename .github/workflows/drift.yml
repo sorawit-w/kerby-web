@@ -64,6 +64,7 @@ jobs:
         if: steps.cmp.outputs.same != 'true'
         id: check
         env:
+          REQUIRE_KERBY_SOURCE: '1'
           KERBY_REPO: ${{ github.workspace }}/.kerby-src
           KERBY_REF: ${{ steps.cmp.outputs.main }}
         run: |

@@ -7,6 +7,16 @@ import { LANES, STEPS } from '../../../data/lifecycle';
 import swe from '../../../data/swe.json';
 import { url } from '../../../lib/url';
 
+const sourceRoot = `https://github.com/${swe.source_repo}/blob/${swe.source_sha}/skills/kerby/`;
+const sourceFiles = (source: string) => {
+  const paths = source.includes('kerby') ? ['SKILL.md'] : [];
+  if (source.includes('BOOTSTRAP')) paths.push('rulebooks/swe/BOOTSTRAP.md');
+  for (const file of ['references/intent-gate.md', 'references/quality-gates.md', 'workflows/feature.md']) {
+    if (source.includes(file)) paths.push(`rulebooks/swe/${file}`);
+  }
+  return paths;
+};
+
 // Phases in step order, each with the step numbers it holds — for the nav.
 const PHASES = STEPS.reduce<{ name: string; steps: number[] }[]>((acc, step, i) => {
   const last = acc[acc.length - 1];
@@ -20,21 +30,29 @@ const PHASES = STEPS.reduce<{ name: string; steps: number[] }[]>((acc, step, i) 
   title="Lifecycle"
   description={`What kerby's swe rulebook does at each of ${STEPS.length} steps of a coding agent's work, from install to the final report.`}>
   <section aria-labelledby="top">
-    <h1 id="top">Lifecycle</h1>
-    <p class="lead">What swe asks of the agent at each step, from install to the final report.</p>
+    <p class="eyebrow">SWE / conditions for progress</p>
+    <h1 id="top">Progress has checkpoints.</h1>
+    <p class="lead">See what must be established before the agent advances, and where it returns when a check fails.</p>
     <p>
-      There are {STEPS.length} steps in four phases. Each step shows what swe asks for, the line the
-      agent must write, and whether a hook checks it. The step numbers stay at the top as you scroll;
-      select one to jump to it.
+      The {STEPS.length} detailed steps below include setup and the working lifecycle. They are not a
+      promise of one straight pass: investigation, changes, and checks repeat as needed. The
+      <a href={url('rulebooks/swe/bug-walkthrough/')}>six-stage bug walkthrough</a> is a simplified reading of this method.
     </p>
 
+    <div class="checkpoint">
+      <h2>Setup once. Load each session. Work in loops.</h2>
+      <p>Installation establishes the configuration; loading and reading the project establish session context. Task execution then moves through Decide, Build, and Finish.</p>
+      <p class="state">If a check fails → return to investigation.</p>
+      <p>Understand the cause, make a focused change, and rerun the relevant check. Do not treat a warning, a completed edit, or a successful commit as proof that the intended behavior works.</p>
+      <p class="small">These are editorial summaries of the source rules below, not literal Kerby output.</p>
+    </div>
     <h2 class="steps-h" id="who">Who acts at each step</h2>
     <p>
       swe is not only rules for the agent. kerby itself acts at some steps, hooks act at others, and some
       decisions are yours. A filled dot means that part acts in the step. A ring means it acts only
       sometimes.
     </p>
-    <div class="table-wrap">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable reference table">
       <table class="swim">
         <caption class="visually-hidden">Who acts in each of the {STEPS.length} steps</caption>
         <thead>
@@ -68,7 +86,7 @@ const PHASES = STEPS.reduce<{ name: string; steps: number[] }[]>((acc, step, i) 
     </div>
     <ul class="swim-notes small">
       <li><strong>kerby</strong> acts when you install it, at every session start, and after a compaction if its session hook is installed.</li>
-      <li><strong>Hooks</strong> run when the agent edits files and when it commits. A destructive git command is stopped at any step.</li>
+      <li><strong>Hooks</strong> run only where installed and supported, on matching tool calls. Recognized destructive Git commands can be blocked at any step; see <a href={url('rulebooks/swe/hooks/')}>each hook’s coverage and gaps</a>.</li>
       <li><strong>You</strong> run install, approve a plan graded {swe.numbers.approvalGrade} or higher, and review and merge the work.</li>
     </ul>
 
@@ -100,9 +118,14 @@ const PHASES = STEPS.reduce<{ name: string; steps: number[] }[]>((acc, step, i) 
             </h3>
             <p class="phase">{s.phase}</p>
             {s.body.map((p) => <p>{p}</p>)}
+            <dl class="checkpoint facts">
+              <dt>Condition</dt><dd>{s.condition}</dd>
+              <dt>Evidence</dt><dd>{s.evidence}</dd>
+              <dt>If unmet</dt><dd>{s.ifUnmet}</dd>
+            </dl>
             {s.commands?.map((c) => <Command title={c.title} ids={c.ids} />)}
             {s.lines && <Lines kind="format" ids={s.lines} caption={s.caption} />}
-            <p class="small">Source: {s.source}</p>
+            <p class="small">Source: {s.source}. {sourceFiles(s.source).map((file) => <a class="source-file" href={`${sourceRoot}${file}`}>{file.split('/').pop()}</a>)}</p>
           </li>
         ))}
       </ol>
@@ -112,6 +135,7 @@ const PHASES = STEPS.reduce<{ name: string; steps: number[] }[]>((acc, step, i) 
   <section aria-labelledby="next-h">
     <h2 id="next-h">Read next</h2>
     <ul class="next">
+      <li><a href={url('rulebooks/swe/bug-walkthrough/')}><strong>Bug walkthrough</strong><span>Watch these conditions shape one complete illustrative task.</span></a></li>
       <li><a href={url('rulebooks/swe/workflows/')}><strong>Workflows</strong><span>Which route your kind of task takes, and the 1–{swe.numbers.maxGrade} grade.</span></a></li>
       <li><a href={url('rulebooks/swe/hooks/')}><strong>Hooks</strong><span>The steps a hook checks, in detail.</span></a></li>
     </ul>
@@ -119,6 +143,7 @@ const PHASES = STEPS.reduce<{ name: string; steps: number[] }[]>((acc, step, i) 
 </Guide>
 
 <style>
+  .source-file { margin-inline-start: 0.5rem; }
   .steps-h {
     margin-top: 2rem;
   }
@@ -185,9 +210,9 @@ const PHASES = STEPS.reduce<{ name: string; steps: number[] }[]>((acc, step, i) 
     border: 1.5px solid var(--secondary);
   }
 
-  /* Terracotta means "a hook", as in the hook-enforced tag. */
+  /* Participation uses structure color; state is always described in text. */
   .swim .lane-hooks .mark.always {
-    background: var(--accent);
+    background: var(--structure);
   }
 
   .swim-notes {

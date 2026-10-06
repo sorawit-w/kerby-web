@@ -313,6 +313,21 @@
   },
   "anchors": [
     {
+      "id": "walkthrough-reproduce",
+      "file": "skills/kerby/rulebooks/swe/workflows/bugfix.md",
+      "quote": "Document the reproduction: what you did, what happened, what should have happened."
+    },
+    {
+      "id": "walkthrough-regression",
+      "file": "skills/kerby/rulebooks/swe/workflows/bugfix.md",
+      "quote": "Write a failing test that captures the bug (the test MUST fail before your fix)"
+    },
+    {
+      "id": "walkthrough-finish",
+      "file": "skills/kerby/rulebooks/swe/workflows/bugfix.md",
+      "quote": "**Manual verification instructions provided**"
+    },
+    {
       "id": "format-complexity",
       "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
       "quote": "complexity: <N> (trigger: <≤8-word reason>) → route: <investigate | new-project | adopt-existing | feature | bugfix | quick-task>"

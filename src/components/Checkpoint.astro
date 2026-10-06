@@ -1,0 +1,60 @@
+---
+import { checkpointSource, type Checkpoint } from '../data/bug-walkthrough';
+
+interface Props {
+  checkpoint: Checkpoint;
+  index?: number;
+}
+const { checkpoint, index } = Astro.props;
+---
+
+<section class="checkpoint" id={checkpoint.id} aria-labelledby={`${checkpoint.id}-heading`} data-checkpoint={checkpoint.id}>
+  <header class="checkpoint-head">
+    {index !== undefined && <span class="checkpoint-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>}
+    <div>
+      <p class="responsibility">{checkpoint.responsibility}</p>
+      <h2 id={`${checkpoint.id}-heading`}>{checkpoint.stage}</h2>
+    </div>
+  </header>
+  <div class="checkpoint-body">
+    <p class="checkpoint-condition"><strong>Condition to advance</strong>{checkpoint.condition}</p>
+    <p>{checkpoint.action}</p>
+    <div class="evidence">
+      <h3>Illustrative evidence</h3>
+      <ul>{checkpoint.evidence.map((item) => <li>{item}</li>)}</ul>
+    </div>
+    <p class="checkpoint-held"><strong>When the condition is unmet</strong>{checkpoint.unmet}</p>
+    <slot />
+    <p class="checkpoint-sources">
+      <span>Rulebook sources: </span>
+      {checkpoint.sources.map((id, i) => {
+        const source = checkpointSource(id);
+        return <>{i > 0 && ' · '}<a href={source.href} data-source-anchor={id} title={source.quote}>{id.replace(/^(walkthrough|format)-/, '').replaceAll('-', ' ')}</a></>;
+      })}
+    </p>
+  </div>
+</section>
+
+<style>
+  .checkpoint { border-top: 2px solid var(--structure); padding: 2rem 0; scroll-margin-top: 6rem; }
+  .checkpoint-head { display: flex; gap: 1rem; align-items: baseline; margin-bottom: 1.5rem; }
+  .checkpoint-number { font-family: var(--font-mono); color: var(--muted); font-size: .8rem; }
+  .responsibility { font-family: var(--font-mono); font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; margin: 0 0 .4rem; }
+  h2 { margin: 0; }
+  .checkpoint-condition { font-size: 1.2rem; line-height: 1.5; }
+  .checkpoint-condition strong, .checkpoint-held strong { display: block; font-size: .85rem; margin-bottom: .4rem; }
+  .evidence { border-left: 2px solid var(--structure); padding: .2rem 0 .2rem 1.3rem; margin: 1.5rem 0; }
+  .evidence h3 { margin: 0 0 .5rem; font-size: 1rem; }
+  .evidence ul { margin: 0; padding-left: 1.1rem; }
+  .evidence li + li { margin-top: .7rem; }
+  .checkpoint-held { padding-top: 1rem; border-top: 1px solid var(--border); }
+  .checkpoint-sources { font-size: .8rem; margin-top: 1.5rem; color: var(--muted); }
+  @media (min-width: 1100px) {
+    .checkpoint { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 1.5rem; }
+    .checkpoint-head { align-items: start; gap: .65rem; }
+    .checkpoint-head h2 { font-size: 1.5rem; }
+    .checkpoint-number { padding-top: .15rem; }
+    .checkpoint-body { min-width: 0; }
+    .checkpoint-body > :first-child { margin-top: 0; }
+  }
+</style>

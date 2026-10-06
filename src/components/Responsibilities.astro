@@ -1,0 +1,21 @@
+---
+import { url } from '../lib/url';
+---
+<section class="responsibilities" aria-labelledby="responsibility-title">
+  <p class="eyebrow">KNOW WHAT GUIDES THE WORK</p>
+  <h2 id="responsibility-title">One method. Clear responsibilities.</h2>
+  <div class="roles">
+    <article><span class="responsibility">01 / Agent instruction</span><h3>SWE guides the agent.</h3><p>The agent is instructed to investigate, plan, verify, and report evidence before claiming completion.</p><a href={url('rulebooks/swe/')}>Understand the method →</a></article>
+    <article><span class="responsibility">02 / Hook check</span><h3>Scripts check specific actions.</h3><p>Supported, installed hooks can block an action or warn about it. Each has a defined scope and limitations.</p><a href={url('rulebooks/swe/hooks/')}>See what hooks check →</a></article>
+    <article><span class="responsibility">03 / Your decision</span><h3>You provide judgment.</h3><p>Review the reasoning and evidence. Make approval decisions where the workflow requires them.</p><a href={url('rulebooks/swe/workflows/#grade')}>Know when approval applies →</a></article>
+  </div>
+  <p class="note">Following an instruction and enforcing it with a script are different. Kerby’s guide makes that boundary visible.</p>
+</section>
+<style>
+.responsibilities { border-top:1px solid var(--border); } h2 { margin:0 0 2rem; }
+.roles { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:2rem; }
+article + article { border-left:1px solid var(--border); padding-left:2rem; }
+h3 { margin:1rem 0; } article p { font-size:1rem; color:var(--secondary); } article a { font-size:.9rem; }
+.note { margin:2.5rem 0 0; font-size:.9rem; color:var(--muted); }
+@media(max-width:959px) { .roles { grid-template-columns:1fr; } article + article { border-left:0; border-top:1px solid var(--border); padding:1.5rem 0 0; } }
+</style>

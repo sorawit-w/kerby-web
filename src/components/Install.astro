@@ -1,37 +1,14 @@
 ---
-// Install — literal zone: no persona, no wit (VOICE.md zoning).
-const README = 'https://github.com/sorawit-w/kerby#readme';
+import Command from './guide/Command.astro';
+import { url } from '../lib/url';
 ---
-
 <section id="install" aria-labelledby="install-heading">
-  <h2 id="install-heading">Install</h2>
-
-  <pre class="cmd"><code>/plugin marketplace add sorawit-w/kerby
-/plugin install kerby@kerby</code></pre>
-
-  <p>Or via the cross-platform CLI:</p>
-
-  <pre class="cmd"><code>npx skills add sorawit-w/kerby</code></pre>
-
-  <p>
-    Then: <code>/kerby</code> loads the rules into the session. <code>/kerby status</code> checks
-    they're still active.
-  </p>
-
-  <p><a href={README}>Full documentation →</a></p>
+  <p class="eyebrow">READY WHEN YOU ARE</p>
+  <h2 id="install-heading">Give your agent a method.</h2>
+  <p>Read the <a href={url('rulebooks/swe/#fit')}>adoption guidance</a>, then add Kerby to your agent.</p>
+  <Command title="In Claude Code, run each command separately:" ids={['install-marketplace', 'install-plugin']} />
+  <Command title="Or add the skill with the cross-platform CLI:" ids={['install-cli']} />
+  <Command title="In your agent, load the rules and inspect their status:" ids={['cmd-load', 'cmd-status']} />
+  <p class="note">Loading instructions and installing hooks are separate. <a href={url('rulebooks/swe/hooks/#install')}>See setup and platform support →</a></p>
 </section>
-
-<style>
-  .cmd {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 1rem 1.25rem;
-    overflow-x: auto;
-    font-size: 0.9rem;
-  }
-
-  code {
-    font-family: var(--font-mono);
-  }
-</style>
+<style>section { border-top:1px solid var(--border); } h2 { margin:0 0 1rem; }.note { color:var(--secondary); font-size:.95rem; }</style>

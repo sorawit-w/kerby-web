@@ -1,156 +1,18 @@
 ---
-import GateMotion from '../assets/gate-motion.svg';
 import { url } from '../lib/url';
-
-// `base` (the universal floor) is intentionally not surfaced here — it's
-// merged under every rulebook implicitly, not a rulebook a user selects.
-const RULEBOOKS = [
-  {
-    name: 'swe',
-    guide: url('rulebooks/swe/'),
-    line: 'Software engineering: no claim without a fresh test behind it, no commit on a protected branch, no secret in the diff.',
-  },
-  {
-    name: 'skill-authoring',
-    guide: null,
-    line: 'For repos that write agent skills: nothing ships as verified without a fresh evaluation of the exact text being shipped.',
-  },
-];
-
-const AUTHORING = 'https://github.com/sorawit-w/kerby/blob/main/docs/AUTHORING-RULEBOOKS.md';
 ---
-
 <section id="what" aria-labelledby="what-heading">
-  <h2 id="what-heading">One motion. Any work.</h2>
-
-  <GateMotion class="gate-motion" />
-
-  <ol class="steps mono">
-    <li>GATE — an action arrives and stops at the threshold.</li>
-    <li>WEIGH — kerby checks it against the evidence: tests, diffs, approvals.</li>
-    <li>VERDICT — it passes, or it doesn't. There is no third option.</li>
-  </ol>
-
-  <p>
-    The engine is domain-blind. It loads a rulebook, watches the work, and renders verdicts. It
-    doesn't know what coding is.
-  </p>
-  <p>
-    A rulebook is a folder: the rules for one kind of work, plus the checks that enforce them. Load
-    the one that fits. Write your own when it doesn't. Rulebooks from outside your machine pass a
-    one-time trust review before they can run.
-  </p>
-
-  <ul class="cards">
-    {RULEBOOKS.map((r) => (
-      <li class="card">
-        {r.guide ? (
-          <a class="card-link" href={r.guide}>
-            <span class="card-name mono">{r.name}</span>
-            <span class="card-line">{r.line}</span>
-            <span class="card-cta">Read the guide →</span>
-          </a>
-        ) : (
-          <div class="card-body">
-            <span class="card-name mono">{r.name}</span>
-            <span class="card-line">{r.line}</span>
-            <span class="badge mono">Guide coming</span>
-          </div>
-        )}
-      </li>
-    ))}
-  </ul>
-
-  <p class="closing">
-    The engine is finished machinery. The next rulebook is a folder you write.
-    {' '}<a href={AUTHORING}>Write a rulebook →</a>
-  </p>
+  <p class="eyebrow">THE METHOD LIVES IN A RULEBOOK</p>
+  <h2 id="what-heading">Start with the work you do.</h2>
+  <p>Kerby loads a selected rulebook into your agent’s session. The rulebook supplies instructions and declares checks; supported hooks can enforce specific checks when installed.</p>
+  <div class="books">
+    <article><p class="eyebrow">01 / SOFTWARE ENGINEERING</p><h3>SWE</h3><p>An opinionated method for investigating, changing, and verifying software. Follow the work from its first question to its final evidence.</p><a class="cta" href={url('rulebooks/swe/')}>Explore the SWE guide →</a></article>
+    <article><p class="eyebrow">02 / AGENT SKILLS</p><h3>Skill authoring</h3><p>Instructions that require a fresh evaluation of the exact skill text before presenting it as verified.</p><p class="coming">Guide coming · <a href="https://github.com/sorawit-w/kerby/tree/main/skills/kerby/rulebooks/skill-authoring">Read the source ↗</a></p></article>
+  </div>
+  <p class="authoring">Have a different kind of work? <a href="https://github.com/sorawit-w/kerby/blob/main/docs/AUTHORING-RULEBOOKS.md">Write a rulebook →</a></p>
 </section>
-
 <style>
-  .gate-motion {
-    width: 100%;
-    height: auto;
-  }
-
-  .steps {
-    list-style: none;
-    padding: 0;
-    display: grid;
-    gap: 0.5rem;
-    color: var(--structure);
-    font-size: 0.9rem;
-  }
-
-  .cards {
-    list-style: none;
-    padding: 0;
-    display: grid;
-    gap: 1rem;
-    margin: 2rem 0;
-  }
-
-  @media (min-width: 720px) {
-    .cards {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    display: grid;
-  }
-
-  .card-link,
-  .card-body {
-    padding: 1rem 1.1rem;
-    display: grid;
-    gap: 0.5rem;
-    align-content: start;
-    grid-template-rows: auto 1fr auto;
-    color: inherit;
-    text-decoration: none;
-    border-radius: 6px;
-  }
-
-  .card:has(.card-link:hover) {
-    border-color: var(--structure);
-  }
-
-  .card-cta {
-    color: var(--accent);
-    font-size: 0.95rem;
-    font-weight: 500;
-  }
-
-  .card-link:hover .card-cta {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-  }
-
-  .badge {
-    justify-self: start;
-    font-size: 0.75rem;
-    color: var(--muted);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.1rem 0.45rem;
-  }
-
-  .card-name {
-    color: var(--structure);
-    font-size: 0.85rem;
-    font-weight: 700;
-  }
-
-  .card-line {
-    color: var(--secondary);
-    font-size: 0.95rem;
-  }
-
-  .mono {
-    font-family: var(--font-mono);
-  }
+section { border-top:1px solid var(--border); } h2 { margin:0 0 1rem; }
+.books { display:grid; grid-template-columns:1fr 1fr; gap:3rem; margin-top:2.5rem; } article { border-top:1px solid var(--structure); padding-top:1.5rem; } h3 { font-size:1.8rem; margin:0; } article p { color:var(--secondary); } .coming,.authoring { font-size:.9rem; } .authoring { margin-top:2rem; }
+@media(max-width:600px) { .books { grid-template-columns:1fr; } }
 </style>

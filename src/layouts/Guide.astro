@@ -3,6 +3,7 @@
 // Everything numeric or versioned comes from swe.json; coverage() fails the
 // build if swe.json names a hook, route or command the prose does not cover.
 import Base from './Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
 import Footer from '../components/Footer.astro';
 import swe from '../data/swe.json';
 import { coverage } from '../data/swe-prose';
@@ -21,6 +22,7 @@ const PAGES = [
   ['', 'Overview'],
   ['lifecycle/', 'Lifecycle'],
   ['workflows/', 'Workflows'],
+  ['bug-walkthrough/', 'Bug walkthrough'],
   ['hooks/', 'Hooks'],
   ['reference/', 'Reference'],
 ] as const;
@@ -31,37 +33,27 @@ const source = `https://github.com/${swe.source_repo}/tree/${swe.source_sha}/ski
 ---
 
 <Base title={`${title} — swe rulebook — kerby`} description={description}>
-  <a class="skip" href="#guide-main">Skip to content</a>
-  <header class="guide-head">
-    <div class="bar">
-      <a class="home" href={url('')}>kerby</a>
-      <span class="slash" aria-hidden="true">/</span>
-      <a class="book" href={url('rulebooks/swe/')}>swe rulebook</a>
-    </div>
-    <nav aria-label="swe guide">
-      <ul>
+  <SiteHeader mainId="guide-main" />
+  <div class="guide-shell">
+    <aside class="guide-rail">
+      <p class="eyebrow">SWE / Field guide</p>
+      <nav aria-label="SWE guide"><ul>
         {PAGES.map(([path, label]) => {
           const href = url(`rulebooks/swe/${path}`);
-          const current = strip(href) === here;
-          return (
-            <li>
-              <a href={href} aria-current={current ? 'page' : undefined}>{label}</a>
-            </li>
-          );
+          return <li><a href={href} aria-current={strip(href) === here ? 'page' : undefined}>{label}</a></li>;
         })}
-      </ul>
-    </nav>
-  </header>
-
-  <main id="guide-main" class="guide">
-    <slot />
-  </main>
+      </ul></nav>
+      <p class="rail-note">Conditions.<br />Evidence.<br />The next step.</p>
+      <a class="rail-source" href={source}>SWE {swe.version} ↗</a>
+    </aside>
+    <main id="guide-main" class="guide"><slot /></main>
+  </div>
 
   <aside class="section stamp" aria-label="About this guide">
     <p>
       This guide describes <strong>swe {swe.version}</strong>, shipped in kerby {swe.kerby_version}. It is
-      built from the same rulebook.toml that kerby loads: every number, hook and line format on these pages
-      is read from that release at build time.
+      built from a pinned rulebook release. Versions, inventories and quoted formats are checked against
+      that source; explanations are editorial, and illustrative examples are labeled.
     </p>
     <p>
       <a href={source}>Read the swe source at {swe.source_sha.slice(0, 7)}</a>

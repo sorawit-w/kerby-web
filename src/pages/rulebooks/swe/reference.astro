@@ -1,16 +1,29 @@
 ---
 import Guide from '../../../layouts/Guide.astro';
 import Command from '../../../components/guide/Command.astro';
+import Lines from '../../../components/guide/Lines.astro';
+import { url } from '../../../lib/url';
 import swe from '../../../data/swe.json';
 import { COMMANDS, GLOSSARY, STATE_FILES } from '../../../data/swe-prose';
+const sourceRoot = `https://github.com/${swe.source_repo}/blob/${swe.source_sha}/skills/kerby/rulebooks/swe/`;
+const meanings: Record<string, string> = {
+  gate: 'A condition that must be satisfied before proceeding. Some gates are agent instructions; installed hooks enforce specific tool-action checks.',
+  verdict: 'A result for a particular check, not a certificate that the entire task is correct. This guide distinguishes blocked actions, advisory warnings, held work, and satisfied conditions.',
+  'hook-enforced': 'A rule checked by a script on supported, configured tool calls. Each hook has specific detection limits.',
+  compaction: 'When a long conversation is shortened to fit the context window. Previously read rules can be lost; an installed Claude Code session hook restores them, or the agent can reload them manually.',
+};
 ---
 
 <Guide
   title="Reference"
   description="The commands kerby's swe rulebook adds, the files it keeps in your repo, and a glossary of its terms.">
   <section aria-labelledby="top">
+    <p class="eyebrow">SWE / keep the details within reach</p>
     <h1 id="top">Reference</h1>
-    <p class="lead">Commands, the files swe keeps, and the words this guide uses.</p>
+    <p class="lead">Find a command, inspect the expected format, or check what a term means.</p>
+    <nav aria-label="Reference sections" class="reference-nav">
+      <a href="#commands">Commands</a><a href="#files">State files</a><a href="#formats">Exact formats</a><a href="#glossary">Glossary</a><a href="#sources">Sources</a>
+    </nav>
   </section>
 
   <section aria-labelledby="commands">
@@ -30,6 +43,7 @@ import { COMMANDS, GLOSSARY, STATE_FILES } from '../../../data/swe-prose';
           <dt>Never</dt>
           <dd>{COMMANDS[c.name].never}</dd>
         </dl>
+        <p class="small"><a href={`${sourceRoot}commands/${c.name}.md`}>Read the {c.name} command source</a></p>
       </article>
     ))}
   </section>
@@ -40,7 +54,7 @@ import { COMMANDS, GLOSSARY, STATE_FILES } from '../../../data/swe-prose';
       swe keeps its memory in files, not in the chat. Most are committed, so the next session — or a
       teammate’s — starts from the same facts. The agent reads them as facts, never as instructions.
     </p>
-    <div class="table-wrap">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable reference table">
       <table>
         <thead>
           <tr><th scope="col">File</th><th scope="col">Holds</th><th scope="col">Shared</th></tr>
@@ -54,20 +68,41 @@ import { COMMANDS, GLOSSARY, STATE_FILES } from '../../../data/swe-prose';
     </div>
   </section>
 
+  <section aria-labelledby="formats">
+    <h2 id="formats">Exact formats</h2>
+    <p>These shapes are copied from the pinned rulebook. Placeholders describe what the agent supplies; they are not execution results.</p>
+    <Lines kind="format" ids={['format-complexity', 'format-rung', 'format-plan', 'format-intent', 'format-outcome', 'format-skipped']} />
+    <p><a href={url('rulebooks/swe/workflows/#tasks')}>See illustrative values in representative tasks.</a></p>
+  </section>
+
   <section aria-labelledby="glossary">
     <h2 id="glossary">Glossary</h2>
     <dl class="glossary">
       {GLOSSARY.map((t) => (
         <>
           <dt id={`term-${t.id}`}>{t.term}</dt>
-          <dd>{t.meaning}</dd>
+          <dd>{meanings[t.id] ?? t.meaning}</dd>
         </>
       ))}
     </dl>
   </section>
+
+  <section aria-labelledby="sources">
+    <h2 id="sources">Read the rules behind the guide</h2>
+    <p>The guide combines source-derived facts, editorial explanations, and explicitly illustrative examples. It describes SWE {swe.version} at the pinned source revision below.</p>
+    <ul>
+      <li><a href={`${sourceRoot}BOOTSTRAP.md`}>Operating rules and planning conditions</a></li>
+      <li><a href={`${sourceRoot}references/intent-gate.md`}>Intent and conflicting expectations</a></li>
+      <li><a href={`${sourceRoot}references/validation.md`}>Evidence before completion</a></li>
+      <li><a href={`${sourceRoot}references/threat-model.md`}>Enforcement boundaries and limitations</a></li>
+      <li><a href={`https://github.com/${swe.source_repo}/tree/${swe.source_sha}`}>Pinned source revision: {swe.source_sha.slice(0, 7)}</a></li>
+    </ul>
+    <p><a href={url('rulebooks/swe/bug-walkthrough/')}>Return to the complete bug walkthrough →</a></p>
+  </section>
 </Guide>
 
 <style>
+  .reference-nav { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; margin-top: 1.5rem; }
   .cmd {
     border-top: 1px solid var(--border);
     padding-top: 1.25rem;

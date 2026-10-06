@@ -5,8 +5,8 @@
 //   - stepnav: marks the step you are reading in the sticky step nav, and
 //     keeps that number in view when the nav scrolls sideways on a phone. It
 //     runs under reduced motion too: a position mark is not an animation.
-//   - picker: turns the task list into one-at-a-time choices. Under
-//     prefers-reduced-motion it does nothing; the full list is that rendering.
+//   - picker: selectable examples, including deep links; reduced motion changes
+//     animation only, never the available functionality.
 //   - copyRows: a Copy button on each command row.
 // The hooks switch is CSS only (:has) and needs no script.
 
@@ -25,8 +25,7 @@ function reveal(items, index) {
     item.hidden = i !== index;
     item.classList.remove('entering');
   });
-  void items[index].offsetWidth; // restart the CSS animation
-  items[index].classList.add('entering');
+  if (!reduce) items[index].classList.add('entering');
 }
 
 function stepnav(nav) {
@@ -105,7 +104,18 @@ function picker(root) {
     buttons.forEach((b, j) => b.setAttribute('aria-pressed', String(j === i)));
     if (user) live.textContent = `Showing: ${choices[i].dataset.label}`;
   }
-  pick(0, false);
+  function followHash() {
+    let id;
+    try { id = decodeURIComponent(window.location.hash.slice(1)); } catch { return false; }
+    const target = document.getElementById(id);
+    const index = choices.findIndex((choice) => choice === target || choice.contains(target));
+    if (index < 0) return false;
+    pick(index, false);
+    target.scrollIntoView({ block: 'start', behavior: 'instant' });
+    return true;
+  }
+  if (!followHash()) pick(0, false);
+  window.addEventListener('hashchange', followHash);
 }
 
 // Copy buttons for command rows (components/guide/Command.astro). Only where
@@ -144,4 +154,5 @@ function copyRows(rows) {
 
 document.querySelectorAll('[data-stepnav]').forEach(stepnav);
 copyRows([...document.querySelectorAll('[data-copy-row]')]);
-if (!reduce) document.querySelectorAll('[data-picker]').forEach(picker);
+document.querySelectorAll('[data-picker]').forEach(picker);
+

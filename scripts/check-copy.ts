@@ -1,102 +1,57 @@
-// Byte-fidelity gate. Extracts the three verdict transcripts from the kerby
-// README ("What it looks like when kerby says no") and byte-compares them
-// against the rendered page's accessible transcript nodes (entity-decoded
-// textContent; trailing-newline normalization only). Also checks the
-// [byte-copy] marketing strings. Compares dist/ only — run bun run build first.
-import { execSync } from 'node:child_process';
+// Compare readable, stable transcript nodes to README at the same pin as sync:swe.
+import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
-// Byte-copy source of truth is the live kerby README (brief L9). Path is the
-// local clone by default, overridable for CI/other machines. When the clone
-// isn't present the gate skips LOUDLY rather than hard-failing — `bun run
-// check` stays runnable anywhere, and the full gate runs wherever the source
-// is checked out (author's machine, or CI with KERBY_REPO set).
-const KERBY_REPO = process.env.KERBY_REPO || join(homedir(), 'projects/kerby');
-const SECTION = 'What it looks like when kerby says no';
-const DIST_HTML = new URL('../dist/index.html', import.meta.url).pathname;
-
-// [byte-copy] strings owned by the brief's copy pack (not README-sourced).
-const BC_STRINGS = [
-  'The gate guardian for agentic work. Nothing unproven passes.',
-  'This is not prose about the product. This is the product.',
-  "No tone to argue with. The gate is open or it isn't.",
-];
-
-function decode(html: string): string {
-  return html
-    .replace(/&#39;/g, "'")
-    .replace(/&quot;/g, '"')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&');
+const ROOT = new URL('..', import.meta.url).pathname;
+const IDS = ['force-push', 'env-overwrite', 'secret-scan'];
+export function pinnedRef(): string {
+  const ref = process.env.KERBY_REF || readFileSync(join(ROOT, '.github/workflows/deploy.yml'), 'utf8').match(/^\s*KERBY_REF:\s*([0-9a-f]{7,40})\s*$/m)?.[1];
+  if (!ref) throw new Error('KERBY_REF missing from deploy.yml');
+  return ref;
 }
-
-// --- source of truth ---------------------------------------------------------
-if (!(await Bun.file(join(KERBY_REPO, 'README.md')).exists())) {
-  console.error(
-    `check:copy — SKIPPED: kerby source not found at ${KERBY_REPO}.\n` +
-      `  Set KERBY_REPO to a kerby checkout to run the byte-copy gate.\n` +
-      `  (The three transcripts still ship in src/components/Demo.astro;\n` +
-      `   this gate verifies them against the live README.)`,
-  );
-  process.exit(0);
+export function readPinnedReadme(repo: string, ref: string): string {
+  return execFileSync('git', ['-C', repo, 'show', `${ref}:README.md`], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
 }
-const sha = execSync('git rev-parse --short HEAD', { cwd: KERBY_REPO }).toString().trim();
-const readme = await Bun.file(join(KERBY_REPO, 'README.md')).text();
-
-const sectionStart = readme.indexOf(`## ${SECTION}`);
-if (sectionStart < 0) {
-  console.error(`FAIL  README section "${SECTION}" not found (source moved?)`);
-  process.exit(1);
+function decodeText(text: string): string {
+  const named: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" };
+  return text.replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos);/gi, (whole, entity: string) => {
+    if (entity.startsWith('#')) return String.fromCodePoint(parseInt(entity.slice(entity[1].toLowerCase() === 'x' ? 2 : 1), entity[1].toLowerCase() === 'x' ? 16 : 10));
+    return named[entity] ?? whole;
+  });
 }
-const nextHeading = readme.indexOf('\n## ', sectionStart + 1);
-const section = readme.slice(sectionStart, nextHeading < 0 ? undefined : nextHeading);
-const fences = [...section.matchAll(/```[^\n]*\n([\s\S]*?)```/g)].map((m) =>
-  m[1].replace(/\n$/, ''),
-);
-if (fences.length < 3) {
-  console.error(`FAIL  expected 3 fenced transcripts in README section, found ${fences.length}`);
-  process.exit(1);
-}
-
-// --- rendered page -----------------------------------------------------------
-const html = await Bun.file(DIST_HTML).text();
-const srBlock = html.match(/sr-transcripts[^>]*>([\s\S]*?)<\/div>/);
-if (!srBlock) {
-  console.error('FAIL  .sr-transcripts block not found in dist/index.html');
-  process.exit(1);
-}
-const rendered = [...srBlock[1].matchAll(/<pre[^>]*>([\s\S]*?)<\/pre>/g)].map((m) =>
-  decode(m[1]).replace(/\n$/, ''),
-);
-
-// --- compare -----------------------------------------------------------------
-let failed = 0;
-fences.slice(0, 3).forEach((src, i) => {
-  if (rendered[i] === src) {
-    console.log(`ok    transcript ${i + 1} byte-matches README`);
-  } else {
-    console.error(`FAIL  transcript ${i + 1} differs from README:`);
-    console.error(`  source:   ${JSON.stringify(src)}`);
-    console.error(`  rendered: ${JSON.stringify(rendered[i])}`);
-    failed++;
+export async function checkCopy(readme: string, html: string): Promise<string[]> {
+  const heading = '## What it looks like when kerby says no';
+  const start = readme.indexOf(heading);
+  if (start < 0) return ['README transcript source section missing'];
+  const end = readme.indexOf('\n## ', start + 1);
+  const fences = [...readme.slice(start, end < 0 ? undefined : end).matchAll(/```[^\n]*\n([\s\S]*?)```/g)].map(m => m[1].replace(/\n$/, ''));
+  if (fences.length < 3) return ['README transcript source has fewer than three transcripts'];
+  const failures: string[] = [];
+  for (const [index, id] of IDS.entries()) {
+    let count = 0;
+    let text = '';
+    await new HTMLRewriter().on(`pre[data-transcript="${id}"]`, {
+      element() { count++; },
+      text(chunk) { text += chunk.text; },
+    }).transform(new Response(html)).text();
+    if (count !== 1) failures.push(`${id}: expected one transcript, found ${count}`);
+    if (decodeText(text).replace(/\n$/, '') !== fences[index]) failures.push(`${id}: rendered transcript differs from pinned README`);
   }
-});
-
-const pageText = decode(html);
-for (const s of BC_STRINGS) {
-  if (pageText.includes(s)) {
-    console.log(`ok    [byte-copy] present: ${JSON.stringify(s.slice(0, 40))}…`);
-  } else {
-    console.error(`FAIL  [byte-copy] string missing: ${JSON.stringify(s)}`);
-    failed++;
+  return failures;
+}
+if (import.meta.main) {
+  const repo = process.env.KERBY_REPO || join(homedir(), 'projects/kerby');
+  try {
+    const ref = pinnedRef();
+    const readme = readPinnedReadme(repo, ref);
+    const failures = await checkCopy(readme, await Bun.file(join(ROOT, 'dist/index.html')).text());
+    for (const failure of failures) console.error(`FAIL  ${failure}`);
+    if (failures.length) process.exit(1);
+    console.log(`check:copy — three transcripts match ${ref} (source: ${repo})`);
+  } catch (error) {
+    console.error(`check:copy — FAILED: pinned source or build unavailable. Set KERBY_REPO to a checkout containing the pin.\n${error}`);
+    process.exit(1);
   }
 }
-
-console.log(`\nsource: ${KERBY_REPO} @ ${sha}`);
-if (failed) {
-  console.error(`check:copy — ${failed} mismatch(es)`);
-  process.exit(1);
-}
-console.log('check:copy — all byte-copy strings match');

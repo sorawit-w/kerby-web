@@ -1,0 +1,40 @@
+name: Validate pull request
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      KERBY_REPO: ${{ github.workspace }}/.kerby-src
+      REQUIRE_KERBY_SOURCE: '1'
+    steps:
+      - name: Checkout site
+        uses: actions/checkout@v4
+      - name: Read the shared source pin
+        id: pin
+        run: |
+          pin=$(sed -nE 's/^[[:space:]]*KERBY_REF:[[:space:]]*([0-9a-f]{7,40})[[:space:]]*$/\1/p' .github/workflows/deploy.yml)
+          test -n "$pin"
+          echo "ref=$pin" >> "$GITHUB_OUTPUT"
+      - name: Checkout pinned Kerby source
+        uses: actions/checkout@v4
+        with:
+          repository: sorawit-w/kerby
+          ref: ${{ steps.pin.outputs.ref }}
+          path: .kerby-src
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Validate root deployment
+        run: bun run check
+      - name: Validate project base deployment
+        run: |
+          bun run build -- --base /kerby-web
+          SITE_BASE=/kerby-web bun run check:site
+          bun run check:copy
