@@ -164,7 +164,7 @@ export const GLOSSARY: Term[] = [
 export function coverage() {
   const missing = [
     ...[...swe.hooks, ...swe.base.hooks].filter((h) => !HOOKS[h.script!]).map((h) => `hook ${h.script}`),
-    ...swe.hooks.filter((h) => !WHEN[h.matcher as string]).map((h) => `trigger ${h.matcher}`),
+    ...[...swe.hooks, ...swe.base.hooks].filter((h) => !WHEN[h.matcher as string]).map((h) => `trigger ${h.matcher}`),
     ...swe.routes.filter((r) => !ROUTES[r]).map((r) => `route ${r}`),
     ...swe.commands.filter((c: { name: string }) => !COMMANDS[c.name]).map((c: { name: string }) => `command ${c.name}`),
   ];
