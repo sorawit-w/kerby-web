@@ -1,8 +1,5 @@
 ---
 import { url } from '../lib/url';
-import ConsoleText from './ConsoleText.astro';
-import { TRANSCRIPTS } from '../data/transcripts';
-import swe from '../data/swe.json';
 ---
 <section class="hero" aria-labelledby="hero-title">
   <div class="hero-copy">
@@ -13,16 +10,14 @@ import swe from '../data/swe.json';
     <p class="judgment">Rulebooks define the conditions. Agent instructions guide judgment; installed hooks enforce specific actions.</p>
   </div>
   <aside class="gate" aria-labelledby="gate-title">
-    <p class="eyebrow">A REAL HOOK CHECK · FROM SWE</p>
-    <h2 id="gate-title">A force push meets a boundary.</h2>
-    <dl>
-      <div><dt>Condition</dt><dd>The agent must not run an unprotected force push.</dd></div>
-      <div><dt>Check</dt><dd>With the Git protection hook installed in a supported agent, the hook inspects the command before execution.</dd></div>
-      <div><dt>Consequence</dt><dd>The matching command is blocked. The user must run it themselves if it is needed.</dd></div>
-    </dl>
-    <p class="output-label">Actual output excerpt · not a live run</p>
-    <pre tabindex="0" aria-label="Force-push refusal excerpt"><ConsoleText text={TRANSCRIPTS[0].split('\n')[0]} /></pre>
-    <p class="source-note"><a href={`https://github.com/${swe.source_repo}/blob/${swe.source_sha}/README.md#what-it-looks-like-when-kerby-says-no`}>Read the source ↗</a> · <a href={url('rulebooks/swe/hooks/')}>Scope and installation →</a></p>
+    <p class="eyebrow">ONE EXAMPLE · SWE GIT HOOK</p>
+    <h2 id="gate-title">An unsafe command gets stopped.</h2>
+    <ol class="example" aria-label="Illustrative command and outcome">
+      <li class="attempt"><p class="step-label">Agent attempts</p><code>git push --force</code></li>
+      <li class="result"><p class="state"><span aria-hidden="true">⊘</span> Blocked</p><p>This command can overwrite remote history.</p></li>
+    </ol>
+    <p class="scope">With SWE’s Git protection hook installed in a supported agent.</p>
+    <a class="example-link" href={url('#demo')}>Explore the checks →</a>
   </aside>
 </section>
 <style>
@@ -35,11 +30,15 @@ h1 { margin:0 0 1.5rem; font-size:clamp(2.5rem,4.7vw,4.25rem); line-height:1.03;
 .judgment { color:var(--muted); font-size:.9rem; margin:0; }
 .gate { border-left:1px solid var(--border); padding-left:3rem; }
 h2 { font-size:1.65rem; margin:0 0 1.5rem; letter-spacing:-.035em; }
-dl { margin:0; }
-dl div { margin:0 0 1rem; }
-dt { font-weight:500; font-size:.9rem; }
-dd { margin:.25rem 0 0; color:var(--secondary); font-size:.9rem; }
-.output-label, .source-note { color:var(--muted); font-size:.75rem; margin:1rem 0 .5rem; }
-pre { background:var(--panel-bg); color:var(--panel-text); padding:1rem; border-radius:6px; overflow:auto; font-size:.8rem; line-height:1.65; margin:0; }
+.example { list-style:none; padding:0; margin:0 0 1.25rem; }
+.attempt { position:relative; padding:0 0 2rem 1.25rem; border-left:1px solid var(--border); }
+.attempt::after { content:''; position:absolute; left:-4px; bottom:0; width:7px; height:7px; border-right:1px solid var(--structure); border-bottom:1px solid var(--structure); transform:rotate(45deg); }
+.step-label { margin:0 0 .5rem; color:var(--muted); font-size:.8rem; }
+code { font-size:1rem; color:var(--text); }
+.result { border-top:1px solid var(--structure); padding:1rem 0 0 1.25rem; }
+.result p { margin:0; font-size:1rem; color:var(--secondary); }
+.result .state { display:flex; gap:.5rem; align-items:center; font-family:var(--font-mono); font-size:.85rem; text-transform:uppercase; color:var(--accent); margin-bottom:.5rem; }
+.scope { color:var(--muted); font-size:.8rem; margin:0 0 .75rem; max-width:28rem; }
+.example-link { font-size:.85rem; }
 @media(max-width:959px) { .hero { grid-template-columns:1fr; gap:2rem; } .hero-copy { max-width:40rem; } .gate { border-left:0; border-top:1px solid var(--border); padding:2rem 0 0; } }
 </style>

@@ -78,3 +78,8 @@ Refreshed the homepage desktop, hero, and mobile screenshots. Guide screenshots 
 The homepage now leads with Kerby's repository-defined identity: “The gate guardian for agentic work.” A genuine SWE force-push refusal explains condition, check, and consequence alongside the hero. Its output excerpt shares the same transcript data as the existing source-validated consoles. The illustrative settings-bug narrative follows as “See it with SWE”; rulebooks remain the mechanism rather than the headline benefit.
 
 Updated homepage metadata and design guidance. Full checks pass with pinned-source validation executed; production screenshots reviewed at 1440px and 375px, with no mobile page overflow. Refreshed homepage screenshots accompany this revision.
+
+
+## Compact hero example
+
+Replaced the hero's condition/check/consequence definition list with a short command-to-blocked-outcome sequence. The panel is explicitly labeled as one SWE Git-hook example and states the installation requirement. Editorial explanation uses ordinary page styling; the exact animated transcripts remain in the linked hook-check section. Updated homepage screenshots. Full checks pass; desktop visual review and 375px overflow check completed.
