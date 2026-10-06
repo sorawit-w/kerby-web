@@ -6,6 +6,7 @@
 //   example — the same lines filled with made-up values, labeled as such on
 //             the panel itself (DESIGN.md Voice: filled examples say "example").
 // Guide pages may use dark panels only for kerby output or swe line formats.
+import ConsoleText from '../ConsoleText.astro';
 import swe from '../../data/swe.json';
 import { plain } from '../../data/swe-prose';
 
@@ -31,8 +32,8 @@ const runs = (line: string) => line.split(/(<[^<>]+>)/g).filter(Boolean);
   <figcaption class="head">{head}</figcaption>
   <pre>{lines.map((line, i) => (
     <>{i > 0 && '\n'}{props.kind === 'format'
-      ? runs(line).map((r) => (r.startsWith('<') ? <span class="ph">{r}</span> : r))
-      : line}</>
+      ? runs(line).map((r) => (r.startsWith('<') ? <span class="ph">{r}</span> : <ConsoleText text={r} />))
+      : <ConsoleText text={line} />}</>
   ))}</pre>
   {props.caption && <p class="caption">{props.caption}</p>}
 </figure>

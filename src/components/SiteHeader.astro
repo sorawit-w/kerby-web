@@ -1,11 +1,13 @@
 ---
+import { Image } from 'astro:assets';
+import portrait from '../assets/kerby-hero.png';
 import { url } from '../lib/url';
 const { mainId = 'main' } = Astro.props;
 const links = [['SWE guide', 'rulebooks/swe/'], ['Bug walkthrough', 'rulebooks/swe/bug-walkthrough/'], ['Install', '#install']] as const;
 ---
 <a class="skip" href={`#${mainId}`}>Skip to content</a>
 <header class="site-header">
-  <a class="brand" href={url('')} aria-label="kerby home"><img src={url('favicon-32.png')} width="32" height="32" alt="" />kerby</a>
+  <a class="brand" href={url('')} aria-label="kerby home"><Image src={portrait} width={32} height={32} densities={[1, 2]} format="webp" alt="" />kerby</a>
   <nav aria-label="Main navigation"><ul>
     {links.map(([label, path]) => <li><a href={url(path)} aria-current={Astro.url.pathname === url(path) ? 'page' : undefined}>{label}</a></li>)}
     <li><a href="https://github.com/sorawit-w/kerby">GitHub <span aria-hidden="true">↗</span></a></li>

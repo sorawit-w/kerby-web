@@ -89,7 +89,7 @@ Normal text pairings must pass AA 4.5:1; meaningful non-text indicators and focu
 
 ## Typography and imagery
 
-Schibsted Grotesk for headings, Geist for body, JetBrains Mono for labels and code. Keep current font assets and their existing budget. Use the original mascot only: existing favicon in navigation, original portrait at moderate size in the homepage introduction. No generated replacements. Preserve intrinsic image sizes to prevent layout shifts.
+Schibsted Grotesk for headings, Geist for body, JetBrains Mono for labels and code. Keep current font assets and their existing budget. Use the original mascot only: portrait in navigation and generated browser icons, original portrait at moderate size in the homepage introduction. No generated replacements. Preserve intrinsic image sizes to prevent layout shifts.
 
 ## Responsibility and state vocabulary
 
@@ -102,7 +102,7 @@ Schibsted Grotesk for headings, Geist for body, JetBrains Mono for labels and co
 
 ## Interaction and accessibility
 
-No autoplay demos. Use native links, details, checkboxes and buttons. All substantive content is available without JavaScript. Selectable examples honor URL fragments; reduced motion disables movement, not functionality. Keyboard focus is a 2px terracotta outline with adequate offset. Sticky navigation must not obscure jump targets. Tables and code can scroll within their own bounds, never force page overflow.
+No autoplay demos. Genuine console transcripts offer an optional replay, with a show-full-output control; reduced motion keeps static output. Highlight BLOCKED, WARNING, and INTENT with the AA-safe panel accent. Use native links, details, checkboxes and buttons. All substantive content is available without JavaScript. Selectable examples honor URL fragments; reduced motion disables movement, not functionality. Keyboard focus is a 2px terracotta outline with adequate offset. Sticky navigation must not obscure jump targets. Tables and code can scroll within their own bounds, never force page overflow.
 
 ## Content provenance
 

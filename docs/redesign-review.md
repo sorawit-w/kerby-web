@@ -54,3 +54,9 @@ Use keyboard navigation and native 200% zoom, reduced-motion preferences, and a 
 INTENT: code does transcript-first promotion with broad enforcement claims; the task expects a guarded path with explicit conditions and responsibilities; the spec in DESIGN.md describes the old transcript-first design.
 
 The approved redesign replaces that old design premise. No engine or SWE rule changes, new mascot artwork, or live execution claims were introduced. Rollback is a revert of the single redesign PR; no migration is required.
+
+## Review refinement: console and mascot
+
+Console output now offers opt-in word-by-word replay with an immediate “Show full output” control. Reduced motion leaves the complete static transcript. BLOCKED, WARNING, and INTENT use the existing AA-safe panel accent, including source-format and illustrative intent lines. Browser keyboard checks confirmed replay/stop behavior and rendered keyword color; the full check suite passes with transcript fidelity intact.
+
+The shared header and browser/touch icons now derive from the existing portrait. Retired full-body icon assets were removed. The original screenshot gallery above predates this small refinement.

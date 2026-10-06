@@ -7,6 +7,8 @@ import '@fontsource/geist/latin-500.css';
 import '@fontsource-variable/jetbrains-mono/wght.css';
 import '../styles/tokens.css';
 import '../styles/global.css';
+import { getImage } from 'astro:assets';
+import portrait from '../assets/kerby-hero.png';
 import { url as asset } from '../lib/url';
 
 interface Props {
@@ -14,6 +16,8 @@ interface Props {
   description: string;
 }
 const { title, description } = Astro.props;
+const favicon = await getImage({ src: portrait, width: 32, height: 32, format: 'png' });
+const touchIcon = await getImage({ src: portrait, width: 180, height: 180, format: 'png' });
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -25,8 +29,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" type="image/png" sizes="32x32" href={asset('favicon-32.png')} />
-    <link rel="apple-touch-icon" href={asset('apple-touch-icon.png')} />
+    <link rel="icon" type="image/png" sizes="32x32" href={favicon.src} />
+    <link rel="apple-touch-icon" href={touchIcon.src} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />

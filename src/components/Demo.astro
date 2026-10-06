@@ -1,4 +1,5 @@
 ---
+import ConsoleText from './ConsoleText.astro';
 import swe from '../data/swe.json';
 const TRANSCRIPTS = [
   `BLOCKED: git push --force / -f
@@ -25,7 +26,7 @@ const ids = ['force-push', 'env-overwrite', 'secret-scan'];
   <p class="eyebrow">HOOK CHECKS IN PRACTICE</p>
   <h2 id="demo-heading">A boundary you can inspect.</h2>
   <p>These genuine transcripts show specific checks. They do not establish that every instruction is enforced, or that every warning blocks an action.</p>
-  <div class="transcript-list">{TRANSCRIPTS.map((text, i) => <details open={i === 0}><summary>{labels[i]}</summary><p>{outcomes[i]}</p><pre tabindex="0" aria-label={`${labels[i]} transcript`} data-transcript={ids[i]}>{text}</pre></details>)}</div>
+  <div class="transcript-list">{TRANSCRIPTS.map((text, i) => <details open={i === 0}><summary>{labels[i]}</summary><p>{outcomes[i]}</p><button class="replay" hidden type="button">Replay output</button><pre tabindex="0" aria-label={`${labels[i]} transcript`} data-transcript={ids[i]}><ConsoleText text={text} /></pre></details>)}</div>
   <p class="source-note"><a href={`https://github.com/${swe.source_repo}/blob/${swe.source_sha}/README.md#what-it-looks-like-when-kerby-says-no`}>Read the original transcripts ↗</a> · Exact text from the pinned Kerby release.</p>
 </section>
 <style>
@@ -35,4 +36,11 @@ details { border-top:1px solid var(--structure); padding:1rem 0; }
 summary { cursor:pointer; font-weight:500; padding:.25rem 0; }
 pre { background:var(--panel-bg); color:var(--panel-text); padding:1.5rem; border-radius:6px; overflow:auto; font-size:.82rem; line-height:1.65; }
 .source-note { font-size:.85rem; color:var(--muted); }
+</style>
+
+<script>import '../scripts/verdicts.js';</script>
+<style>
+.replay { margin-bottom: .5rem; }
+pre :global(.reveal-word) { transition: opacity 80ms linear; }
+@media (prefers-reduced-motion: reduce) { pre :global(.reveal-word) { transition: none; } }
 </style>
