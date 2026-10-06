@@ -1,0 +1,117 @@
+name: kerby drift
+
+# The site pins kerby (KERBY_REF in deploy.yml) on purpose, so a kerby change
+# never breaks the deploy. The cost is that the site can fall behind unseen.
+# Weekly, this job checks the site against kerby main. If anything the site
+# shows has changed — a landing transcript, a swe fact, an anchored line — it
+# opens (or updates) one issue labeled kerby-drift. It never edits files or
+# opens a PR: moving the pin stays a human decision.
+
+on:
+  schedule:
+    - cron: '17 6 * * 1' # Mondays, 06:17 UTC
+  workflow_dispatch:
+    inputs:
+      against:
+        description: 'Compare against this kerby SHA instead of main (tests the issue path)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout kerby main
+        uses: actions/checkout@v4
+        with:
+          repository: sorawit-w/kerby
+          path: .kerby-src
+          fetch-depth: 0
+
+      - name: Compare the pin with kerby main
+        id: cmp
+        env:
+          AGAINST: ${{ inputs.against }}
+        run: |
+          pin=$(sed -nE 's/^[[:space:]]*KERBY_REF:[[:space:]]*([0-9a-f]{7,40})[[:space:]]*$/\1/p' .github/workflows/deploy.yml)
+          target="${AGAINST:-HEAD}"
+          case "$target" in
+            HEAD) ;;
+            *[!0-9a-f]*) echo "::error::'against' is not a hex SHA: '$target'"; exit 1 ;;
+          esac
+          pin=$(git -C .kerby-src rev-parse --verify "$pin^{commit}")
+          main=$(git -C .kerby-src rev-parse --verify "$target^{commit}")
+          git -C .kerby-src checkout -q "$main"
+          echo "pin=$pin" >> "$GITHUB_OUTPUT"
+          echo "main=$main" >> "$GITHUB_OUTPUT"
+          if [ "$pin" = "$main" ]; then
+            echo "same=true" >> "$GITHUB_OUTPUT"
+            echo "The pin equals the kerby commit checked — nothing to check."
+          fi
+
+      - name: Setup Bun
+        if: steps.cmp.outputs.same != 'true'
+        uses: oven-sh/setup-bun@v2
+
+      - name: Check the site against kerby main
+        if: steps.cmp.outputs.same != 'true'
+        id: check
+        env:
+          KERBY_REPO: ${{ github.workspace }}/.kerby-src
+          KERBY_REF: ${{ steps.cmp.outputs.main }}
+        run: |
+          bun install --frozen-lockfile
+          bun run build > /dev/null
+          set +e
+          bun scripts/check-copy.ts > "$RUNNER_TEMP/copy.txt" 2>&1; copy=$?
+          bun scripts/sync-swe.ts --check --drift > "$RUNNER_TEMP/swe.txt" 2>&1; swe=$?
+          set -e
+          cat "$RUNNER_TEMP/copy.txt" "$RUNNER_TEMP/swe.txt"
+          if [ "$copy" -ne 0 ] || [ "$swe" -ne 0 ]; then echo "drift=true" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Open or update the kerby-drift issue
+        if: steps.check.outputs.drift == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PIN: ${{ steps.cmp.outputs.pin }}
+          MAIN: ${{ steps.cmp.outputs.main }}
+        run: |
+          site=$(sed -nE 's/^  "version": "([^"]+)",$/\1/p' src/data/swe.json | head -1)
+          upstream=$(git -C .kerby-src show HEAD:skills/kerby/rulebooks/swe/rulebook.toml | sed -nE 's/^version = "([^"]+)"$/\1/p' | head -1)
+          {
+            echo "kerby main has moved past the site's pin, and something the site shows has changed."
+            echo
+            echo "| | kerby commit | swe |"
+            echo "|---|---|---|"
+            echo "| Site pin (\`KERBY_REF\`) | \`${PIN:0:7}\` | $site |"
+            echo "| kerby checked (main, unless a test run set another commit) | \`${MAIN:0:7}\` | $upstream |"
+            echo
+            echo "### check:copy (landing transcripts)"
+            echo '```'
+            cat "$RUNNER_TEMP/copy.txt"
+            echo '```'
+            echo
+            echo "### check:swe --drift (guide facts and anchors)"
+            echo '```'
+            cat "$RUNNER_TEMP/swe.txt"
+            echo '```'
+            echo
+            echo "To catch up: set \`KERBY_REF\` in \`.github/workflows/deploy.yml\` to the new commit, re-copy any changed transcript, run \`bun run sync:swe\`, update the guide text where an anchor moved, and run \`bun run check\`."
+            echo
+            echo "_Updated by the weekly kerby drift job: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID_"
+          } > "$RUNNER_TEMP/body.md"
+          gh label create kerby-drift --color E6DFD4 --description "kerby moved past the site's pin" --force
+          existing=$(gh issue list --label kerby-drift --state open --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue edit "$existing" --body-file "$RUNNER_TEMP/body.md"
+            echo "Updated issue #$existing"
+          else
+            gh issue create --title "kerby moved: the site's swe guide or landing demo is out of date" --label kerby-drift --body-file "$RUNNER_TEMP/body.md"
+          fi
