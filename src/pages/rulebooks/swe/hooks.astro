@@ -65,7 +65,7 @@ const count = (tier: string) => all.filter((h) => h.tier === tier).length;
             <dt>Runs</dt>
             <dd>{WHEN[h.matcher as string]}{h.from === 'base' && ' — from the base floor, under every rulebook'}</dd>
             <dt>Result</dt>
-            <dd>{p.effect === 'blocks' ? 'Blocks the action' : 'Warns only, never blocks'} · tier {h.tier}</dd>
+            <dd>{h.blocks ? 'Blocks the action' : 'Warns only, never blocks'} · tier {h.tier}</dd>
             <dt>Checks</dt>
             <dd>{h.checks.map((c) => <code>{c}</code>).reduce((acc: unknown[], c, i) => (i ? [...acc, ' ', c] : [c]), [])}</dd>
             <dt>What it does</dt>

@@ -32,6 +32,7 @@ const ANCHORS: { id: string; file: string; quote: string }[] = [
   { id: 'format-plan-waived', file: `${SWE}/BOOTSTRAP.md`, quote: 'plan: <files> — <change> — <check> (full plan waived: user opt-out "<quoted phrase>")' },
   { id: 'format-intent', file: `${SWE}/references/intent-gate.md`, quote: 'INTENT: code does <X>; the failing check/task expects <Y>; the spec (README/docs/docstring) says <Z>' },
   { id: 'format-skipped', file: `${SWE}/BOOTSTRAP.md`, quote: 'skipped: <what you did not build> — add when <trigger>' },
+  { id: 'skipped-none', file: `${SWE}/BOOTSTRAP.md`, quote: '`skipped: none`' },
   { id: 'format-outcome', file: `${SWE}/BOOTSTRAP.md`, quote: 'outcome: <case> — match | mismatch | not exercised' },
   { id: 'format-smallest', file: `${SWE}/workflows/feature.md`, quote: 'smallest: <the least you can build that fully satisfies the request>' },
   { id: 'format-deferring', file: `${SWE}/workflows/feature.md`, quote: 'deferring: <items, comma-separated> | none' },
@@ -60,6 +61,9 @@ const ANCHORS: { id: string; file: string; quote: string }[] = [
   { id: 'high-stakes-infra', file: `${SWE}/BOOTSTRAP.md`, quote: '**Infrastructure:**' },
   { id: 'high-stakes-ci', file: `${SWE}/BOOTSTRAP.md`, quote: '**CI/CD:**' },
   { id: 'high-stakes-traffic', file: `${SWE}/BOOTSTRAP.md`, quote: '**Production-traffic-shaping values:**' },
+  { id: 'recent-commits', file: `${SWE}/BOOTSTRAP.md`, quote: '`git log --oneline -20`' },
+  { id: 'costly-new-files', file: `${SWE}/BOOTSTRAP.md`, quote: 'Creating >3 new files' },
+  { id: 'costly-edited-files', file: `${SWE}/BOOTSTRAP.md`, quote: 'Modifying >5 existing files in one pass' },
 ];
 
 function skip(why: string): never {
@@ -106,6 +110,7 @@ function hooksOf(checks: Check[]) {
     event: cs[0].event,
     matcher: cs[0].matcher,
     tier: cs.some((c) => c.floor) ? 'locked' : cs.some((c) => c.severity === 'block') ? 'recommended' : 'optional',
+    blocks: cs.some((c) => c.severity === 'block'),
     checks: cs.map((c) => c.id),
   }));
 }
@@ -142,7 +147,14 @@ const data = {
   version: swe.version,
   kerby_version: show('skills/kerby/VERSION').trim(),
   description: swe.description,
-  numbers: { planThreshold: num('plan-threshold'), approvalGrade: num('approval-grade') },
+  numbers: {
+    planThreshold: num('plan-threshold'),
+    approvalGrade: num('approval-grade'),
+    recentCommits: num('recent-commits'),
+    costlyNewFiles: num('costly-new-files'),
+    costlyEditedFiles: num('costly-edited-files'),
+    maxGrade: Number(quote('ladder-critical').match(/–(\d+)\)/)![1]),
+  },
   routes: quote('format-complexity').match(/route: <([^>]+)>/)![1].split(' | '),
   checks: swe.check as Check[],
   hooks: hooksOf(swe.check),

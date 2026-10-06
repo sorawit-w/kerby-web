@@ -5,13 +5,17 @@ import Tag from '../../../components/guide/Tag.astro';
 import swe from '../../../data/swe.json';
 import { HOOKS, plain } from '../../../data/swe-prose';
 import { url } from '../../../lib/url';
+import { STEPS } from '../../../data/lifecycle';
 
 const { planThreshold, approvalGrade } = swe.numbers;
 const page = (p: string) => url(`rulebooks/swe/${p}`);
 
 // Blocking hooks: base's secret scan first (every rulebook has it), then swe's.
-const blocking = [...swe.base.hooks, ...swe.hooks].filter((h) => HOOKS[h.script].effect === 'blocks');
-const warning = swe.hooks.filter((h) => HOOKS[h.script].effect === 'warns');
+const blocking = [
+  ...swe.base.hooks.map((h) => ({ ...h, base: true })),
+  ...swe.hooks.map((h) => ({ ...h, base: false })),
+].filter((h) => h.blocks);
+const warning = swe.hooks.filter((h) => !h.blocks);
 
 // Rules no hook can check — they live in the conversation, not at a tool call.
 const INSTRUCTION_RULES = [
@@ -72,7 +76,7 @@ const INSTRUCTION_RULES = [
         agent runs the checks and shows you the result, never “should work”.
       </li>
     </ul>
-    <p><a href={page('lifecycle/')}>See all 13 steps, from install to the final report</a></p>
+    <p><a href={page('lifecycle/')}>See all {STEPS.length} steps, from install to the final report</a></p>
   </section>
 
   <section aria-labelledby="blocks">
@@ -89,7 +93,7 @@ const INSTRUCTION_RULES = [
         <tbody>
           {blocking.map((h) => (
             <tr>
-              <td><span class="chip">{h.script}</span></td>
+              <td><span class="chip">{h.script}</span>{h.base && <span class="from"> from base</span>}</td>
               <td>{HOOKS[h.script].stops}</td>
               <td>{h.tier}</td>
             </tr>
@@ -105,7 +109,7 @@ const INSTRUCTION_RULES = [
 
   <section aria-labelledby="costs">
     <h2 id="costs">What it costs</h2>
-    <p>Every task starts with these lines, even a one-word fix:</p>
+    <p>Every change starts with these lines, even a one-word fix:</p>
     <Lines kind="format" ids={['format-complexity', 'format-rung', 'format-plan']} />
     <ul class="points">
       <li>
@@ -193,8 +197,8 @@ const INSTRUCTION_RULES = [
   <section aria-labelledby="more">
     <h2 id="more">Read next</h2>
     <ul class="next">
-      <li><a href={page('lifecycle/')}><strong>Lifecycle</strong><span>What swe does at each of 13 steps, from install to the final report.</span></a></li>
-      <li><a href={page('workflows/')}><strong>Workflows</strong><span>The {swe.routes.length} routes, the 1–10 grade, and what happens to your kind of task.</span></a></li>
+      <li><a href={page('lifecycle/')}><strong>Lifecycle</strong><span>What swe does at each of {STEPS.length} steps, from install to the final report.</span></a></li>
+      <li><a href={page('workflows/')}><strong>Workflows</strong><span>The {swe.routes.length} routes, the 1–{swe.numbers.maxGrade} grade, and what happens to your kind of task.</span></a></li>
       <li><a href={page('hooks/')}><strong>Hooks</strong><span>Each hook: what it stops, what it misses, and how to turn it off.</span></a></li>
       <li><a href={page('reference/')}><strong>Reference</strong><span>Commands, the files swe keeps, and a glossary.</span></a></li>
     </ul>
@@ -204,6 +208,12 @@ const INSTRUCTION_RULES = [
 <style>
   .h-box {
     font-size: 1.15rem;
+  }
+
+  .from {
+    font-size: 0.85rem;
+    color: var(--muted);
+    white-space: nowrap;
   }
 
   .points {

@@ -11,7 +11,6 @@ import swe from './swe.json';
 
 export type HookProse = {
   name: string;
-  effect: 'blocks' | 'warns';
   stops: string;
   does: string;
   gaps: string;
@@ -23,7 +22,6 @@ export const HOOKS: Record<string, HookProse> = {
   'protect-git.sh': {
     stops: 'Force push, history rewrites, wholesale discards, and commits on a protected branch.',
     name: 'Destructive git and protected branches',
-    effect: 'blocks',
     does:
       'Stops git commands that can lose work: force push, push to a protected branch, reset --hard, clean -f, branch -D, and checkout . or restore . that throw away all local changes. It also stops a commit while you are on a protected branch.',
     gaps:
@@ -34,7 +32,6 @@ export const HOOKS: Record<string, HookProse> = {
   'protect-env.sh': {
     stops: 'Editing or overwriting an existing .env file.',
     name: 'Existing .env files',
-    effect: 'blocks',
     does:
       'Stops the agent from editing or overwriting an existing .env file. git cannot restore a real .env, because it is not tracked. The agent gives you the variable names to add yourself. Template files such as .env.example are allowed.',
     gaps: 'It watches the Edit and Write tools. A shell command that writes to .env directly is not seen.',
@@ -43,7 +40,6 @@ export const HOOKS: Record<string, HookProse> = {
   'status-provenance-check.sh': {
     stops: 'A commit whose STATUS.md states a version, a SHA, or a PR number.',
     name: 'Version numbers in STATUS.md',
-    effect: 'blocks',
     does:
       'Stops a commit when .kerby/STATUS.md states a version, a commit SHA, or a PR or issue number. STATUS.md says where the work stands. Git and the log already record what happened.',
     gaps:
@@ -53,7 +49,6 @@ export const HOOKS: Record<string, HookProse> = {
   'warn-env-read.sh': {
     stops: 'Nothing. It reminds the agent not to print .env secrets.',
     name: 'Reading .env files',
-    effect: 'warns',
     does: 'When the agent reads a .env file, it reminds the agent never to print the secret values.',
     gaps: 'It watches the Read tool only. cat .env in a shell is not seen.',
     off: 'CODING_RULES_HOOK_DISABLED=warn-env-read',
@@ -61,7 +56,6 @@ export const HOOKS: Record<string, HookProse> = {
   'route-high-stakes.sh': {
     stops: 'Nothing. It reminds the agent that high-stakes files need the full workflow.',
     name: 'High-stakes files',
-    effect: 'warns',
     does:
       'When the agent edits a high-stakes file — migrations, auth, payments, infrastructure, CI — it reminds the agent that this change needs the full feature or bugfix workflow, not quick-task.',
     gaps: 'Values that shape production traffic, such as timeouts or rate limits, have no file pattern. That category stays the agent’s judgment.',
@@ -70,7 +64,6 @@ export const HOOKS: Record<string, HookProse> = {
   'hollow-test-check.sh': {
     stops: 'Nothing. It flags skipped tests and reminds the agent to run the gates.',
     name: 'Hollow tests and gate reminder',
-    effect: 'warns',
     does:
       'At commit time, it counts focused or skipped tests (.only, .skip) and always-true assertions in the staged test lines, and reminds the agent to run lint, tests and build. It never stops the commit.',
     gaps: 'It cannot see fakes that only show up when tests run, such as a test run that matched zero tests.',
@@ -79,12 +72,11 @@ export const HOOKS: Record<string, HookProse> = {
   'pre-commit-check.sh': {
     stops: 'A commit that contains a secret, such as an API key or token.',
     name: 'Secrets in staged changes (from base)',
-    effect: 'blocks',
     does:
       'Scans what you are about to commit for secrets such as API keys and tokens. It uses gitleaks or betterleaks when installed, and a smaller built-in pattern list when not. This hook belongs to the base floor, so every rulebook has it.',
     gaps:
       'It reads the commit command before it runs. git add x && git commit in one command is not fully seen. The optional git pre-commit hook covers that case.',
-    off: 'It cannot be turned off.',
+    off: 'No variable turns it off. It is a security floor; the only way to stop it is to remove it from your settings file.',
   },
 };
 
@@ -158,14 +150,14 @@ export const GLOSSARY: Term[] = [
   { id: 'instructions-only', term: 'instructions only', meaning: 'A rule the agent follows because it read it. Nothing stops the agent if it does not. kerby’s own docs call this behavioral.' },
   { id: 'tier', term: 'tier', meaning: 'How a hook is offered at install. Locked: comes with any hook install and cannot be skipped on its own. Recommended: a blocking hook you can skip, and kerby status keeps saying it is not enforcing. Optional: a hook that only warns, which you can skip.' },
   { id: 'floor', term: 'floor', meaning: 'The base rules every rulebook gets, such as the secret scan. No rulebook can turn them off.' },
-  { id: 'grade', term: 'grade', meaning: 'How big a task is, from 1 to 10. The grade decides how much planning is needed.' },
+  { id: 'grade', term: 'grade', meaning: `How big a task is, from 1 to ${swe.numbers.maxGrade}. The grade decides how much planning is needed.` },
   { id: 'route', term: 'route', meaning: 'The workflow a task follows, such as feature or bugfix. The task type picks it.' },
   { id: 'rung', term: 'rung', meaning: 'A step on the decision ladder: do I need this at all, does the standard library do it, … only then write new code.' },
   { id: 'plan-gate', term: 'plan gate', meaning: 'The rule that the agent states its plan before the first edit.' },
   { id: 'intent-gate', term: 'intent gate', meaning: 'Before changing behavior, the agent writes what the code does, what the test expects, and what the docs say. If they disagree, it stops and tells you.' },
   { id: 'protected-branch', term: 'protected branch', meaning: 'A branch the agent never works on directly, such as main.' },
   { id: 'quality-gate', term: 'quality gate', meaning: 'The checks that prove work is done: lint, build and tests, in three sizes — Quick, Standard and Full.' },
-  { id: 'compaction', term: 'compaction', meaning: 'When a long conversation is shortened to fit the model’s memory. Rules read earlier can be lost, so kerby reloads them.' },
+  { id: 'compaction', term: 'compaction', meaning: 'When a long conversation is shortened to fit the model’s context window. Rules read earlier can be lost, so kerby reloads them.' },
 ];
 
 // Build-time coverage: anything swe.json names must be described here.
@@ -188,3 +180,23 @@ export function anchor(id: string): string {
 
 // Markdown-free text of an anchor, for prose and table cells.
 export const plain = (id: string) => anchor(id).replace(/\*\*/g, '').replace(/`/g, '');
+
+// An example line built FROM a format: each <placeholder> in the anchored
+// format is replaced, in order, by one value. A format that gains or loses a
+// placeholder upstream fails the build here instead of leaving a stale
+// example. `pick` chooses one option from a literal list in the format, such
+// as "match | mismatch | not exercised"; it fails if that list is gone.
+export function fill(id: string, values: string[], pick?: { from: string; to: string }): string {
+  const format = anchor(id);
+  const holes = format.match(/<[^<>]+>/g) ?? [];
+  if (holes.length !== values.length) {
+    throw new Error(`swe guide: format "${id}" has ${holes.length} placeholders, example gives ${values.length}`);
+  }
+  let i = 0;
+  let line = format.replace(/<[^<>]+>/g, () => values[i++]);
+  if (pick) {
+    if (!line.includes(pick.from)) throw new Error(`swe guide: format "${id}" no longer contains "${pick.from}"`);
+    line = line.replace(pick.from, pick.to);
+  }
+  return line;
+}

@@ -6,7 +6,11 @@
   "description": "Coding guardrails: clarity over cleverness, safety over speed, never leave the repo broken — nothing unproven passes the gate.",
   "numbers": {
     "planThreshold": 4,
-    "approvalGrade": 7
+    "approvalGrade": 7,
+    "recentCommits": 20,
+    "costlyNewFiles": 3,
+    "costlyEditedFiles": 5,
+    "maxGrade": 10
   },
   "routes": [
     "investigate",
@@ -164,6 +168,7 @@
       "event": "PreToolUse",
       "matcher": "Bash",
       "tier": "locked",
+      "blocks": true,
       "checks": [
         "destructive-git",
         "protected-branch-commit"
@@ -175,6 +180,7 @@
       "event": "PreToolUse",
       "matcher": "Edit|Write",
       "tier": "recommended",
+      "blocks": true,
       "checks": [
         "protect-env"
       ]
@@ -185,6 +191,7 @@
       "event": "PreToolUse",
       "matcher": "Read",
       "tier": "optional",
+      "blocks": false,
       "checks": [
         "env-read-warning"
       ]
@@ -195,6 +202,7 @@
       "event": "PreToolUse",
       "matcher": "Edit|Write",
       "tier": "optional",
+      "blocks": false,
       "checks": [
         "high-stakes-routing"
       ]
@@ -205,6 +213,7 @@
       "event": "PreToolUse",
       "matcher": "Bash",
       "tier": "optional",
+      "blocks": false,
       "checks": [
         "hollow-test-heuristic"
       ]
@@ -215,6 +224,7 @@
       "event": "PreToolUse",
       "matcher": "Bash",
       "tier": "recommended",
+      "blocks": true,
       "checks": [
         "status-provenance"
       ]
@@ -241,6 +251,7 @@
         "event": "PreToolUse",
         "matcher": "Bash",
         "tier": "locked",
+        "blocks": true,
         "checks": [
           "secrets-staged"
         ]
@@ -277,6 +288,11 @@
       "id": "format-skipped",
       "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
       "quote": "skipped: <what you did not build> — add when <trigger>"
+    },
+    {
+      "id": "skipped-none",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "`skipped: none`"
     },
     {
       "id": "format-outcome",
@@ -417,6 +433,21 @@
       "id": "high-stakes-traffic",
       "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
       "quote": "**Production-traffic-shaping values:**"
+    },
+    {
+      "id": "recent-commits",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "`git log --oneline -20`"
+    },
+    {
+      "id": "costly-new-files",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "Creating >3 new files"
+    },
+    {
+      "id": "costly-edited-files",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "Modifying >5 existing files in one pass"
     }
   ]
 }

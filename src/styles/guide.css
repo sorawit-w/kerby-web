@@ -5,6 +5,16 @@
 
 /* --- shell --------------------------------------------------------------- */
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .skip {
   position: absolute;
   left: 1rem;
@@ -269,11 +279,9 @@
 @keyframes guide-rise {
   from {
     opacity: 0;
-    transform: translateY(4px);
   }
   to {
     opacity: 1;
-    transform: none;
   }
 }
 
@@ -356,7 +364,7 @@
 
 .map li {
   font-size: 0.95rem;
-  animation: guide-rise 220ms cubic-bezier(0.23, 1, 0.32, 1);
+  animation: guide-rise 200ms ease-out;
 }
 
 .map li.moved {
@@ -415,7 +423,6 @@
   padding-left: 0.5rem;
   border-left: 1.5px solid var(--structure);
   line-height: 1.35;
-  max-width: 45%;
 }
 
 .ladder .mark.approval {
@@ -468,7 +475,7 @@
 }
 
 .stepper.is-enhanced .step.entering {
-  animation: guide-rise 220ms cubic-bezier(0.23, 1, 0.32, 1);
+  animation: guide-rise 200ms ease-out;
 }
 
 .rail {
@@ -596,7 +603,7 @@
 }
 
 .picker.is-enhanced .choice.entering {
-  animation: guide-rise 220ms cubic-bezier(0.23, 1, 0.32, 1);
+  animation: guide-rise 200ms ease-out;
 }
 
 .picker .facts {

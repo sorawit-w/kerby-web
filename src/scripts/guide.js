@@ -48,9 +48,10 @@ function stepper(root) {
 
   const back = el('button', { type: 'button', class: 'btn' }, '← Back');
   const next = el('button', { type: 'button', class: 'btn' }, 'Next →');
-  const status = el('p', { class: 'status', 'aria-live': 'polite' });
+  const status = el('p', { class: 'status' });
+  const announce = el('p', { class: 'visually-hidden', 'aria-live': 'polite' });
   const controls = el('div', { class: 'controls' });
-  controls.append(back, status, next);
+  controls.append(back, status, next, announce);
   back.addEventListener('click', () => go(current - 1, true));
   next.addEventListener('click', () => go(current + 1, true));
 
@@ -73,14 +74,23 @@ function stepper(root) {
       if (j === i) b.setAttribute('aria-current', 'step');
       else b.removeAttribute('aria-current');
     });
+    // Disabling the focused button drops focus to <body>; hand it across first.
+    if (i === 0 && document.activeElement === back) next.focus();
+    if (i === steps.length - 1 && document.activeElement === next) back.focus();
     back.disabled = i === 0;
     next.disabled = i === steps.length - 1;
     status.textContent = `Step ${i + 1} of ${steps.length}: ${steps[i].dataset.title}`;
-    if (user) history.replaceState(null, '', `#${steps[i].id}`);
+    if (user) {
+      announce.textContent = status.textContent; // announce changes, not the first render
+      history.replaceState(null, '', `#${steps[i].id}`);
+    }
   }
 
-  const fromHash = steps.findIndex((s) => `#${s.id}` === location.hash);
-  go(fromHash >= 0 ? fromHash : 0, false);
+  const fromHash = () => steps.findIndex((s) => `#${s.id}` === location.hash);
+  go(Math.max(fromHash(), 0), false);
+  window.addEventListener('hashchange', () => {
+    if (fromHash() >= 0) go(fromHash(), true);
+  });
 }
 
 function picker(root) {
@@ -89,18 +99,20 @@ function picker(root) {
   const bar = el('div', { class: 'choices', role: 'group', 'aria-label': root.dataset.picker || 'Choose' });
   const buttons = choices.map((choice, i) => {
     const b = el('button', { type: 'button', class: 'btn', 'aria-controls': choice.id, 'aria-pressed': 'false' }, choice.dataset.label);
-    b.addEventListener('click', () => pick(i));
+    b.addEventListener('click', () => pick(i, true));
     bar.append(b);
     return b;
   });
-  root.prepend(bar);
+  const live = el('p', { class: 'visually-hidden', 'aria-live': 'polite' });
+  root.prepend(bar, live);
   root.classList.add('is-enhanced');
 
-  function pick(i) {
+  function pick(i, user) {
     reveal(choices, i);
     buttons.forEach((b, j) => b.setAttribute('aria-pressed', String(j === i)));
+    if (user) live.textContent = `Showing: ${choices[i].dataset.label}`;
   }
-  pick(0);
+  pick(0, false);
 }
 
 if (!reduce) {
