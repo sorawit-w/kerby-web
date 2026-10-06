@@ -125,7 +125,7 @@ const PHASES = STEPS.reduce<{ name: string; steps: number[] }[]>((acc, step, i) 
             </h3>
             <p class="phase">{s.phase}</p>
             {s.body.map((p) => <p>{p}</p>)}
-            <dl class="checkpoint facts">
+            <dl class="facts">
               <dt>Condition</dt><dd>{s.condition}</dd>
               <dt>Evidence</dt><dd>{s.evidence}</dd>
               <dt>If unmet</dt><dd>{s.ifUnmet}</dd>

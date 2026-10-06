@@ -600,22 +600,30 @@
   animation: guide-rise 200ms ease-out;
 }
 
-.picker .facts {
+/* Facts are subordinate to their enclosing step or section, not a new boundary. */
+.guide .facts {
   display: grid;
-  grid-template-columns: max-content 1fr;
-  gap: 0.35rem 1rem;
-  margin: 0.75rem 0;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: 1rem 1.5rem;
+  margin: 1.5rem 0;
 }
 
-.picker .facts dt {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--structure);
-  padding-top: 0.15rem;
+.guide .facts dt {
+  font-weight: 500;
+  color: var(--secondary);
 }
 
-.picker .facts dd {
+.guide .facts dd {
   margin: 0;
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .guide .facts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.25rem;
+  }
+  .guide .facts dt:not(:first-child) { margin-top: 0.75rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
