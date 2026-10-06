@@ -1,9 +1,12 @@
 // swe guide enhancements. The HTML is complete without this script: every
-// lifecycle step and every task is rendered as a list. This only turns those
-// lists into a one-at-a-time stepper and a task picker. Under
-// prefers-reduced-motion it does nothing — the full lists are the
-// reduced-motion rendering, as the plan requires. The hooks switch is CSS
-// only (:has) and needs no script.
+// lifecycle step is rendered top-down, the step nav is plain #step-N links,
+// and every task is rendered as a list. This script adds two things:
+//   - stepnav: marks the step you are reading in the sticky step nav, and
+//     keeps that number in view when the nav scrolls sideways on a phone. It
+//     runs under reduced motion too: a position mark is not an animation.
+//   - picker: turns the task list into one-at-a-time choices. Under
+//     prefers-reduced-motion it does nothing; the full list is that rendering.
+// The hooks switch is CSS only (:has) and needs no script.
 
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -24,73 +27,61 @@ function reveal(items, index) {
   items[index].classList.add('entering');
 }
 
-function stepper(root) {
-  const steps = [...root.querySelectorAll('[data-step]')];
-  if (steps.length < 2) return;
-  let current = 0;
+function stepnav(nav) {
+  const links = [...nav.querySelectorAll('a[href^="#step-"]')];
+  const steps = links.map((a) => document.getElementById(a.hash.slice(1))).filter(Boolean);
+  if (steps.length !== links.length || !steps.length) return;
+  let current = -1;
 
-  // Rail: one numbered button per step, grouped by phase.
-  const rail = el('div', { class: 'rail', role: 'group', 'aria-label': 'Jump to a step' });
-  const buttons = [];
-  let group = null;
-  steps.forEach((step, i) => {
-    const phase = step.dataset.phase;
-    if (!group || group.dataset.phase !== phase) {
-      group = el('div', { class: 'group', 'data-phase': phase });
-      group.append(el('span', { class: 'group-name' }, phase), el('div', { class: 'dots' }));
-      rail.append(group);
-    }
-    const b = el('button', { type: 'button', 'aria-label': `Step ${i + 1}: ${step.dataset.title}` }, String(i + 1));
-    b.addEventListener('click', () => go(i, true));
-    group.querySelector('.dots').append(b);
-    buttons.push(b);
-  });
+  // Anchor jumps land below the pinned nav: CSS reads --stepnav-h for
+  // scroll-margin-top. Re-measured on every update, so a jump target (height
+  // + 12px) always sits above the "current" line (height + 24px).
+  let height = 0;
+  const measure = () => {
+    if (nav.offsetHeight === height) return;
+    height = nav.offsetHeight;
+    document.documentElement.style.setProperty('--stepnav-h', `${height}px`);
+  };
 
-  const back = el('button', { type: 'button', class: 'btn' }, '← Back');
-  const next = el('button', { type: 'button', class: 'btn' }, 'Next →');
-  const status = el('p', { class: 'status' });
-  const announce = el('p', { class: 'visually-hidden', 'aria-live': 'polite' });
-  const controls = el('div', { class: 'controls' });
-  controls.append(back, status, next, announce);
-  back.addEventListener('click', () => go(current - 1, true));
-  next.addEventListener('click', () => go(current + 1, true));
-
-  root.prepend(rail);
-  root.append(controls);
-  root.classList.add('is-enhanced');
-
-  root.addEventListener('keydown', (e) => {
-    if (e.target.closest('input, textarea')) return;
-    if (e.key === 'ArrowRight') go(current + 1, true);
-    if (e.key === 'ArrowLeft') go(current - 1, true);
-  });
-
-  function go(i, user) {
-    if (i < 0 || i >= steps.length) return;
-    current = i;
-    reveal(steps, i);
-    buttons.forEach((b, j) => {
-      b.classList.toggle('done', j < i);
-      if (j === i) b.setAttribute('aria-current', 'step');
-      else b.removeAttribute('aria-current');
+  function update() {
+    measure();
+    const line = height + 24; // a step is "current" once its top passes under the nav
+    let i = -1;
+    steps.forEach((step, j) => {
+      if (step.getBoundingClientRect().top <= line) i = j;
     });
-    // Disabling the focused button drops focus to <body>; hand it across first.
-    if (i === 0 && document.activeElement === back) next.focus();
-    if (i === steps.length - 1 && document.activeElement === next) back.focus();
-    back.disabled = i === 0;
-    next.disabled = i === steps.length - 1;
-    status.textContent = `Step ${i + 1} of ${steps.length}: ${steps[i].dataset.title}`;
-    if (user) {
-      announce.textContent = status.textContent; // announce changes, not the first render
-      history.replaceState(null, '', `#${steps[i].id}`);
+    // At the very bottom a short last step can never reach the line.
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) i = steps.length - 1;
+    nav.classList.toggle('is-stuck', nav.getBoundingClientRect().top <= 0 && i >= 0);
+    if (i === current) return;
+    current = i;
+    links.forEach((a, j) => {
+      if (j === i) a.setAttribute('aria-current', 'step');
+      else a.removeAttribute('aria-current');
+    });
+    // On a phone the numbers scroll sideways: keep the current one in view.
+    if (i >= 0 && nav.scrollWidth > nav.clientWidth) {
+      const a = links[i].getBoundingClientRect();
+      const n = nav.getBoundingClientRect();
+      nav.scrollTo({
+        left: nav.scrollLeft + a.left - n.left - (n.width - a.width) / 2,
+        behavior: reduce ? 'auto' : 'smooth',
+      });
     }
   }
 
-  const fromHash = () => steps.findIndex((s) => `#${s.id}` === location.hash);
-  go(Math.max(fromHash(), 0), false);
-  window.addEventListener('hashchange', () => {
-    if (fromHash() >= 0) go(fromHash(), true);
-  });
+  let queued = false;
+  const onScroll = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      update();
+    });
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  update();
 }
 
 function picker(root) {
@@ -115,7 +106,5 @@ function picker(root) {
   pick(0, false);
 }
 
-if (!reduce) {
-  document.querySelectorAll('[data-stepper]').forEach(stepper);
-  document.querySelectorAll('[data-picker]').forEach(picker);
-}
+document.querySelectorAll('[data-stepnav]').forEach(stepnav);
+if (!reduce) document.querySelectorAll('[data-picker]').forEach(picker);

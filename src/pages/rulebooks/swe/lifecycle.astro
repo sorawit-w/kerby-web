@@ -6,6 +6,13 @@ import { STEPS } from '../../../data/lifecycle';
 import swe from '../../../data/swe.json';
 import { url } from '../../../lib/url';
 
+// Phases in step order, each with the step numbers it holds — for the nav.
+const PHASES = STEPS.reduce<{ name: string; steps: number[] }[]>((acc, step, i) => {
+  const last = acc[acc.length - 1];
+  if (last && last.name === step.phase) last.steps.push(i + 1);
+  else acc.push({ name: step.phase, steps: [i + 1] });
+  return acc;
+}, []);
 ---
 
 <Guide
@@ -16,15 +23,31 @@ import { url } from '../../../lib/url';
     <p class="lead">What swe asks of the agent at each step, from install to the final report.</p>
     <p>
       There are {STEPS.length} steps in four phases. Each step shows what swe asks for, the line the
-      agent must write, and whether a hook checks it. Use Next and Back, the numbered buttons, or the
-      arrow keys.
+      agent must write, and whether a hook checks it. The step numbers stay at the top as you scroll;
+      select one to jump to it.
     </p>
 
     <h2 class="steps-h">The {STEPS.length} steps</h2>
-    <div class="stepper" data-stepper>
+    <div class="stepper">
+      <nav class="stepnav" aria-label="Steps" data-stepnav>
+        {PHASES.map((phase) => (
+          <div class="group">
+            <span class="group-name">{phase.name}</span>
+            <ol class="nums">
+              {phase.steps.map((n) => (
+                <li>
+                  <a href={`#step-${n}`} title={STEPS[n - 1].title}>
+                    <span class="visually-hidden">Step </span>{n}<span class="visually-hidden">: {STEPS[n - 1].title}</span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))}
+      </nav>
       <ol class="steps">
         {STEPS.map((s, i) => (
-          <li class="step" data-step data-title={s.title} data-phase={s.phase} id={`step-${i + 1}`}>
+          <li class="step" data-step id={`step-${i + 1}`}>
             <h3>
               <span class="num">{i + 1}</span>
               {s.title}

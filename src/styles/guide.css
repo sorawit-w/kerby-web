@@ -429,7 +429,13 @@
   border-left-color: var(--accent);
 }
 
-/* --- stepper and picker (enhanced by scripts/guide.js) -------------------- */
+/* --- lifecycle: every step top-down, with a sticky step nav ------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
 
 .stepper .steps {
   list-style: none;
@@ -437,12 +443,16 @@
   margin: 0;
 }
 
-/* Step numbers are rendered, not CSS counters: a counter skips the steps the
-   enhanced stepper hides, so every visible step would read "1". */
 .stepper .step {
   border-top: 1px solid var(--border);
   padding: 1.5rem 0;
   max-width: none;
+  /* A jump to #step-N lands below the pinned nav; guide.js measures it. */
+  scroll-margin-top: calc(var(--stepnav-h, 5rem) + 0.75rem);
+}
+
+.stepper .step:first-child {
+  border-top: 0;
 }
 
 .stepper .step h3 {
@@ -469,85 +479,98 @@
   color: var(--muted);
 }
 
-.stepper.is-enhanced .step {
-  border-top: 0;
-  padding-top: 0.5rem;
-}
-
-.stepper.is-enhanced .step.entering {
-  animation: guide-rise 200ms ease-out;
-}
-
-.rail {
+/* Sticky within .stepper only: it pins while the steps scroll past, then
+   leaves with them. Plain links, so it works without JS; guide.js adds the
+   "you are here" mark (aria-current) as you scroll. */
+.stepnav {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--bg);
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem 1.5rem;
-  margin: 0 0 1.25rem;
-  padding-bottom: 1rem;
+  gap: 0.75rem 1.5rem;
+  padding: 0.75rem 0;
   border-bottom: 1px solid var(--border);
 }
 
-.rail .group {
-  display: grid;
-  gap: 0.4rem;
+.stepnav.is-stuck {
+  border-bottom-color: var(--structure);
 }
 
-.rail .group-name {
+.stepnav .group {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.stepnav .group-name {
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.06em;
   color: var(--muted);
 }
 
-.rail .dots {
+.stepnav .nums {
+  list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
   gap: 0.35rem;
 }
 
-.rail button {
+.stepnav a {
   width: 1.75rem;
   height: 1.75rem;
   display: grid;
   place-items: center;
-  padding: 0;
   font-family: var(--font-mono);
   font-size: 0.75rem;
   color: var(--secondary);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 6px;
-  cursor: pointer;
+  text-decoration: none;
   transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.rail button:hover {
+.stepnav a:hover {
   border-color: var(--structure);
 }
 
-.rail button.done {
-  color: var(--muted);
-}
-
-.rail button[aria-current='step'] {
+.stepnav a[aria-current='step'] {
   color: var(--text);
   border: 1.5px solid var(--accent);
   transform: translateY(-2px);
 }
 
-.controls {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border);
-}
+/* Phones: one row of numbers that scrolls sideways, so the pinned bar stays
+   short. Phase names are dropped here; each step still shows its phase. */
+@media (max-width: 639px) {
+  .stepnav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 0.35rem;
+    padding: 0.6rem 0;
+    scrollbar-width: none;
+  }
 
-.controls .status {
-  font-size: 0.9rem;
-  color: var(--muted);
-  text-align: center;
+  .stepnav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .stepnav .group,
+  .stepnav .nums,
+  .stepnav li {
+    display: contents;
+  }
+
+  .stepnav .group-name {
+    display: none;
+  }
+
+  .stepnav a {
+    flex: none;
+  }
 }
 
 .guide button.btn {
@@ -626,13 +649,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .map li,
-  .stepper .step.entering,
   .picker .choice.entering {
     animation: none;
   }
 
   .map .switch input::after,
-  .rail button,
+  .stepnav a,
   .guide button.btn {
     transition: none;
   }
