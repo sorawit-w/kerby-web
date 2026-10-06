@@ -76,6 +76,24 @@ const ANCHORS: { id: string; file: string; quote: string }[] = [
   { id: 'cmd-install', file: 'skills/kerby/README.md', quote: '/kerby install # persistent per-project setup' },
   { id: 'cmd-prepare', file: 'skills/kerby/README.md', quote: '/kerby swe prepare # onboard an existing repo (populate context)' },
   { id: 'cmd-audit', file: 'skills/kerby/README.md', quote: '/kerby swe audit # conformance audit → HTML report (incremental)' },
+  // How kerby (the engine) treats swe: the status panel format, the trust
+  // prompt, fail-closed loading, and real manifest blocks the guide quotes.
+  { id: 'status-loaded', file: 'skills/kerby/SKILL.md', quote: '**kerby: loaded.** Detected `<id list>` markers in current context.' },
+  { id: 'status-row', file: 'skills/kerby/SKILL.md', quote: '<id> — <kind> — declared: <enforcement> — effective: <enforcement>' },
+  { id: 'status-unregistered', file: 'skills/kerby/SKILL.md', quote: 'not registered (behavioral only)' },
+  { id: 'trust-prompt', file: 'skills/kerby/SKILL.md', quote: 'Approve and pin? [y/n]' },
+  { id: 'fail-closed', file: 'skills/kerby/SKILL.md', quote: 'If the loader cannot complete — validator crash, invalid manifest, unreadable declared file — the rules are NOT loaded' },
+  {
+    id: 'toml-destructive-git',
+    file: `${SWE}/rulebook.toml`,
+    quote: 'id = "destructive-git"\nkind = "code"\nneeds = ["branch"]\nenforcement = "hard"\nenforcer = "hooks/protect-git.sh"\nevent = "PreToolUse"\nmatcher = "Bash"\nseverity = "block"\nfloor = true',
+  },
+  {
+    id: 'toml-intent-gate',
+    file: `${SWE}/rulebook.toml`,
+    quote: 'id = "intent-gate-on-behavior-change"\nkind = "prose"\nbody = "references/intent-gate.md"\nenforcement = "behavioral"\nseverity = "block"\ntoken_cost = "low"',
+  },
+  { id: 'toml-audit', file: `${SWE}/rulebook.toml`, quote: 'name = "audit"\nbody = "commands/audit.md"' },
 ];
 
 function skip(why: string): never {
@@ -171,7 +189,7 @@ const data = {
   checks: swe.check as Check[],
   hooks: hooksOf(swe.check),
   commands: swe.command,
-  base: { version: base.version, hooks: hooksOf(base.check) },
+  base: { version: base.version, hooks: hooksOf(base.check), checks: base.check as Check[] },
   anchors,
 };
 

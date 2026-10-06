@@ -1,9 +1,10 @@
 ---
 import Guide from '../../../layouts/Guide.astro';
 import Lines from '../../../components/guide/Lines.astro';
+import Manifest from '../../../components/guide/Manifest.astro';
 import Tag from '../../../components/guide/Tag.astro';
 import swe from '../../../data/swe.json';
-import { HOOKS, plain } from '../../../data/swe-prose';
+import { BASE_RULES, HOOKS, plain } from '../../../data/swe-prose';
 import { url } from '../../../lib/url';
 import { STEPS } from '../../../data/lifecycle';
 
@@ -16,6 +17,11 @@ const blocking = [
   ...swe.hooks.map((h) => ({ ...h, base: false })),
 ].filter((h) => h.blocks);
 const warning = swe.hooks.filter((h) => !h.blocks);
+
+// How swe is built, for the "How swe works with kerby" section. Counts only.
+const prose = swe.checks.filter((c) => c.kind === 'prose').length;
+const code = swe.checks.filter((c) => c.kind === 'code').length;
+const baseRules = swe.base.checks.filter((c) => c.kind === 'prose');
 
 // Rules no hook can check — they live in the conversation, not at a tool call.
 const INSTRUCTION_RULES = [
@@ -51,6 +57,150 @@ const INSTRUCTION_RULES = [
         {' '}{plain('warning-token-cost')}. Read them, keep what fits your work, and change the rest. A
         rulebook is a folder you can fork.
       </p>
+    </div>
+  </section>
+
+  <section aria-labelledby="engine">
+    <h2 id="engine">How swe works with kerby</h2>
+    <p class="frame">
+      <strong>swe is more than a prompt.</strong> It is a package that kerby runs. kerby loads its rules
+      into your agent, installs its hooks in your agent tool, and runs its commands when you ask. One
+      file, <code>rulebook.toml</code>, declares all of it.
+    </p>
+
+    <div class="flow">
+      <div class="node">
+        <h3>swe</h3>
+        <p>a folder</p>
+        <ul>
+          <li>rulebook.toml</li>
+          <li>{prose} prose checks in rule files</li>
+          <li>{swe.hooks.length} hook scripts</li>
+          <li>{swe.commands.length} commands</li>
+        </ul>
+      </div>
+      <span class="link" aria-hidden="true"></span>
+      <div class="node">
+        <h3>kerby</h3>
+        <p>the engine</p>
+        <ul>
+          <li>checks the manifest</li>
+          <li>loads the rules</li>
+          <li>installs the hooks</li>
+          <li>runs the commands</li>
+        </ul>
+      </div>
+      <span class="link" aria-hidden="true"></span>
+      <div class="node">
+        <h3>your agent</h3>
+        <p>Claude Code or Codex</p>
+        <ul>
+          <li>reads the rules as instructions</li>
+          <li>is stopped by a hook at a tool call</li>
+          <li>follows a command when you run it</li>
+        </ul>
+      </div>
+    </div>
+    <p class="small">
+      Under every rulebook, kerby also adds <strong>base</strong>: {baseRules.length} floor rules and the
+      secret scan. No rulebook can turn them off.
+    </p>
+
+    <h3 class="inside-h">Look inside swe</h3>
+    <div class="picker" data-picker="Parts of swe">
+      <div class="choice" data-choice data-label="rulebook.toml" id="part-manifest">
+        <h4>rulebook.toml — the manifest</h4>
+        <p>
+          kerby reads this file first, every time. It lists all {swe.checks.length} checks — {prose} prose
+          and {code} code — and the {swe.commands.length} commands. For each check it says what kind it is,
+          how it is enforced, and which script runs it. If the file is invalid, kerby loads nothing.
+        </p>
+        <Manifest
+          id="toml-destructive-git"
+          caption="one check, as kerby reads it"
+          notes={[
+            { key: 'kind = "code"', note: 'Backed by a script, not only by text.' },
+            { key: 'enforcer =', note: 'The script that /kerby install registers in your agent tool.' },
+            { key: 'event =', note: 'The script runs before the tool call happens…' },
+            { key: 'matcher =', note: '…but only for shell commands.' },
+            { key: 'severity =', note: 'A failed check stops the action. It does not only warn.' },
+            { key: 'floor = true', note: 'No rulebook or setting can loosen it, so install never offers this hook for skipping on its own.' },
+          ]}
+        />
+      </div>
+
+      <div class="choice" data-choice data-label="Rule files" id="part-rules">
+        <h4>Rule files — what the agent reads <Tag kind="instructions" /></h4>
+        <p>
+          The {prose} prose checks point to Markdown files: BOOTSTRAP.md and its references. At load,
+          kerby reads BOOTSTRAP.md and the short rules into the agent’s context in full. Longer references
+          are read only when a step needs them. No script checks that the agent follows them.
+        </p>
+        <Manifest
+          id="toml-intent-gate"
+          notes={[
+            { key: 'kind = "prose"', note: 'Text the agent reads. No script checks it.' },
+            { key: 'body =', note: 'The file kerby reads into the agent’s context.' },
+            { key: 'enforcement =', note: 'Instructions only: the agent follows it because it read it.' },
+            { key: 'token_cost = "low"', note: 'Short, so it loads at every session start, not only when a step needs it.' },
+          ]}
+        />
+      </div>
+
+      <div class="choice" data-choice data-label="hooks/" id="part-hooks">
+        <h4>hooks/ — what can stop an action <Tag kind="hook" /></h4>
+        <p>
+          {swe.hooks.length} shell scripts. /kerby install registers them in your agent tool’s settings,
+          after you agree. From then on, the tool runs them before a matching tool call, and a script can
+          stop that call. Claude Code runs them. Codex does not.
+        </p>
+        <ul class="parts">
+          {swe.hooks.map((h) => <li><span class="chip">{h.script}</span> {HOOKS[h.script].name} · {h.tier}</li>)}
+        </ul>
+        <p><a href={page('hooks/')}>What each hook stops, and what it misses</a></p>
+      </div>
+
+      <div class="choice" data-choice data-label="commands/" id="part-commands">
+        <h4>commands/ — what you run</h4>
+        <p>
+          {swe.commands.length} command files. When you type a command, kerby reads its file and the agent
+          follows it.
+        </p>
+        <Manifest
+          id="toml-audit"
+          notes={[
+            { key: 'name =', note: 'You run it as /kerby swe audit.' },
+            { key: 'body =', note: 'The file kerby reads and follows when you run it.' },
+          ]}
+        />
+      </div>
+
+      <div class="choice" data-choice data-label="base (from kerby)" id="part-base">
+        <h4>base — the floor under swe</h4>
+        <p>
+          base is not part of swe. kerby adds it under every rulebook, so swe always has it. It brings the
+          secret-scan hook and {baseRules.length} rules that no rulebook can turn off:
+        </p>
+        <ul class="parts">
+          {baseRules.map((c) => <li>{BASE_RULES[c.id]}</li>)}
+        </ul>
+      </div>
+    </div>
+
+    <div class="box gate">
+      <h3>kerby is a gate, not a prompt file</h3>
+      <ul>
+        <li>It picks the rulebook from your lock file or your repo’s files, and asks you when it cannot tell. It never picks silently.</li>
+        <li>
+          Before it loads a rulebook that did not ship with kerby, it shows what the rulebook will do and asks
+          “{plain('trust-prompt')}” It asks again whenever that rulebook’s files change.
+        </li>
+        <li>
+          If a rulebook cannot load — an invalid manifest, a missing file — kerby loads nothing and marks the
+          work HELD for you to decide. A failed load never counts as a pass.
+        </li>
+        <li>After a compaction, kerby’s session hook puts the rules back, in Claude Code, if you installed it.</li>
+      </ul>
     </div>
   </section>
 
@@ -208,6 +358,97 @@ const INSTRUCTION_RULES = [
 <style>
   .h-box {
     font-size: 1.15rem;
+  }
+
+  .frame {
+    font-size: 1.1rem;
+  }
+
+  /* swe → kerby → agent. The connector is a 1px structure line, not a glyph. */
+  .flow {
+    display: grid;
+    grid-template-columns: 1fr 1.25rem 1fr 1.25rem 1fr;
+    align-items: stretch;
+    margin: 1.5rem 0 0.75rem;
+  }
+
+  .flow .node {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    padding: 0.9rem 1rem;
+  }
+
+  .flow .node:nth-of-type(2) {
+    border-color: var(--structure);
+  }
+
+  .flow h3 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .flow .node > p {
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .flow ul {
+    margin: 0;
+    padding-left: 1rem;
+    font-size: 0.92rem;
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .flow .link {
+    align-self: center;
+    border-top: 1px solid var(--structure);
+  }
+
+  @media (max-width: 640px) {
+    .flow {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto 1rem auto 1rem auto;
+    }
+
+    .flow .link {
+      justify-self: center;
+      align-self: stretch;
+      border-top: 0;
+      border-left: 1px solid var(--structure);
+    }
+  }
+
+  .inside-h {
+    margin-top: 2rem;
+  }
+
+  .picker h4 {
+    margin: 0 0 0.5rem;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.75rem;
+  }
+
+  .parts {
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .gate ul {
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .gate h3 {
+    margin-top: 0;
   }
 
   .from {

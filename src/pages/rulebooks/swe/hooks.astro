@@ -1,8 +1,9 @@
 ---
 import Guide from '../../../layouts/Guide.astro';
 import Command from '../../../components/guide/Command.astro';
+import Lines from '../../../components/guide/Lines.astro';
 import swe from '../../../data/swe.json';
-import { HOOKS, WHEN } from '../../../data/swe-prose';
+import { HOOKS, WHEN, plain } from '../../../data/swe-prose';
 import { url } from '../../../lib/url';
 
 // Base's floor hook first: it runs under every rulebook. Then swe's, by tier.
@@ -51,6 +52,21 @@ const count = (tier: string) => all.filter((h) => h.tier === tier).length;
       add, without changing anything.
     </p>
     <Command title="In your agent:" ids={['cmd-install', 'cmd-status', 'cmd-hooks']} />
+  </section>
+
+  <section aria-labelledby="status">
+    <h2 id="status">Check what is really enforcing</h2>
+    <p>
+      swe declares how each check is enforced. A hook-backed check is really enforced only while its hook
+      is installed. /kerby status shows both for every check: what swe declares, and what is in force
+      now.
+    </p>
+    <Command title="In your agent:" ids={['cmd-status']} />
+    <Lines
+      kind="format"
+      ids={['status-loaded', 'status-row']}
+      caption={`A check whose hook is not installed shows “${plain('status-unregistered')}”. The rule still applies, but only as instructions.`}
+    />
   </section>
 
   <section aria-labelledby="list">

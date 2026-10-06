@@ -3,7 +3,7 @@ import Guide from '../../../layouts/Guide.astro';
 import Command from '../../../components/guide/Command.astro';
 import Lines from '../../../components/guide/Lines.astro';
 import Tag from '../../../components/guide/Tag.astro';
-import { STEPS } from '../../../data/lifecycle';
+import { LANES, STEPS } from '../../../data/lifecycle';
 import swe from '../../../data/swe.json';
 import { url } from '../../../lib/url';
 
@@ -27,6 +27,50 @@ const PHASES = STEPS.reduce<{ name: string; steps: number[] }[]>((acc, step, i) 
       agent must write, and whether a hook checks it. The step numbers stay at the top as you scroll;
       select one to jump to it.
     </p>
+
+    <h2 class="steps-h" id="who">Who acts at each step</h2>
+    <p>
+      swe is not only rules for the agent. kerby itself acts at some steps, hooks act at others, and some
+      decisions are yours. A filled dot means that part acts in the step. A ring means it acts only
+      sometimes.
+    </p>
+    <div class="table-wrap">
+      <table class="swim">
+        <caption class="visually-hidden">Who acts in each of the {STEPS.length} steps</caption>
+        <thead>
+          <tr>
+            <th scope="col"><span class="visually-hidden">Who</span></th>
+            {STEPS.map((step, i) => (
+              <th scope="col"><a href={`#step-${i + 1}`} title={step.title}><span class="visually-hidden">Step </span>{i + 1}<span class="visually-hidden">: {step.title}</span></a></th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {LANES.map((lane) => (
+            <tr class={`lane-${lane.id}`}>
+              <th scope="row">{lane.name}</th>
+              {STEPS.map((step) => {
+                const v = step.lanes[lane.id];
+                return (
+                  <td>
+                    {v && (
+                      <span class={`mark ${v}`}>
+                        <span class="visually-hidden">{v === 'always' ? 'acts' : 'sometimes acts'}</span>
+                      </span>
+                    )}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <ul class="swim-notes small">
+      <li><strong>kerby</strong> acts when you install it, at every session start, and after a compaction if its session hook is installed.</li>
+      <li><strong>Hooks</strong> run when the agent edits files and when it commits. A destructive git command is stopped at any step.</li>
+      <li><strong>You</strong> run install, approve a plan graded {swe.numbers.approvalGrade} or higher, and review and merge the work.</li>
+    </ul>
 
     <h2 class="steps-h">The {STEPS.length} steps</h2>
     <div class="stepper">
@@ -77,5 +121,78 @@ const PHASES = STEPS.reduce<{ name: string; steps: number[] }[]>((acc, step, i) 
 <style>
   .steps-h {
     margin-top: 2rem;
+  }
+
+  /* Swimlane: a real table, so screen readers get rows and columns for free. */
+  .swim {
+    table-layout: fixed;
+    min-width: 34rem;
+  }
+
+  .swim th:first-child {
+    width: 9.5rem;
+  }
+
+  .swim thead th {
+    text-align: center;
+    padding: 0 0 0.5rem;
+  }
+
+  .swim thead th:first-child {
+    text-align: left;
+  }
+
+  .swim thead a {
+    color: var(--secondary);
+    text-decoration: none;
+  }
+
+  .swim thead a:hover {
+    color: var(--text);
+    text-decoration: underline;
+  }
+
+  .swim tbody th {
+    text-align: left;
+    font-family: var(--font-body);
+    letter-spacing: 0;
+    color: var(--text);
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 0.55rem 0.5rem 0.55rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .swim td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 0.55rem 0;
+  }
+
+  .swim .mark {
+    display: inline-block;
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    vertical-align: middle;
+  }
+
+  .swim .mark.always {
+    background: var(--secondary);
+  }
+
+  .swim .mark.sometimes {
+    border: 1.5px solid var(--secondary);
+  }
+
+  /* Terracotta means "a hook", as in the hook-enforced tag. */
+  .swim .lane-hooks .mark.always {
+    background: var(--accent);
+  }
+
+  .swim-notes {
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.3rem;
   }
 </style>

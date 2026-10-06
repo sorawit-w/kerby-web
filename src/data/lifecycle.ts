@@ -14,8 +14,22 @@ export type Step = {
   lines?: string[];
   caption?: string;
   commands?: { title: string; ids: string[] }[];
+  // Who acts in this step, for the swimlane: 'always', or 'sometimes'.
+  lanes: Partial<Record<Lane, 'always' | 'sometimes'>>;
   source: string;
 };
+
+export type Lane = 'you' | 'kerby' | 'hooks' | 'agent';
+
+// Swimlane rows, top to bottom. The hooks lane marks the steps where hooks
+// run: file edits (Build) and commits (Commit). A destructive git command is
+// stopped at any step — the page says so under the table.
+export const LANES: { id: Lane; name: string }[] = [
+  { id: 'you', name: 'You' },
+  { id: 'kerby', name: 'kerby (engine)' },
+  { id: 'hooks', name: 'Hooks' },
+  { id: 'agent', name: 'Agent, following swe' },
+];
 
 // Each step names the swe section it summarizes. Numbers and line formats
 // come from swe.json; the words here are a plain summary of that section.
@@ -23,6 +37,7 @@ export const STEPS: Step[] = [
   {
     phase: 'Set up',
     title: 'Install',
+    lanes: { you: 'always', kerby: 'always' },
     body: [
       'Add kerby to your agent once per machine. Then run /kerby install once in each repo. It asks before every change it makes.',
       'First it adds one line to your agent file — CLAUDE.md, AGENTS.md, AI-CONTEXT.md or .cursorrules — so each session loads the rules. Then it shows the hooks in a table and asks: all, choose, or none. Last, it offers a git pre-commit hook that scans for secrets inside git itself.',
@@ -37,6 +52,7 @@ export const STEPS: Step[] = [
   {
     phase: 'Set up',
     title: 'Load',
+    lanes: { kerby: 'always' },
     body: [
       'At the start of each session, kerby picks the rulebook and reads its rules into the agent’s context.',
       'It picks from your lock file first, then from files in your repo such as package.json. When it cannot tell, it asks you. It never picks silently. It prints one line that says what it loaded.',
@@ -49,6 +65,7 @@ export const STEPS: Step[] = [
   {
     phase: 'Set up',
     title: 'Read the project',
+    lanes: { agent: 'always' },
     tag: 'instructions',
     body: [
       `Before any work, the agent reads what the project already knows: agent-context.yaml, the status and log in .kerby/, the knowledge base, CONTEXT.md, DESIGN.md, your agent file, and the last ${recentCommits} commits.`,
@@ -59,6 +76,7 @@ export const STEPS: Step[] = [
   {
     phase: 'Decide',
     title: 'Grade and route',
+    lanes: { agent: 'always' },
     tag: 'partly',
     body: [
       `The agent grades the task from 1 to ${swe.numbers.maxGrade} and picks a route, such as feature or bugfix.`,
@@ -71,6 +89,7 @@ export const STEPS: Step[] = [
   {
     phase: 'Decide',
     title: 'Plan',
+    lanes: { agent: 'always', you: 'sometimes' },
     tag: 'instructions',
     body: [
       'Before the first edit, the agent names the files, the change, and how it will check the result.',
@@ -83,6 +102,7 @@ export const STEPS: Step[] = [
   {
     phase: 'Decide',
     title: 'Intent',
+    lanes: { agent: 'always' },
     tag: 'instructions',
     body: [
       'Before an edit that changes behavior, the agent writes three things: what the code does now, what the test or task expects, and what the docs say.',
@@ -94,6 +114,7 @@ export const STEPS: Step[] = [
   {
     phase: 'Build',
     title: 'Branch',
+    lanes: { agent: 'always' },
     tag: 'partly',
     body: [
       `The agent never works on a protected branch: ${plain('protected-branches')}. It creates a branch with a short typed name, such as fix/null-user.`,
@@ -105,6 +126,7 @@ export const STEPS: Step[] = [
   {
     phase: 'Build',
     title: 'Build in small steps',
+    lanes: { agent: 'always', hooks: 'always' },
     tag: 'instructions',
     body: [
       'The agent works in a loop: pick one piece, do it, check it, commit it, log it, repeat. It prefers to write the test first.',
@@ -115,6 +137,7 @@ export const STEPS: Step[] = [
   {
     phase: 'Build',
     title: 'Check',
+    lanes: { agent: 'always' },
     tag: 'instructions',
     body: [
       'Before each commit, the agent picks a quality gate from what is staged, runs it, and reads the whole output. Quick runs lint. Standard runs build, lint and test. Full adds end-to-end tests and a manual check.',
@@ -125,6 +148,7 @@ export const STEPS: Step[] = [
   {
     phase: 'Build',
     title: 'Commit',
+    lanes: { agent: 'always', hooks: 'always' },
     tag: 'partly',
     body: [
       `After each finished piece, the agent commits only the files it changed. The message starts with a type, ${plain('commit-types')}.`,
@@ -135,6 +159,7 @@ export const STEPS: Step[] = [
   {
     phase: 'Build',
     title: 'Log',
+    lanes: { agent: 'always' },
     tag: 'instructions',
     body: [
       'After each commit, the agent adds an entry to .kerby/memory.log: the task, what it did, the files, the commit, and whether it is done or blocked.',
@@ -145,6 +170,7 @@ export const STEPS: Step[] = [
   {
     phase: 'Finish',
     title: 'Report',
+    lanes: { agent: 'always', you: 'always' },
     tag: 'instructions',
     body: [
       'The final report always gives you steps to check the work by hand, and one line that names what the agent chose not to build.',
@@ -156,6 +182,7 @@ export const STEPS: Step[] = [
   {
     phase: 'Finish',
     title: 'Save and resume',
+    lanes: { agent: 'always', kerby: 'sometimes' },
     tag: 'partly',
     body: [
       'Before the conversation gets too long, the agent updates STATUS.md and the log and commits them, so the next session can start where this one stopped.',

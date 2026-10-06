@@ -243,6 +243,9 @@
 .guide .table-wrap {
   overflow-x: auto;
   margin: 1.25rem 0;
+  /* Contain absolutely positioned children (visually-hidden labels), or
+     they escape the scroll box and widen the page on a phone. */
+  position: relative;
 }
 
 .guide table {

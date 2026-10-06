@@ -7,14 +7,15 @@
 //             the panel itself (DESIGN.md Voice: filled examples say "example").
 // Guide pages may use dark panels only for kerby output or swe line formats.
 import swe from '../../data/swe.json';
-import { anchor } from '../../data/swe-prose';
+import { plain } from '../../data/swe-prose';
 
 type Props =
   | { kind: 'format'; ids: string[]; caption?: string }
   | { kind: 'example'; lines: string[]; caption?: string };
 
 const props = Astro.props;
-const lines = props.kind === 'format' ? props.ids.map(anchor) : props.lines;
+// plain(): Markdown marks (**, `) in a source line are styling, not part of the format.
+const lines = props.kind === 'format' ? props.ids.map(plain) : props.lines;
 const sources =
   props.kind === 'format'
     ? [...new Set(props.ids.map((id) => swe.anchors.find((a) => a.id === id)!.file.split('/').pop()))]
