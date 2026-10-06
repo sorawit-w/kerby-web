@@ -2,20 +2,23 @@
 import { url } from '../lib/url';
 ---
 <section class="responsibilities" aria-labelledby="responsibility-title">
-  <p class="eyebrow">KNOW WHAT GUIDES THE WORK</p>
-  <h2 id="responsibility-title">One method. Clear responsibilities.</h2>
+  <h2 class="eyebrow" id="responsibility-title">KNOW WHAT GUIDES THE WORK</h2>
   <div class="roles">
-    <article><span class="responsibility">01 / Agent instruction</span><h3>SWE guides the agent.</h3><p>The agent is instructed to investigate, plan, verify, and report evidence before claiming completion.</p><a href={url('rulebooks/swe/')}>Understand the method →</a></article>
-    <article><span class="responsibility">02 / Hook check</span><h3>Scripts check specific actions.</h3><p>Supported, installed hooks can block an action or warn about it. Each has a defined scope and limitations.</p><a href={url('rulebooks/swe/hooks/')}>See what hooks check →</a></article>
-    <article><span class="responsibility">03 / Your decision</span><h3>You provide judgment.</h3><p>Review the reasoning and evidence. Make approval decisions where the workflow requires them.</p><a href={url('rulebooks/swe/workflows/#grade')}>Know when approval applies →</a></article>
+    <article><svg viewBox="0 0 32 36" aria-hidden="true"><rect x="5" y="4" width="22" height="28" rx="2"/><path d="M10 10h12M10 16h12M10 22h8"/></svg><div><h3><a href={url('rulebooks/swe/')}>SWE guides</a></h3><p class="responsibility">Agent instruction</p><p>Instructions shape how the agent investigates, changes, and checks the code.</p></div></article>
+    <article><svg viewBox="0 0 32 36" aria-hidden="true"><rect x="5" y="15" width="22" height="17" rx="2"/><path d="M10 15V9a6 6 0 0 1 12 0v6M16 22v4"/></svg><div><h3><a href={url('rulebooks/swe/hooks/')}>Hooks check actions</a></h3><p class="responsibility">Hook check</p><p>Supported, installed hooks block specific actions or warn. Each has a defined scope.</p></div></article>
+    <article><svg viewBox="0 0 32 36" aria-hidden="true"><circle cx="16" cy="9" r="6"/><path d="M5 31v-4a11 9 0 0 1 22 0v4Z"/></svg><div><h3><a href={url('rulebooks/swe/workflows/#grade')}>You review</a></h3><p class="responsibility">Your decision</p><p>Inspect the reasoning, evidence, and decisions that need your judgment.</p></div></article>
   </div>
-  <p class="note">Following an instruction and enforcing it with a script are different. Kerby’s guide makes that boundary visible.</p>
+  <p class="note">Instruction-following and hook enforcement are different. The rulebook makes that distinction explicit.</p>
 </section>
 <style>
-.responsibilities { border-top:1px solid var(--border); } h2 { margin:0 0 2rem; }
+.responsibilities { border-top:1px solid var(--border); padding-block:2rem; }
 .roles { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:2rem; }
+article { display:grid; grid-template-columns:2rem 1fr; gap:1.25rem; }
 article + article { border-left:1px solid var(--border); padding-left:2rem; }
-h3 { margin:1rem 0; } article p { font-size:1rem; color:var(--secondary); } article a { font-size:.9rem; }
-.note { margin:2.5rem 0 0; font-size:.9rem; color:var(--muted); }
-@media(max-width:959px) { .roles { grid-template-columns:1fr; } article + article { border-left:0; border-top:1px solid var(--border); padding:1.5rem 0 0; } }
+svg { width:2rem; height:2.25rem; fill:none; stroke:var(--text); stroke-width:1.5; }
+h3 { font-size:1rem; margin:0 0 .4rem; } h3 a { color:var(--text); text-decoration:none; } h3 a:hover { text-decoration:underline; }
+article p { font-size:.9rem; line-height:1.5; color:var(--secondary); margin:.4rem 0 0; }
+article .responsibility { font-size:.7rem; color:var(--muted); }
+.note { margin:1.5rem auto 0; max-width:none; text-align:center; font-size:.85rem; color:var(--muted); }
+@media(max-width:959px) { .roles { grid-template-columns:1fr; gap:1.25rem; } article + article { border-left:0; border-top:1px solid var(--border); padding:1.25rem 0 0; } .note { text-align:left; } }
 </style>

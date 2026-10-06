@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import portrait from '../assets/kerby-hero.png';
+import { url } from '../lib/url';
 const LINKS = [
   ['GitHub', 'https://github.com/sorawit-w/kerby'],
   ['Changelog', 'https://github.com/sorawit-w/kerby/blob/main/CHANGELOG.md'],
@@ -9,7 +12,7 @@ const LINKS = [
 
 <footer class="section site-footer" aria-label="Site footer">
   <div class="footer-row">
-    <p class="identity"><strong>kerby</strong><span>Rulebooks for agentic work. Conditions before completion.</span></p>
+    <div class="identity"><a class="footer-brand" href={url('')} aria-label="kerby home"><Image src={portrait} width={28} height={28} densities={[1, 2]} format="webp" alt="" /><strong>kerby</strong></a><span class="tagline">The gate guardian for agentic work.</span></div>
     <nav aria-label="Footer links"><ul class="links">
       {LINKS.map(([label, href]) => <li><a href={href}>{label}</a></li>)}
     </ul></nav>
@@ -18,36 +21,15 @@ const LINKS = [
 </footer>
 
 <style>
-  .site-footer {
-    border-top: 1px solid var(--border);
-    padding-block: 2rem;
-  }
-  .footer-row {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 2rem;
-  }
-  .identity { margin: 0; max-width: 32rem; }
-  .identity strong {
-    display: block;
-    font-family: var(--font-display);
-    font-size: 1.25rem;
-    line-height: 1.2;
-    margin-bottom: .5rem;
-  }
-  .identity span, .note { color: var(--muted); font-size: .85rem; }
-  .links {
-    display: flex;
-    gap: .75rem 1.5rem;
-    flex-wrap: wrap;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    font-size: .9rem;
-  }
-  .note { margin: 1.5rem 0 0; max-width: none; }
-  @media (max-width: 959px) {
-    .footer-row { flex-direction: column; gap: 1.5rem; }
-  }
+  .site-footer { border-top:1px solid var(--border); padding-block:1rem; }
+  .footer-row { display:flex; align-items:center; justify-content:space-between; gap:1.5rem; }
+  .identity { display:flex; align-items:center; gap:1.25rem; min-width:0; }
+  .footer-brand { display:inline-flex; align-items:center; gap:.5rem; color:var(--text); text-decoration:none; flex:none; }
+  .footer-brand strong { font-family:var(--font-display); font-size:1.2rem; letter-spacing:-.035em; }
+  .tagline { border-left:1px solid var(--structure); padding-left:1.25rem; color:var(--muted); font-size:.8rem; }
+  .links { display:flex; gap:.6rem 1rem; flex-wrap:wrap; list-style:none; padding:0; margin:0; font-family:var(--font-mono); font-size:.7rem; }
+  .links a { color:var(--muted); text-decoration:none; } .links a:hover { text-decoration:underline; }
+  .note { margin:.75rem 0 0; max-width:none; color:var(--muted); font-size:.7rem; }
+  @media(max-width:959px) { .footer-row { align-items:flex-start; flex-direction:column; gap:1rem; } }
+  @media(max-width:400px) { .identity { gap:.75rem; } .tagline { padding-left:.75rem; } }
 </style>

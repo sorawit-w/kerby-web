@@ -1,46 +1,39 @@
 ---
-import { Image } from 'astro:assets';
-import heroArt from '../assets/kerby-hero.png';
 import { url } from '../lib/url';
 import { SCENARIO, CHECKPOINTS } from '../data/bug-walkthrough';
-const verify = CHECKPOINTS.find((c) => c.stage === 'Verify')!;
+const preview = [CHECKPOINTS[0], CHECKPOINTS[1], CHECKPOINTS[4]];
+const descriptions = ['Save a setting, refresh, and observe the reset.', 'Trace where the saved value is lost.', 'Repeat the same steps after the fix.'];
 ---
 <section class="hero" aria-labelledby="hero-title">
   <div class="hero-copy">
-    <p class="eyebrow">KERBY / RULEBOOKS FOR AGENTIC WORK</p>
-    <h1 id="hero-title">A guarded path<br />from task to done.</h1>
-    <p class="lead">SWE gives your coding agent conditions to satisfy as it investigates, plans, changes, and verifies your code.</p>
-    <div class="ctas"><a class="cta" href={url('rulebooks/swe/bug-walkthrough/')}>Follow a bug fix <span class="direction-arrow" aria-hidden="true">→</span></a><a href={url('rulebooks/swe/')}>Explore SWE</a></div>
-    <div class="guardian"><Image src={heroArt} alt="Kerby, a watchful pixel-art guardian dog" width={96} densities={[1, 2]} format="webp" loading="eager" /><p>Conditions before completion.<br /><span>For coding agents. Built around your judgment.</span></p></div>
+    <p class="eyebrow">KERBY / SWE RULEBOOK</p>
+    <h1 id="hero-title">See how your <br />agent gets to done.</h1>
+    <p class="lead">A guarded path through investigating, planning, changing, and verifying your code.</p>
+    <div class="ctas"><a class="cta" href={url('rulebooks/swe/bug-walkthrough/')}>Follow a bug fix <span class="direction-arrow" aria-hidden="true">→</span></a><a class="secondary-link" href={url('rulebooks/swe/')}>Explore SWE</a></div>
+    <p class="judgment">For coding agents. Built around your judgment.</p>
   </div>
   <aside class="story" aria-label="Illustrative settings bug">
-    <p class="eyebrow">ILLUSTRATIVE EXAMPLE / A BUG REPORT</p>
+    <p class="eyebrow">ILLUSTRATIVE EXAMPLE</p>
     <blockquote>“{SCENARIO}”</blockquote>
-    <div class="threshold">
-      <p class="responsibility">Agent instruction · Verification</p>
-      <p class="state held"><span aria-hidden="true">↳</span> Held — not ready to call this fixed.</p>
-      <p class="condition-label">Condition to advance</p><p>{verify.condition}</p>
-      <dl><dt>Evidence needed</dt><dd>{verify.evidence[0]}</dd><dt>If the check fails</dt><dd>{verify.unmet}</dd></dl>
-    </div>
-    <p class="story-note">A worked example of the method, not a live agent session.</p>
+    <ol>{preview.map((step, i) => <li><span class="number" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><div><a href={url(`rulebooks/swe/bug-walkthrough/#${step.id}`)}>{i === 0 ? 'Reproduce' : step.stage}</a><p>{descriptions[i]}</p></div></li>)}</ol>
   </aside>
 </section>
 <style>
-.hero { display:grid; grid-template-columns: 1.15fr 1fr; gap:4rem; padding-block:5rem 4.5rem; }
-h1 { margin:0 0 1.5rem; }
-.hero-copy .lead { max-width:36rem; }
-.guardian { display:flex; align-items:center; gap:1rem; margin-top:2.5rem; }
-.guardian img { flex:none; width:96px; height:96px; object-fit:contain; }
-.guardian p { font-size:.95rem; font-weight:500; }
-.guardian span { color:var(--muted); font-weight:400; font-size:.85rem; }
-.story { border-left:1px solid var(--border); padding-left:3rem; align-self:center; }
-blockquote { margin:0 0 2rem; font-family:var(--font-display); font-size:clamp(1.6rem,2.4vw,2rem); line-height:1.25; letter-spacing:-.025em; }
-.threshold { border-top:2px solid var(--structure); padding-top:1rem; }
-.threshold p { margin:.5rem 0; }
-.condition-label { font-size:.8rem; color:var(--muted); padding-top:.5rem; }
-.threshold dl { display:grid; gap:.35rem; font-size:.95rem; }
-.threshold dt { color:var(--muted); font-size:.8rem; margin-top:.7rem; }
-.threshold dd { margin:0; }
-.story-note { color:var(--muted); font-size:.8rem; margin-top:1.5rem; }
-@media(max-width:959px) { .hero { grid-template-columns:1fr; gap:2.5rem; padding-top:3rem; } .story { border-left:0; border-top:1px solid var(--border); padding:2rem 0 0; } h1 br { display:none; } }
+.hero { display:grid; grid-template-columns:1.15fr 1fr; gap:3rem; padding-block:3.5rem; }
+h1 { margin:0 0 1.5rem; font-size:clamp(2.5rem,4.7vw,4.25rem); line-height:1.03; letter-spacing:-.055em; }
+.lead { max-width:30rem; font-size:1.4rem; line-height:1.45; margin:0; }
+.ctas { margin:1.75rem 0; }
+.secondary-link { color:var(--text); }
+.judgment { color:var(--muted); font-size:.9rem; margin:0; }
+.story { border-left:1px solid var(--border); padding-left:3rem; }
+blockquote { margin:0 0 1.75rem; font-family:Georgia,serif; font-size:clamp(1.7rem,2.5vw,2.25rem); line-height:1.2; letter-spacing:-.035em; }
+ol { list-style:none; margin:0; padding:0; }
+li { display:flex; gap:1.5rem; position:relative; padding-bottom:1.8rem; }
+li:last-child { padding-bottom:0; }
+li:not(:last-child)::before { content:''; position:absolute; left:1.2rem; top:2.4rem; bottom:0; border-left:1px solid var(--border); }
+.number { display:grid; place-items:center; flex:none; width:2.4rem; height:2.4rem; border:1px solid var(--border); border-radius:50%; font-size:.75rem; font-family:var(--font-mono); }
+li a { color:var(--text); text-decoration:none; font-weight:500; }
+li a:hover { text-decoration:underline; }
+li p { margin:.25rem 0 0; color:var(--muted); font-size:.9rem; }
+@media(max-width:959px) { .hero { grid-template-columns:1fr; gap:2rem; } h1 br { display:none; } .hero-copy { max-width:40rem; } .story { border-left:0; border-top:1px solid var(--border); padding:2rem 0 0; } }
 </style>

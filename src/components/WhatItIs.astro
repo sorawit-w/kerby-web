@@ -2,17 +2,17 @@
 import { url } from '../lib/url';
 ---
 <section id="what" aria-labelledby="what-heading">
-  <p class="eyebrow">THE METHOD LIVES IN A RULEBOOK</p>
-  <h2 id="what-heading">Start with the work you do.</h2>
-  <p>Kerby loads a selected rulebook into your agent’s session. The rulebook supplies instructions and declares checks; supported hooks can enforce specific checks when installed.</p>
-  <div class="books">
-    <article><p class="eyebrow">01 / SOFTWARE ENGINEERING</p><h3>SWE</h3><p>An opinionated method for investigating, changing, and verifying software. Follow the work from its first question to its final evidence.</p><a class="cta" href={url('rulebooks/swe/')}>Explore the SWE guide →</a></article>
-    <article><p class="eyebrow">02 / AGENT SKILLS</p><h3>Skill authoring</h3><p>Instructions that require a fresh evaluation of the exact skill text before presenting it as verified.</p><p class="coming">Guide coming · <a href="https://github.com/sorawit-w/kerby/tree/main/skills/kerby/rulebooks/skill-authoring">Read the source ↗</a></p></article>
-  </div>
-  <p class="authoring">Have a different kind of work? <a href="https://github.com/sorawit-w/kerby/blob/main/docs/AUTHORING-RULEBOOKS.md">Write a rulebook →</a></p>
+  <div class="start"><div><h2 id="what-heading">Start with SWE.</h2><p>Explore the method before you install it.</p></div><a class="cta" href={url('rulebooks/swe/')}>Read the SWE guide <span class="direction-arrow" aria-hidden="true">→</span></a></div>
+  <details><summary>Other rulebooks and authoring</summary><p>Kerby loads a selected rulebook into your agent’s session. Each rulebook supplies instructions and declares checks.</p><h3>Skill authoring</h3><p>Instructions that require a fresh evaluation of the exact skill text before presenting it as verified. Guide coming · <a href="https://github.com/sorawit-w/kerby/tree/main/skills/kerby/rulebooks/skill-authoring">Read the source ↗</a></p><p>Have a different kind of work? <a href="https://github.com/sorawit-w/kerby/blob/main/docs/AUTHORING-RULEBOOKS.md">Write a rulebook →</a></p></details>
 </section>
 <style>
-section { border-top:1px solid var(--border); } h2 { margin:0 0 1rem; }
-.books { display:grid; grid-template-columns:1fr 1fr; gap:3rem; margin-top:2.5rem; } article { border-top:1px solid var(--structure); padding-top:1.5rem; } h3 { font-size:1.8rem; margin:0; } article p { color:var(--secondary); } .coming,.authoring { font-size:.9rem; } .authoring { margin-top:2rem; }
-@media(max-width:600px) { .books { grid-template-columns:1fr; } }
+section { border-top:1px solid var(--border); padding-block:2rem; }
+.start { display:flex; justify-content:space-between; align-items:center; gap:2rem; }
+h2 { margin:0 0 .4rem; font-size:2rem; letter-spacing:-.035em; }
+p { margin:.4rem 0 0; color:var(--secondary); }
+details { margin-top:1.5rem; font-size:.9rem; }
+summary { color:var(--muted); cursor:pointer; }
+h3 { margin:1rem 0 .4rem; }
+details p + p { margin-top:1rem; }
+@media(max-width:600px) { .start { align-items:flex-start; flex-direction:column; gap:1rem; } }
 </style>

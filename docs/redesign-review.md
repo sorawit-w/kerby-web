@@ -66,3 +66,9 @@ The shared header and browser/touch icons now derive from the existing portrait.
 Primary and read-next links now have restrained pointer-hover arrow movement. Console disclosure chevrons reflect open/closed state. Copy success retains explicit feedback and adds a checkmark without changing the button width. Workflow examples use an opacity-only entrance for pointer input; keyboard selection is immediate. Shared timing tokens and reduced-motion handling keep these behaviors consistent.
 
 The full check suite passes. Browser checks verified keyboard disclosure state, stable copy width before/after success, immediate keyboard example selection, rapid successive example selection, and no overflow at 375px. The existing source transcripts remain byte-identical.
+
+## Supplied mockup reconciliation
+
+Rebuilt the homepage around the user's supplied reference: split hero, editorial scenario quote, connected six-stage path with a return branch, verification detail, compact responsibility columns, and a small SWE call to action. The shared footer is now one compact desktop row with the original portrait, tagline, and links; mobile stacks the links below the identity. Required source transcripts, installation commands, and secondary rulebook information remain available.
+
+Refreshed the homepage desktop, hero, and mobile screenshots. Guide screenshots above predate this shared header/footer refinement. Production-browser review covered desktop and mobile homepage composition, the shared footer on the SWE overview, and overflow checks at 320px, 375px, and 768px. Full `bun run check` passes, including pinned source validation and transcript fidelity.

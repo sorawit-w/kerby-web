@@ -69,6 +69,8 @@ file on purpose, never a downstream consumer.
 
 The site explains a guarded path to completion for SWE adopters. A reader should understand how their agent works differently, what permits advancement, who checks a condition, and what happens when it is unmet. The current head-and-neck pixel mascot remains the guardian identity; the interface explains the conditions.
 
+The supplied homepage mockup governs the compact composition: a split hero with an editorial quote and three-step preview, a connected six-stage path with a verification detail, compact icon-led responsibilities, and a single-row portrait footer. Required transcript and installation sections continue below this core narrative.
+
 The approved redesign replaces the previous transcript-first single-column design. The homepage introduces the method through one illustrative settings bug; all guide pages use the same responsibility and checkpoint language.
 
 ## Layout and hierarchy
@@ -91,7 +93,7 @@ Normal text pairings must pass AA 4.5:1; meaningful non-text indicators and focu
 
 ## Typography and imagery
 
-Schibsted Grotesk for headings, Geist for body, JetBrains Mono for labels and code. Keep current font assets and their existing budget. Use the original mascot only: portrait in navigation and generated browser icons, original portrait at moderate size in the homepage introduction. No generated replacements. Preserve intrinsic image sizes to prevent layout shifts.
+Schibsted Grotesk for headings, Geist for body, JetBrains Mono for labels and code. The homepage’s illustrative quote uses system Georgia to match the supplied editorial mockup without another font download. Keep current font assets and their existing budget. Use the original mascot only: portrait in navigation, the compact footer, and generated browser icons. No generated replacements. Preserve intrinsic image sizes to prevent layout shifts.
 
 ## Responsibility and state vocabulary
 
