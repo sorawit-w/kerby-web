@@ -1,39 +1,45 @@
 ---
 import { url } from '../lib/url';
-import { SCENARIO, CHECKPOINTS } from '../data/bug-walkthrough';
-const preview = [CHECKPOINTS[0], CHECKPOINTS[1], CHECKPOINTS[4]];
-const descriptions = ['Save a setting, refresh, and observe the reset.', 'Trace where the saved value is lost.', 'Repeat the same steps after the fix.'];
+import ConsoleText from './ConsoleText.astro';
+import { TRANSCRIPTS } from '../data/transcripts';
+import swe from '../data/swe.json';
 ---
 <section class="hero" aria-labelledby="hero-title">
   <div class="hero-copy">
-    <p class="eyebrow">KERBY / RULEBOOK ENGINE</p>
-    <h1 id="hero-title">Give your agent <br />a rulebook.</h1>
-    <p class="lead">Kerby loads rulebooks into your agent’s session. They define how work should proceed, what evidence it needs, and when to stop.</p>
-    <div class="ctas"><a class="cta" href={url('rulebooks/swe/bug-walkthrough/')}>See SWE in action <span class="direction-arrow" aria-hidden="true">→</span></a><a class="secondary-link" href={url('#install')}>Install Kerby</a></div>
-    <p class="judgment">SWE is the included rulebook for software engineering.</p>
+    <p class="eyebrow">KERBY</p>
+    <h1 id="hero-title">The gate guardian for agentic work.</h1>
+    <p class="lead">Set the conditions your agent must satisfy before proceeding—and the evidence it must provide before claiming success.</p>
+    <div class="ctas"><a class="cta" href={url('#demo')}>See the checks in action <span class="direction-arrow" aria-hidden="true">→</span></a><a class="secondary-link" href={url('#install')}>Install Kerby</a></div>
+    <p class="judgment">Rulebooks define the conditions. Agent instructions guide judgment; installed hooks enforce specific actions.</p>
   </div>
-  <aside class="story" aria-label="Illustrative settings bug">
-    <p class="eyebrow">SWE EXAMPLE · ILLUSTRATIVE</p>
-    <blockquote>“{SCENARIO}”</blockquote>
-    <ol>{preview.map((step, i) => <li><span class="number" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><div><a href={url(`rulebooks/swe/bug-walkthrough/#${step.id}`)}>{i === 0 ? 'Reproduce' : step.stage}</a><p>{descriptions[i]}</p></div></li>)}</ol>
+  <aside class="gate" aria-labelledby="gate-title">
+    <p class="eyebrow">A REAL HOOK CHECK · FROM SWE</p>
+    <h2 id="gate-title">A force push meets a boundary.</h2>
+    <dl>
+      <div><dt>Condition</dt><dd>The agent must not run an unprotected force push.</dd></div>
+      <div><dt>Check</dt><dd>With the Git protection hook installed in a supported agent, the hook inspects the command before execution.</dd></div>
+      <div><dt>Consequence</dt><dd>The matching command is blocked. The user must run it themselves if it is needed.</dd></div>
+    </dl>
+    <p class="output-label">Actual output excerpt · not a live run</p>
+    <pre tabindex="0" aria-label="Force-push refusal excerpt"><ConsoleText text={TRANSCRIPTS[0].split('\n')[0]} /></pre>
+    <p class="source-note"><a href={`https://github.com/${swe.source_repo}/blob/${swe.source_sha}/README.md#what-it-looks-like-when-kerby-says-no`}>Read the source ↗</a> · <a href={url('rulebooks/swe/hooks/')}>Scope and installation →</a></p>
   </aside>
 </section>
 <style>
 .hero { display:grid; grid-template-columns:1.15fr 1fr; gap:3rem; padding-block:3.5rem; }
+.hero-copy, .gate { min-width:0; }
 h1 { margin:0 0 1.5rem; font-size:clamp(2.5rem,4.7vw,4.25rem); line-height:1.03; letter-spacing:-.055em; }
-.lead { max-width:30rem; font-size:1.4rem; line-height:1.45; margin:0; }
+.lead { max-width:32rem; font-size:1.4rem; line-height:1.45; margin:0; }
 .ctas { margin:1.75rem 0; }
 .secondary-link { color:var(--text); }
 .judgment { color:var(--muted); font-size:.9rem; margin:0; }
-.story { border-left:1px solid var(--border); padding-left:3rem; }
-blockquote { margin:0 0 1.75rem; font-family:Georgia,serif; font-size:clamp(1.7rem,2.5vw,2.25rem); line-height:1.2; letter-spacing:-.035em; }
-ol { list-style:none; margin:0; padding:0; }
-li { display:flex; gap:1.5rem; position:relative; padding-bottom:1.8rem; }
-li:last-child { padding-bottom:0; }
-li:not(:last-child)::before { content:''; position:absolute; left:1.2rem; top:2.4rem; bottom:0; border-left:1px solid var(--border); }
-.number { display:grid; place-items:center; flex:none; width:2.4rem; height:2.4rem; border:1px solid var(--border); border-radius:50%; font-size:.75rem; font-family:var(--font-mono); }
-li a { color:var(--text); text-decoration:none; font-weight:500; }
-li a:hover { text-decoration:underline; }
-li p { margin:.25rem 0 0; color:var(--muted); font-size:.9rem; }
-@media(max-width:959px) { .hero { grid-template-columns:1fr; gap:2rem; } h1 br { display:none; } .hero-copy { max-width:40rem; } .story { border-left:0; border-top:1px solid var(--border); padding:2rem 0 0; } }
+.gate { border-left:1px solid var(--border); padding-left:3rem; }
+h2 { font-size:1.65rem; margin:0 0 1.5rem; letter-spacing:-.035em; }
+dl { margin:0; }
+dl div { margin:0 0 1rem; }
+dt { font-weight:500; font-size:.9rem; }
+dd { margin:.25rem 0 0; color:var(--secondary); font-size:.9rem; }
+.output-label, .source-note { color:var(--muted); font-size:.75rem; margin:1rem 0 .5rem; }
+pre { background:var(--panel-bg); color:var(--panel-text); padding:1rem; border-radius:6px; overflow:auto; font-size:.8rem; line-height:1.65; margin:0; }
+@media(max-width:959px) { .hero { grid-template-columns:1fr; gap:2rem; } .hero-copy { max-width:40rem; } .gate { border-left:0; border-top:1px solid var(--border); padding:2rem 0 0; } }
 </style>

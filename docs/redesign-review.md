@@ -72,3 +72,9 @@ The full check suite passes. Browser checks verified keyboard disclosure state, 
 Rebuilt the homepage around the user's supplied reference: split hero, editorial scenario quote, connected six-stage path with a return branch, verification detail, compact responsibility columns, and a small SWE call to action. The shared footer is now one compact desktop row with the original portrait, tagline, and links; mobile stacks the links below the identity. Required source transcripts, installation commands, and secondary rulebook information remain available.
 
 Refreshed the homepage desktop, hero, and mobile screenshots. Guide screenshots above predate this shared header/footer refinement. Production-browser review covered desktop and mobile homepage composition, the shared footer on the SWE overview, and overflow checks at 320px, 375px, and 768px. Full `bun run check` passes, including pinned source validation and transcript fidelity.
+
+## Guardian positioning
+
+The homepage now leads with Kerby's repository-defined identity: “The gate guardian for agentic work.” A genuine SWE force-push refusal explains condition, check, and consequence alongside the hero. Its output excerpt shares the same transcript data as the existing source-validated consoles. The illustrative settings-bug narrative follows as “See it with SWE”; rulebooks remain the mechanism rather than the headline benefit.
+
+Updated homepage metadata and design guidance. Full checks pass with pinned-source validation executed; production screenshots reviewed at 1440px and 375px, with no mobile page overflow. Refreshed homepage screenshots accompany this revision.
