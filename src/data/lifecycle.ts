@@ -13,6 +13,7 @@ export type Step = {
   body: string[];
   lines?: string[];
   caption?: string;
+  commands?: { title: string; ids: string[] }[];
   source: string;
 };
 
@@ -23,10 +24,15 @@ export const STEPS: Step[] = [
     phase: 'Set up',
     title: 'Install',
     body: [
-      'You run kerby install once per repo. It asks before every change it makes.',
+      'Add kerby to your agent once per machine. Then run /kerby install once in each repo. It asks before every change it makes.',
       'First it adds one line to your agent file — CLAUDE.md, AGENTS.md, AI-CONTEXT.md or .cursorrules — so each session loads the rules. Then it shows the hooks in a table and asks: all, choose, or none. Last, it offers a git pre-commit hook that scans for secrets inside git itself.',
     ],
-    source: 'kerby SKILL.md § install',
+    commands: [
+      { title: 'Once per machine, in Claude Code:', ids: ['install-marketplace', 'install-plugin'] },
+      { title: 'Or with the cross-platform CLI, in a terminal:', ids: ['install-cli'] },
+      { title: 'Then once per repo, in your agent:', ids: ['cmd-install'] },
+    ],
+    source: 'kerby README § Install; SKILL.md § install',
   },
   {
     phase: 'Set up',
@@ -34,7 +40,9 @@ export const STEPS: Step[] = [
     body: [
       'At the start of each session, kerby picks the rulebook and reads its rules into the agent’s context.',
       'It picks from your lock file first, then from files in your repo such as package.json. When it cannot tell, it asks you. It never picks silently. It prints one line that says what it loaded.',
+      'The line that install adds to your agent file does this for you. To load by hand, or to check later that the rules are still loaded:',
     ],
+    commands: [{ title: 'In your agent:', ids: ['cmd-load', 'cmd-status'] }],
     lines: ['format-rulebook'],
     source: 'kerby SKILL.md § Rulebooks, selection',
   },
@@ -151,8 +159,9 @@ export const STEPS: Step[] = [
     tag: 'partly',
     body: [
       'Before the conversation gets too long, the agent updates STATUS.md and the log and commits them, so the next session can start where this one stopped.',
-      'Long conversations get compacted, and rules read earlier can be lost. In Claude Code, if you installed kerby’s session hook, it puts the rules back after a compaction. Otherwise, run kerby reload.',
+      'Long conversations get compacted, and rules read earlier can be lost. In Claude Code, if you installed kerby’s session hook, it puts the rules back after a compaction. Otherwise, reload them by hand.',
     ],
+    commands: [{ title: 'After a compaction, in your agent:', ids: ['cmd-status', 'cmd-reload'] }],
     source: 'BOOTSTRAP.md § 6; kerby SKILL.md § Compaction',
   },
 ];

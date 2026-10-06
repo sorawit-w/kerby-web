@@ -148,7 +148,7 @@ export const GLOSSARY: Term[] = [
   { id: 'hook', term: 'hook', meaning: 'A small script your agent tool runs at a fixed moment, such as before a shell command. A hook can block the action.' },
   { id: 'hook-enforced', term: 'hook-enforced', meaning: 'A rule a hook checks. The agent cannot skip it while the hook is installed.' },
   { id: 'instructions-only', term: 'instructions only', meaning: 'A rule the agent follows because it read it. Nothing stops the agent if it does not. kerby’s own docs call this behavioral.' },
-  { id: 'tier', term: 'tier', meaning: 'How a hook is offered at install. Locked: comes with any hook install and cannot be skipped on its own. Recommended: a blocking hook you can skip, and kerby status keeps saying it is not enforcing. Optional: a hook that only warns, which you can skip.' },
+  { id: 'tier', term: 'tier', meaning: 'How a hook is offered at install. Locked: comes with any hook install and cannot be skipped on its own. Recommended: a blocking hook you can skip, and /kerby status keeps saying it is not enforcing. Optional: a hook that only warns, which you can skip.' },
   { id: 'floor', term: 'floor', meaning: 'The base rules every rulebook gets, such as the secret scan. No rulebook can turn them off.' },
   { id: 'grade', term: 'grade', meaning: `How big a task is, from 1 to ${swe.numbers.maxGrade}. The grade decides how much planning is needed.` },
   { id: 'route', term: 'route', meaning: 'The workflow a task follows, such as feature or bugfix. The task type picks it.' },
@@ -163,12 +163,15 @@ export const GLOSSARY: Term[] = [
 // Build-time coverage: anything swe.json names must be described here.
 export function coverage() {
   const missing = [
-    ...[...swe.hooks, ...swe.base.hooks].filter((h) => !HOOKS[h.script!]).map((h) => `hook ${h.script}`),
-    ...[...swe.hooks, ...swe.base.hooks].filter((h) => !WHEN[h.matcher as string]).map((h) => `trigger ${h.matcher}`),
-    ...swe.routes.filter((r) => !ROUTES[r]).map((r) => `route ${r}`),
-    ...swe.commands.filter((c: { name: string }) => !COMMANDS[c.name]).map((c: { name: string }) => `command ${c.name}`),
+    ...[...swe.hooks, ...swe.base.hooks].filter((h) => !HOOKS[h.script!]).map((h) => `no prose for hook ${h.script} (src/data/swe-prose.ts HOOKS)`),
+    ...[...swe.hooks, ...swe.base.hooks].filter((h) => !WHEN[h.matcher as string]).map((h) => `no prose for trigger ${h.matcher} (src/data/swe-prose.ts WHEN)`),
+    ...swe.routes.filter((r) => !ROUTES[r]).map((r) => `no prose for route ${r} (src/data/swe-prose.ts ROUTES)`),
+    ...swe.commands.filter((c: { name: string }) => !COMMANDS[c.name]).map((c: { name: string }) => `no prose for command ${c.name} (src/data/swe-prose.ts COMMANDS)`),
+    ...swe.commands
+      .filter((c: { name: string }) => !swe.anchors.some((a) => a.id === `cmd-${c.name}`))
+      .map((c: { name: string }) => `no copy-able line for command ${c.name} (add anchor cmd-${c.name} in scripts/sync-swe.ts)`),
   ];
-  if (missing.length) throw new Error(`swe guide: no description for ${missing.join(', ')} — add it to src/data/swe-prose.ts`);
+  if (missing.length) throw new Error(`swe guide: ${missing.join('; ')}`);
 }
 
 // Look up an anchored quote by id; a typo fails the build instead of rendering blank.
@@ -177,6 +180,10 @@ export function anchor(id: string): string {
   if (!a) throw new Error(`swe guide: unknown anchor "${id}" — add it to ANCHORS in scripts/sync-swe.ts`);
   return a.quote;
 }
+
+// The command a reader pastes into their agent: the anchored README line up
+// to its " # " comment.
+export const command = (id: string) => anchor(id).split(/\s+#\s/)[0].trim();
 
 // Markdown-free text of an anchor, for prose and table cells.
 export const plain = (id: string) => anchor(id).replace(/\*\*/g, '').replace(/`/g, '');

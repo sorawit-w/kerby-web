@@ -64,6 +64,18 @@ const ANCHORS: { id: string; file: string; quote: string }[] = [
   { id: 'recent-commits', file: `${SWE}/BOOTSTRAP.md`, quote: '`git log --oneline -20`' },
   { id: 'costly-new-files', file: `${SWE}/BOOTSTRAP.md`, quote: 'Creating >3 new files' },
   { id: 'costly-edited-files', file: `${SWE}/BOOTSTRAP.md`, quote: 'Modifying >5 existing files in one pass' },
+  // Commands a reader copies into their agent, exactly as kerby's READMEs
+  // write them. The page shows the part before " # "; the comment stays here.
+  { id: 'install-marketplace', file: 'README.md', quote: '/plugin marketplace add sorawit-w/kerby' },
+  { id: 'install-plugin', file: 'README.md', quote: '/plugin install kerby@kerby' },
+  { id: 'install-cli', file: 'README.md', quote: 'npx skills add sorawit-w/kerby' },
+  { id: 'cmd-hooks', file: 'README.md', quote: '/kerby hooks # read-only: what `install` would register, and what is bound now' },
+  { id: 'cmd-load', file: 'skills/kerby/README.md', quote: '/kerby load # explicit' },
+  { id: 'cmd-reload', file: 'skills/kerby/README.md', quote: "/kerby reload # after compaction, if the hook's re-injected block is missing" },
+  { id: 'cmd-status', file: 'skills/kerby/README.md', quote: '/kerby status # check whether rules are still loaded' },
+  { id: 'cmd-install', file: 'skills/kerby/README.md', quote: '/kerby install # persistent per-project setup' },
+  { id: 'cmd-prepare', file: 'skills/kerby/README.md', quote: '/kerby swe prepare # onboard an existing repo (populate context)' },
+  { id: 'cmd-audit', file: 'skills/kerby/README.md', quote: '/kerby swe audit # conformance audit → HTML report (incremental)' },
 ];
 
 function skip(why: string): never {
