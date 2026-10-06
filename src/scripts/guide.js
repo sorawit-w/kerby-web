@@ -10,7 +10,7 @@
 //   - copyRows: a Copy button on each command row.
 // The hooks switch is CSS only (:has) and needs no script.
 
-const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
 function el(tag, attrs = {}, text) {
   const node = document.createElement(tag);
@@ -19,14 +19,25 @@ function el(tag, attrs = {}, text) {
   return node;
 }
 
-// Show one item, hide the rest; replay the entrance on the shown item.
-function reveal(items, index) {
+// Switch immediately; pointer actions may briefly fade in the new example.
+function reveal(items, index, animate = false) {
   items.forEach((item, i) => {
+    item.getAnimations().forEach(animation => animation.cancel());
     item.hidden = i !== index;
-    item.classList.remove('entering');
   });
-  if (!reduce) items[index].classList.add('entering');
+  if (animate && !reduce.matches) {
+    const style = getComputedStyle(items[index]);
+    items[index].animate([{ opacity: 0 }, { opacity: 1 }], {
+      duration: parseFloat(style.getPropertyValue('--motion-feedback')),
+      easing: 'linear',
+    });
+  }
 }
+reduce.addEventListener('change', () => {
+  if (reduce.matches) document.querySelectorAll('[data-choice]').forEach(item => {
+    item.getAnimations().forEach(animation => animation.cancel());
+  });
+});
 
 function stepnav(nav) {
   const links = [...nav.querySelectorAll('a[href^="#step-"]')];
@@ -66,7 +77,7 @@ function stepnav(nav) {
       const n = nav.getBoundingClientRect();
       nav.scrollTo({
         left: nav.scrollLeft + a.left - n.left - (n.width - a.width) / 2,
-        behavior: reduce ? 'auto' : 'smooth',
+        behavior: reduce.matches ? 'auto' : 'smooth',
       });
     }
   }
@@ -91,7 +102,7 @@ function picker(root) {
   const bar = el('div', { class: 'choices', role: 'group', 'aria-label': root.dataset.picker || 'Choose' });
   const buttons = choices.map((choice, i) => {
     const b = el('button', { type: 'button', class: 'btn', 'aria-controls': choice.id, 'aria-pressed': 'false' }, choice.dataset.label);
-    b.addEventListener('click', () => pick(i, true));
+    b.addEventListener('click', (event) => pick(i, true, event.detail > 0));
     bar.append(b);
     return b;
   });
@@ -99,8 +110,8 @@ function picker(root) {
   root.prepend(bar, live);
   root.classList.add('is-enhanced');
 
-  function pick(i, user) {
-    reveal(choices, i);
+  function pick(i, user, animate = false) {
+    reveal(choices, i, animate);
     buttons.forEach((b, j) => b.setAttribute('aria-pressed', String(j === i)));
     if (user) live.textContent = `Showing: ${choices[i].dataset.label}`;
   }
@@ -127,23 +138,28 @@ function copyRows(rows) {
   rows.forEach((row) => {
     const code = row.querySelector('code');
     const text = code.textContent.trim();
-    const button = el('button', { type: 'button', class: 'copy', 'aria-label': `Copy ${text}` }, 'Copy');
+    const button = el('button', { type: 'button', class: 'copy', 'aria-label': `Copy ${text}` });
+    const mark = el('span', { class: 'copy-mark', 'aria-hidden': 'true' }, '✓');
+    const label = el('span', { class: 'copy-label' }, 'Copy');
+    button.append(mark, label);
     let timer;
-    button.addEventListener('click', async () => {
+    button.addEventListener('click', async (event) => {
       clearTimeout(timer);
+      button.toggleAttribute('data-instant', event.detail === 0);
+      button.removeAttribute('data-copied');
       try {
         await navigator.clipboard.writeText(text);
-        button.textContent = 'Copied';
+        label.textContent = 'Copied';
         button.setAttribute('data-copied', '');
         live.textContent = `Copied ${text}`;
       } catch {
         // Clipboard refused: select the command so the reader can copy it by hand.
         window.getSelection().selectAllChildren(code);
-        button.textContent = 'Selected';
+        label.textContent = 'Selected';
         live.textContent = `${text} is selected. Copy it with your keyboard.`;
       }
       timer = setTimeout(() => {
-        button.textContent = 'Copy';
+        label.textContent = 'Copy';
         button.removeAttribute('data-copied');
         live.textContent = '';
       }, 1600);

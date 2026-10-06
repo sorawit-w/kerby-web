@@ -34,3 +34,11 @@ main > section, .section { width: 100%; max-width: 76rem; margin-inline: auto; p
 @media(max-width: 959px) { main > section, .section { padding-block: 3rem; } }
 @media(max-width: 600px) { main > section, .section { padding: 2.5rem 1.25rem; } .site-header { padding: 1rem 1.25rem; align-items: flex-start; flex-direction: column; gap: .6rem; } .site-header ul { gap: .4rem 1.1rem; } .site-header nav a { font-size: .85rem; } }
 @media(prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; } }
+
+.direction-arrow { display: inline-block; transition: transform var(--motion-return) var(--motion-ease); }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .cta:hover:not(:focus-visible) .direction-arrow {
+    transform: translateX(3px);
+    transition-duration: var(--motion-enter);
+  }
+}

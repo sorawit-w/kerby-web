@@ -596,9 +596,6 @@
   margin-top: 0;
 }
 
-.picker.is-enhanced .choice.entering {
-  animation: guide-rise 200ms ease-out;
-}
 
 /* Facts are subordinate to their enclosing step or section, not a new boundary. */
 .guide .facts {
@@ -627,8 +624,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .map li,
-  .picker .choice.entering {
+  .map li {
     animation: none;
   }
 
@@ -649,5 +645,17 @@
     margin-bottom: .75rem;
     color: var(--muted);
     font-size: .8rem;
+  }
+}
+
+.guide .next a strong::after {
+  content: ' →' / '';
+  display: inline-block;
+  transition: transform var(--motion-return) var(--motion-ease);
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .guide .next a:hover:not(:focus-visible) strong::after {
+    transform: translateX(3px);
+    transition-duration: var(--motion-enter);
   }
 }

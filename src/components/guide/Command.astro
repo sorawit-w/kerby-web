@@ -75,6 +75,10 @@ const { ids, title } = Astro.props;
 
   li :global(.copy) {
     flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
     font: inherit;
     font-size: 0.85rem;
     font-weight: 500;
@@ -95,4 +99,11 @@ const { ids, title } = Astro.props;
     color: var(--text);
     border-color: var(--accent);
   }
+</style>
+
+<style>
+li :global(.copy-label) { display: inline-block; min-width: 8ch; text-align: center; }
+li :global(.copy-mark) { width: 1em; opacity: 0; transition: opacity var(--motion-feedback) linear; }
+li :global(.copy[data-copied] .copy-mark) { opacity: 1; }
+li :global(.copy[data-instant] .copy-mark) { transition: none; }
 </style>

@@ -1,6 +1,10 @@
 /* Design tokens — defined in DESIGN.md. Accent is a mark, never
    a fill. Flat: no gradients, no shadows. Background never pure white. */
 :root {
+  --motion-feedback: 120ms;
+  --motion-enter: 160ms;
+  --motion-return: 100ms;
+  --motion-ease: cubic-bezier(0.23, 1, 0.32, 1);
   --bg: #FAF8F4;
   --surface: #FFFDF9;
   --text: #1A1A1A;

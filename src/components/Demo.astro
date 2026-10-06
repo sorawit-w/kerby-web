@@ -26,7 +26,7 @@ const ids = ['force-push', 'env-overwrite', 'secret-scan'];
   <p class="eyebrow">HOOK CHECKS IN PRACTICE</p>
   <h2 id="demo-heading">A boundary you can inspect.</h2>
   <p>These genuine transcripts show specific checks. They do not establish that every instruction is enforced, or that every warning blocks an action.</p>
-  <div class="transcript-list">{TRANSCRIPTS.map((text, i) => <details open={i === 0}><summary>{labels[i]}</summary><p>{outcomes[i]}</p><button class="replay" hidden type="button">Replay output</button><pre tabindex="0" aria-label={`${labels[i]} transcript`} data-transcript={ids[i]}><ConsoleText text={text} /></pre></details>)}</div>
+  <div class="transcript-list">{TRANSCRIPTS.map((text, i) => <details open={i === 0}><summary><span class="chevron" aria-hidden="true">›</span>{labels[i]}</summary><p>{outcomes[i]}</p><button class="replay" hidden type="button">Replay output</button><pre tabindex="0" aria-label={`${labels[i]} transcript`} data-transcript={ids[i]}><ConsoleText text={text} /></pre></details>)}</div>
   <p class="source-note"><a href={`https://github.com/${swe.source_repo}/blob/${swe.source_sha}/README.md#what-it-looks-like-when-kerby-says-no`}>Read the original transcripts ↗</a> · Exact text from the pinned Kerby release.</p>
 </section>
 <style>
@@ -43,4 +43,12 @@ pre { background:var(--panel-bg); color:var(--panel-text); padding:1.5rem; borde
 .replay { margin-bottom: .5rem; }
 pre :global(.reveal-word) { transition: opacity 80ms linear; }
 @media (prefers-reduced-motion: reduce) { pre :global(.reveal-word) { transition: none; } }
+</style>
+
+<style>
+summary { display: flex; align-items: baseline; gap: .65rem; list-style: none; }
+summary::-webkit-details-marker { display: none; }
+.chevron { display: inline-block; font-size: 1.2em; transform-origin: center; transition: transform var(--motion-return) var(--motion-ease); }
+details[open] .chevron { transform: rotate(90deg); transition-duration: var(--motion-enter); }
+summary:focus-visible .chevron { transition: none; }
 </style>

@@ -60,3 +60,9 @@ The approved redesign replaces that old design premise. No engine or SWE rule ch
 Console output now offers opt-in word-by-word replay with an immediate “Show full output” control. Reduced motion leaves the complete static transcript. BLOCKED, WARNING, and INTENT use the existing AA-safe panel accent, including source-format and illustrative intent lines. Browser keyboard checks confirmed replay/stop behavior and rendered keyword color; the full check suite passes with transcript fidelity intact.
 
 The shared header and browser/touch icons now derive from the existing portrait. Retired full-body icon assets were removed. The original screenshot gallery above predates this small refinement.
+
+## Micro-interaction refinement
+
+Primary and read-next links now have restrained pointer-hover arrow movement. Console disclosure chevrons reflect open/closed state. Copy success retains explicit feedback and adds a checkmark without changing the button width. Workflow examples use an opacity-only entrance for pointer input; keyboard selection is immediate. Shared timing tokens and reduced-motion handling keep these behaviors consistent.
+
+The full check suite passes. Browser checks verified keyboard disclosure state, stable copy width before/after success, immediate keyboard example selection, rapid successive example selection, and no overflow at 375px. The existing source transcripts remain byte-identical.
