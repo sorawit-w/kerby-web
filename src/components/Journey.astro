@@ -1,49 +1,29 @@
 ---
 import { SCENARIO, CHECKPOINTS } from '../data/bug-walkthrough';
 import { url } from '../lib/url';
-const verify = CHECKPOINTS.find(step => step.id === 'verify')!;
 ---
-<section class="journey" aria-labelledby="journey-title">
-  <p class="eyebrow">SEE IT WITH SWE · ILLUSTRATIVE EXAMPLE</p>
-  <h2 id="journey-title">The fix is only part of the work.</h2>
-  <p class="intro">Kerby’s software-engineering rulebook puts conditions around investigating, changing, and verifying code.</p>
-  <blockquote>“{SCENARIO}”</blockquote>
-  <ol class="path">{CHECKPOINTS.map((step, i) => <li class:list={{ featured: step.id === 'verify' }}><a href={url(`rulebooks/swe/bug-walkthrough/#${step.id}`)} title={step.condition}><span class="number">{String(i + 1).padStart(2,'0')}</span><span class="stage">{step.stage}</span></a></li>)}</ol>
-  <div class="return" id="arrow"><span class="return-tip" aria-hidden="true">↑</span><p>Check fails → investigate again</p></div>
-  <div class="verification">
-    <div><p class="eyebrow">05 / VERIFY · ILLUSTRATIVE EXAMPLE</p><h3>Does the setting survive a refresh?</h3><p>The agent repeats the original failure case and runs the relevant checks.</p><p class="responsibility">{verify.responsibility}</p></div>
-    <div class="evidence-needed"><p class="eyebrow">WHAT YOU SHOULD SEE</p><ul><li>A regression check for saved settings</li><li>Results from the relevant project checks</li></ul><p class="condition"><strong>Condition to advance</strong><br />{verify.condition}</p><p class="unmet"><strong>Held if the check fails.</strong> Return to investigation.</p></div>
-  </div>
-  <p class="source-note">A simplified view of SWE, not a live run. <a href={url('rulebooks/swe/bug-walkthrough/#verify')}>Read the settings-bug walkthrough →</a></p>
+<section class="journey" id="what" aria-labelledby="what-heading">
+  <h2 id="what-heading"><span id="journey-title">Start with SWE.</span></h2>
+  <p>Kerby’s software-engineering rulebook guides your agent from understanding a task to verifying the result.</p>
+  <ol class="path">{CHECKPOINTS.map((step, i) => <li><a href={url(`rulebooks/swe/bug-walkthrough/#${step.id}`)}><span class="number">{String(i + 1).padStart(2,'0')}</span>{step.stage}</a></li>)}</ol>
+  <p id="arrow" class="return">If verification fails, return to investigation.</p>
+  <div class="walkthrough"><p class="eyebrow">ILLUSTRATIVE WALKTHROUGH</p><blockquote>“{SCENARIO}”</blockquote><a href={url('rulebooks/swe/bug-walkthrough/')}>See how the agent works through it →</a></div>
+  <p class="guide-link"><a href={url('rulebooks/swe/')}>Read the SWE guide →</a></p>
+  <details><summary>Other rulebooks and authoring</summary><p>Rulebooks supply instructions and declare checks. <a href="https://github.com/sorawit-w/kerby/tree/main/skills/kerby/rulebooks/skill-authoring">Skill authoring</a> requires fresh evaluation of the exact skill text before presenting it as verified. You can also <a href="https://github.com/sorawit-w/kerby/blob/main/docs/AUTHORING-RULEBOOKS.md">write your own rulebook</a>.</p></details>
 </section>
 <style>
 .journey { border-top:1px solid var(--border); padding-block:2.5rem; }
-h2 { margin:0 0 .5rem; font-size:clamp(2rem,3.7vw,3rem); letter-spacing:-.045em; }
-.journey blockquote { margin:1.5rem 0 0; font-family:Georgia,serif; font-size:1.5rem; color:var(--secondary); max-width:42rem; }
-.intro { margin:0; font-size:1.25rem; color:var(--secondary); }
-.path { list-style:none; padding:0; margin:2rem 0 0; display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); }
-.path li { position:relative; text-align:center; }
-.path li:not(:last-child)::after { content:''; position:absolute; top:1.15rem; left:calc(50% + 2rem); width:calc(100% - 4rem); border-top:1px solid var(--border); }
-.path a { color:var(--text); text-decoration:none; display:inline-grid; justify-items:center; gap:.6rem; }
-.number { display:grid; place-items:center; width:2.3rem; height:2.3rem; border:1px solid var(--border); border-radius:50%; font-family:var(--font-mono); font-size:.75rem; }
-.stage { font-size:.95rem; }
-.featured .number { border-color:var(--accent); }
-.featured .stage { font-weight:500; text-decoration:underline; text-decoration-color:var(--accent); text-underline-offset:.45rem; }
-.path a:hover .stage { text-decoration:underline; }
-.return { position:relative; width:66.666%; margin:0 0 2.5rem 8.333%; height:2rem; border:1px solid var(--structure); border-top:0; border-radius:0 0 6px 6px; }
-.return p { position:absolute; bottom:-.65rem; left:50%; transform:translateX(-50%); background:var(--bg); padding:0 .5rem; white-space:nowrap; margin:0; color:var(--muted); font-size:.75rem; }
-.return-tip { position:absolute; top:-.1rem; left:-.43rem; background:var(--bg); line-height:1; }
-.verification { display:grid; grid-template-columns:1fr 1.05fr; gap:3rem; }
-.verification h3 { font-size:1.8rem; margin:0 0 .75rem; max-width:24rem; letter-spacing:-.035em; }
-.verification p { color:var(--secondary); margin:.6rem 0; }
-.verification .eyebrow { margin:0 0 1rem; color:var(--muted); }
-.evidence-needed { border-left:1px solid var(--border); padding-left:3rem; }
-.evidence-needed ul { list-style:none; padding:0; margin:0; }
-.evidence-needed li { position:relative; padding-left:1.8rem; margin:.75rem 0; font-size:1rem; color:var(--secondary); }
-.evidence-needed li::before { content:'○' / ''; position:absolute; left:0; color:var(--structure); }
-.condition { font-size:.85rem; }
-.unmet { border-top:1px solid var(--border); padding-top:.9rem; font-size:.9rem; }
-.source-note { font-size:.8rem; color:var(--muted); margin:1.5rem 0 0; }
-@media(max-width:959px) { .verification { grid-template-columns:1fr; gap:1.5rem; } .evidence-needed { border-left:0; padding-left:0; } }
-@media(max-width:600px) { .path { grid-template-columns:1fr; gap:0; } .path li { text-align:left; padding-bottom:1rem; } .path a { display:flex; gap:1rem; } .path li:not(:last-child)::after { top:2.3rem; bottom:0; left:1.15rem; width:0; border-top:0; border-left:1px solid var(--border); } .return { border:0; height:auto; width:auto; margin:.5rem 0 2rem; } .return-tip { display:none; } .return p { position:static; transform:none; white-space:normal; padding:0; } }
+h2 { margin:0 0 1rem; font-size:2rem; }
+p { color:var(--secondary); }
+.path { list-style:none; padding:0; margin:2rem 0 1rem; display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:1rem; }
+.path a { color:var(--text); text-decoration:none; display:flex; flex-direction:column; gap:.5rem; font-size:.95rem; }
+.path a:hover { text-decoration:underline; }
+.number { font-family:var(--font-mono); font-size:.7rem; color:var(--muted); border-bottom:1px solid var(--border); padding-bottom:.5rem; }
+.return { font-size:.85rem; color:var(--muted); margin:0; }
+.walkthrough { margin-top:2rem; border-left:2px solid var(--structure); padding-left:1.25rem; }
+.walkthrough .eyebrow { margin:0 0 .65rem; font-size:.65rem; }
+blockquote { margin:0 0 .75rem; font-family:Georgia,serif; font-size:1.35rem; max-width:40rem; }
+.guide-link { margin:1.5rem 0 .75rem; }
+details { font-size:.9rem; } summary { cursor:pointer; color:var(--secondary); }
+@media(max-width:600px) { .path { grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; } }
 </style>

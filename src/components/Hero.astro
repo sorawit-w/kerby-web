@@ -1,45 +1,25 @@
 ---
 import { url } from '../lib/url';
+import { Image } from 'astro:assets';
+import portrait from '../assets/kerby-hero.png';
 ---
 <section class="hero" aria-labelledby="hero-title">
   <div class="hero-copy">
-    <p class="eyebrow">KERBY</p>
+    <p class="eyebrow">WORKS WITH CLAUDE CODE AND CODEX</p>
     <h1 id="hero-title">The gate guardian for agentic work.</h1>
-    <p class="lead">Set the conditions your agent must satisfy before proceeding—and the evidence it must provide before claiming success.</p>
-    <div class="ctas"><a class="cta" href={url('#demo')}>See the checks in action <span class="direction-arrow" aria-hidden="true">→</span></a><a class="secondary-link" href={url('#install')}>Install Kerby</a></div>
-    <p class="judgment">Rulebooks define the conditions. Agent instructions guide judgment; installed hooks enforce specific actions.</p>
+    <p class="lead">Conditions before action. Evidence before “done.”</p>
+    <p class="explanation">Kerby brings rules and checks to your agent’s work. Rulebooks define the conditions; installed hooks enforce specific actions.</p>
+    <div class="ctas"><a class="cta" href={url('#install')}>Install Kerby <span class="direction-arrow" aria-hidden="true">→</span></a><a class="secondary-link" href={url('#demo')}>See it in action ↓</a></div>
   </div>
-  <aside class="gate" aria-labelledby="gate-title">
-    <p class="eyebrow">ILLUSTRATIVE EXAMPLE · SWE GIT HOOK</p>
-    <h2 id="gate-title">An unsafe command gets stopped.</h2>
-    <ol class="example" aria-label="Illustrative command and outcome">
-      <li class="attempt"><p class="step-label">Agent attempts</p><code>git push --force</code></li>
-      <li class="result"><p class="state"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m6 6 12 12"/></svg> Blocked before execution</p><p>This command can overwrite remote history.</p></li>
-    </ol>
-    <p class="scope">With SWE’s Git protection hook installed in a supported agent.</p>
-    <a class="example-link" href={url('#demo')}>Explore the checks →</a>
-  </aside>
+  <Image class="portrait" src={portrait} width={180} height={180} densities={[1,2]} format="webp" alt="Kerby, the pixel-art gate guardian" />
 </section>
 <style>
-.hero { display:grid; grid-template-columns:1.15fr 1fr; gap:3rem; padding-block:3.5rem; }
-.hero-copy, .gate { min-width:0; }
-h1 { margin:0 0 1.5rem; font-size:clamp(2.5rem,4.7vw,4.25rem); line-height:1.03; letter-spacing:-.055em; }
-.lead { max-width:32rem; font-size:1.4rem; line-height:1.45; margin:0; }
-.ctas { margin:1.75rem 0; }
+.hero { display:grid; grid-template-columns:minmax(0,1fr) 180px; align-items:center; gap:4rem; padding-block:3rem; }
+h1 { max-width:44rem; margin:0 0 1.25rem; font-size:clamp(2.5rem,4.7vw,4.25rem); line-height:1.03; letter-spacing:-.055em; }
+.lead { font-size:1.4rem; margin:0 0 .75rem; }
+.explanation { max-width:38rem; color:var(--secondary); margin:0; }
+.ctas { margin:1.5rem 0 0; }
 .secondary-link { color:var(--text); }
-.judgment { color:var(--muted); font-size:.9rem; margin:0; }
-.gate { border-left:1px solid var(--border); padding-left:3rem; }
-h2 { font-size:1.65rem; margin:0 0 1.5rem; letter-spacing:-.035em; }
-.example { list-style:none; padding:0; margin:0 0 1rem; border:1px solid var(--border); border-radius:6px; background:var(--surface); overflow:hidden; }
-.attempt, .result { padding:1.5rem; }
-.step-label { margin:0 0 .65rem; color:var(--muted); font-family:var(--font-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; }
-code { font-size:1.05rem; color:var(--text); overflow-wrap:anywhere; }
-.result { border-top:1px solid var(--border); }
-.result p { margin:0 0 0 1.85rem; font-size:.95rem; color:var(--secondary); }
-.result .state { display:flex; gap:.6rem; align-items:center; font-family:var(--font-body); font-size:1rem; font-weight:500; color:var(--accent); margin:0 0 .5rem; }
-.state svg { width:1.25rem; height:1.25rem; flex:none; fill:none; stroke:currentColor; stroke-width:1.6; }
-@media(max-width:600px) { .attempt, .result { padding:1.25rem; } }
-.scope { color:var(--muted); font-size:.8rem; margin:0 0 .75rem; max-width:28rem; }
-.example-link { font-size:.85rem; }
-@media(max-width:959px) { .hero { grid-template-columns:1fr; gap:2rem; } .hero-copy { max-width:40rem; } .gate { border-left:0; border-top:1px solid var(--border); padding:2rem 0 0; } }
+.portrait { image-rendering:pixelated; }
+@media(max-width:600px) { .hero { grid-template-columns:1fr; gap:1.5rem; } .portrait { grid-row:1; width:96px; height:96px; } .eyebrow { font-size:.65rem; } }
 </style>

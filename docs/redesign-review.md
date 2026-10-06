@@ -87,3 +87,9 @@ Replaced the hero's condition/check/consequence definition list with a short com
 ## Visual designer pass on the hero example
 
 Two independent design agents identified the rail/arrow/divider collision and inconsistent text insets. Replaced that construction with one light outlined frame and two consistently padded rows, plus an SVG stop icon and explicit “Blocked before execution” label. Installation context stays outside the frame. A follow-up desktop screenshot review found no material visual issue; mobile rendering was also inspected at 375px with no horizontal overflow. Full checks pass. Homepage screenshots refreshed.
+
+## Subtractive homepage revision
+
+Reduced the homepage to four sections: guardian introduction with a moderate original portrait, genuine hook transcripts, a compact SWE preview, and installation. Removed the duplicate hero hook example and standalone responsibility/verification explanations from the homepage; the full guides and walkthrough retain that detail. The SWE preview links into the same six stages, rendered in two compact rows on mobile. Secondary rulebook content remains in a native disclosure. Console transcripts now wrap on narrow screens; their exact text and animation behavior remain intact.
+
+Full `bun run check` passes, including pinned source validation. Production rendering inspected at 1440px and 375px; no page overflow at 375px. Updated homepage screenshots show this revision. Existing guide screenshots and guide content are unaffected by this pass. The PR remains open for review; the live original is unchanged.

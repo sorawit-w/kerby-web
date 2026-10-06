@@ -69,7 +69,7 @@ file on purpose, never a downstream consumer.
 
 The homepage introduces Kerby as the gate guardian for agentic work. Rulebooks provide the conditions; SWE is the featured software-engineering example. The SWE guides explain a guarded path to completion. A reader should understand how their agent works differently, what permits advancement, who checks a condition, and what happens when it is unmet. The current head-and-neck pixel mascot remains the guardian identity; the interface explains the conditions.
 
-The supplied homepage mockup governs the compact composition: a split hero with the guardian identity and a compact, explicitly labeled hook example showing an attempted command and its blocked outcome, a connected six-stage path with a verification detail, compact icon-led responsibilities, and a single-row portrait footer. Required transcript and installation sections continue below this core narrative.
+The homepage now uses a reduced four-part composition: guardian introduction with the original portrait, genuine hook output, a compact SWE preview, and installation. Homepage content is capped at 64rem; guides retain the wider shell. Detailed verification and responsibility explanations belong in the guides. Keep the six-stage preview compact (three columns by two rows on mobile).
 
 The approved redesign replaces the previous transcript-first single-column design. The homepage labels the illustrative settings bug and six-stage path as SWE examples; all guide pages use the same responsibility and checkpoint language.
 
