@@ -59,8 +59,9 @@ const source = `https://github.com/${swe.source_repo}/tree/${swe.source_sha}/ski
 
   <aside class="section stamp" aria-label="About this guide">
     <p>
-      This guide describes <strong>swe {swe.version}</strong>, shipped in kerby {swe.kerby_version}. Every
-      number, hook and line format on these pages is read from that release at build time.
+      This guide describes <strong>swe {swe.version}</strong>, shipped in kerby {swe.kerby_version}. It is
+      built from the same rulebook.toml that kerby loads: every number, hook and line format on these pages
+      is read from that release at build time.
     </p>
     <p>
       <a href={source}>Read the swe source at {swe.source_sha.slice(0, 7)}</a>

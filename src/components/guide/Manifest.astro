@@ -1,0 +1,91 @@
+---
+// A real excerpt of swe's rulebook.toml — the file kerby reads — with a
+// plain note on what each key makes kerby do. The excerpt is an anchored
+// quote (check:swe fails if it changes upstream); a note whose key is not in
+// the excerpt fails the build. Light panel: this is swe's source, not output.
+import { anchor } from '../../data/swe-prose';
+
+interface Props {
+  id: string;
+  notes: { key: string; note: string }[];
+  caption?: string;
+}
+const { id, notes, caption } = Astro.props;
+const excerpt = anchor(id);
+for (const n of notes) {
+  if (!excerpt.split('\n').some((line) => line.startsWith(n.key))) {
+    throw new Error(`swe guide: note "${n.key}" is not a line in anchor ${id}`);
+  }
+}
+---
+
+<figure class="manifest">
+  <figcaption class="head">rulebook.toml · excerpt, copied from swe{caption && ` · ${caption}`}</figcaption>
+  <pre>{excerpt}</pre>
+  <dl>
+    {notes.map((n) => (
+      <>
+        <dt><code>{n.key}</code></dt>
+        <dd>{n.note}</dd>
+      </>
+    ))}
+  </dl>
+</figure>
+
+<style>
+  .manifest {
+    margin: 1.25rem 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .head {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--structure);
+    padding: 0.6rem 1.1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  pre {
+    margin: 0;
+    padding: 0.9rem 1.1rem;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--text);
+    overflow-x: auto;
+  }
+
+  dl {
+    margin: 0;
+    padding: 0.9rem 1.1rem;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 0.5rem 1rem;
+    font-size: 0.92rem;
+  }
+
+  dt code {
+    font-size: 0.85rem;
+  }
+
+  dd {
+    margin: 0;
+    color: var(--secondary);
+  }
+
+  @media (max-width: 520px) {
+    dl {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.1rem;
+    }
+
+    dd {
+      margin-bottom: 0.5rem;
+    }
+  }
+</style>
