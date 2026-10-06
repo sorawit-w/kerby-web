@@ -357,6 +357,66 @@
       "id": "warning-token-cost",
       "file": "skills/kerby/rulebooks/swe/README.md",
       "quote": "there is a real input-token cost"
+    },
+    {
+      "id": "format-rulebook",
+      "file": "skills/kerby/SKILL.md",
+      "quote": "rulebook: <id>@<version> (<origin>) — source: explicit | pinned | intent | detected | chosen"
+    },
+    {
+      "id": "prime-directive",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "Clarity over cleverness. Safety over speed. Never leave the repo broken."
+    },
+    {
+      "id": "iron-law",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "No completion claims without fresh evidence."
+    },
+    {
+      "id": "do-not-merge",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "Do NOT merge — leave for human review"
+    },
+    {
+      "id": "commit-types",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "one of `feat` `fix` `chore` `docs` `refactor` `test` `perf` `build` `ci`"
+    },
+    {
+      "id": "quick-task-fit",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "no new logic/refactor, ≤~50 LOC, no schema/contract changes"
+    },
+    {
+      "id": "high-stakes-migrations",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "**Schema migrations:**"
+    },
+    {
+      "id": "high-stakes-auth",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "**Authentication / authorization:**"
+    },
+    {
+      "id": "high-stakes-payments",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "**Payments / billing:**"
+    },
+    {
+      "id": "high-stakes-infra",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "**Infrastructure:**"
+    },
+    {
+      "id": "high-stakes-ci",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "**CI/CD:**"
+    },
+    {
+      "id": "high-stakes-traffic",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "**Production-traffic-shaping values:**"
     }
   ]
 }

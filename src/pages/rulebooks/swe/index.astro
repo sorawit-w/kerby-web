@@ -1,0 +1,235 @@
+---
+import Guide from '../../../layouts/Guide.astro';
+import Lines from '../../../components/guide/Lines.astro';
+import Tag from '../../../components/guide/Tag.astro';
+import swe from '../../../data/swe.json';
+import { HOOKS, plain } from '../../../data/swe-prose';
+import { url } from '../../../lib/url';
+
+const { planThreshold, approvalGrade } = swe.numbers;
+const page = (p: string) => url(`rulebooks/swe/${p}`);
+
+// Blocking hooks: base's secret scan first (every rulebook has it), then swe's.
+const blocking = [...swe.base.hooks, ...swe.hooks].filter((h) => HOOKS[h.script].effect === 'blocks');
+const warning = swe.hooks.filter((h) => HOOKS[h.script].effect === 'warns');
+
+// Rules no hook can check — they live in the conversation, not at a tool call.
+const INSTRUCTION_RULES = [
+  'State a plan before the first edit',
+  'Write the intent line before changing behavior',
+  'Prove “done” with fresh evidence',
+  'Run the right quality gate before commit',
+  'Never print a secret into the chat',
+  'Stay on the task; log other issues',
+  'Never merge — merging is yours',
+  'Keep non-production work away from production systems',
+];
+---
+
+<Guide
+  title="Should I adopt it?"
+  description="What kerby's swe rulebook does to a coding agent's work, what it blocks, what it costs, and how much of it a hook enforces.">
+  <section aria-labelledby="top">
+    <h1 id="top">The swe rulebook</h1>
+    <p class="lead">{swe.description}</p>
+    <p>
+      swe is kerby’s rulebook for software engineering. It tells a coding agent — Claude Code or Codex —
+      how to plan, change, check and report its work in your repo. A few hooks stop the actions that
+      cannot be undone. This page helps you decide if you want it.
+    </p>
+
+    <div class="box">
+      <h2 class="h-box">Read this before you adopt it</h2>
+      <p>swe’s own README says this about itself:</p>
+      <blockquote>“{plain('warning-opinionated')}”</blockquote>
+      <p>
+        The rules are one author’s taste, not a neutral default. They load into every session, so
+        {' '}{plain('warning-token-cost')}. Read them, keep what fits your work, and change the rest. A
+        rulebook is a folder you can fork.
+      </p>
+    </div>
+  </section>
+
+  <section aria-labelledby="does">
+    <h2 id="does">What it does</h2>
+    <p>Every rule serves one line, which swe calls its prime directive:</p>
+    <blockquote>{plain('prime-directive')}</blockquote>
+    <ul class="points">
+      <li>
+        <strong>It grades every task and picks a workflow.</strong> A typo and a new feature do not get
+        the same process. <a href={page('workflows/')}>How tasks are routed</a>
+      </li>
+      <li>
+        <strong>It states a plan before the first edit.</strong> From grade {planThreshold}, the plan is
+        written in full. From grade {approvalGrade}, the agent stops and waits for your approval.
+      </li>
+      <li>
+        <strong>It works on a branch and commits after each finished piece.</strong> It never works on
+        a protected branch such as main, and it never merges. Merging is yours.
+      </li>
+      <li>
+        <strong>It proves “done” with fresh evidence.</strong> swe’s rule: “{plain('iron-law')}” The
+        agent runs the checks and shows you the result, never “should work”.
+      </li>
+    </ul>
+    <p><a href={page('lifecycle/')}>See all 13 steps, from install to the final report</a></p>
+  </section>
+
+  <section aria-labelledby="blocks">
+    <h2 id="blocks">What it blocks</h2>
+    <p>
+      These hooks stop an action before it happens. The agent sees the reason and has to choose another
+      way.
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th scope="col">Hook</th><th scope="col">It stops</th><th scope="col">Tier</th></tr>
+        </thead>
+        <tbody>
+          {blocking.map((h) => (
+            <tr>
+              <td><span class="chip">{h.script}</span></td>
+              <td>{HOOKS[h.script].stops}</td>
+              <td>{h.tier}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="small">
+      Hooks run only after you install them, and only in Claude Code. Codex reads the same rules but
+      does not run the hooks. <a href={page('hooks/')}>Every hook, its gaps, and how to turn it off</a>
+    </p>
+  </section>
+
+  <section aria-labelledby="costs">
+    <h2 id="costs">What it costs</h2>
+    <p>Every task starts with these lines, even a one-word fix:</p>
+    <Lines kind="format" ids={['format-complexity', 'format-rung', 'format-plan']} />
+    <ul class="points">
+      <li>
+        <strong>Approval stops.</strong> Work graded {approvalGrade} or higher waits for your yes,
+        including work that only reaches that grade halfway through.
+      </li>
+      <li>
+        <strong>Many small commits.</strong> The agent commits after each finished piece. If your team
+        wants one commit per change, squash when you merge.
+      </li>
+      <li>
+        <strong>A plan even when you say “just do it”.</strong> Those words shorten the plan to one line.
+        They do not remove it.
+      </li>
+      <li>
+        <strong>Tokens.</strong> The rules load into every session.
+      </li>
+      <li>
+        <strong>Enforcement depends on your tool.</strong> Hooks run in Claude Code. In Codex the rules are
+        instructions only. On GitHub Copilot, kerby’s own docs say to treat it as advisory.
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="map">
+    <h2 id="map">Hook-enforced or instructions only</h2>
+    <p>
+      Most of swe is instructions: the agent follows them because it read them. Only the hooks can stop
+      an action. Turn the hooks off to see what is left.
+    </p>
+    <div class="map">
+      <label class="switch">
+        <input type="checkbox" id="hooks-on" checked />
+        Hooks installed
+      </label>
+      <div class="cols">
+        <div class="col">
+          <h3><Tag kind="hook" /></h3>
+          <p class="when-on">Stopped by a hook, every time.</p>
+          <p class="when-off">Nothing. Without hooks, no rule here is checked.</p>
+          <ul class="when-on">
+            {blocking.map((h) => <li>{HOOKS[h.script].name}</li>)}
+          </ul>
+        </div>
+        <div class="col">
+          <h3><Tag kind="instructions" /></h3>
+          <p>The agent follows these because it read them.</p>
+          <ul>
+            {blocking.map((h) => <li class="when-off moved">{HOOKS[h.script].name}</li>)}
+            {INSTRUCTION_RULES.map((r) => <li>{r}</li>)}
+          </ul>
+        </div>
+      </div>
+      <p class="small">
+        {warning.length} more hooks only warn and never stop anything:
+        {' '}{warning.map((h) => HOOKS[h.script].name.toLowerCase()).join(', ')}.
+      </p>
+    </div>
+  </section>
+
+  <section aria-labelledby="fit">
+    <h2 id="fit">Is it for you?</h2>
+    <div class="fit">
+      <div>
+        <h3>A good fit if</h3>
+        <ul>
+          <li>you want to see the plan before the agent edits anything;</li>
+          <li>you review the agent’s work as pull requests;</li>
+          <li>you want proof that work is done, not a promise;</li>
+          <li>you use Claude Code and want hard stops on destructive git and secrets.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Not a fit if</h3>
+        <ul>
+          <li>you want an agent that edits quietly when asked;</li>
+          <li>you want short answers without the extra lines;</li>
+          <li>you need hard enforcement in a tool that does not run kerby’s hooks;</li>
+          <li>you disagree with many rules and do not want to edit a rulebook.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="more">
+    <h2 id="more">Read next</h2>
+    <ul class="next">
+      <li><a href={page('lifecycle/')}><strong>Lifecycle</strong><span>What swe does at each of 13 steps, from install to the final report.</span></a></li>
+      <li><a href={page('workflows/')}><strong>Workflows</strong><span>The {swe.routes.length} routes, the 1–10 grade, and what happens to your kind of task.</span></a></li>
+      <li><a href={page('hooks/')}><strong>Hooks</strong><span>Each hook: what it stops, what it misses, and how to turn it off.</span></a></li>
+      <li><a href={page('reference/')}><strong>Reference</strong><span>Commands, the files swe keeps, and a glossary.</span></a></li>
+    </ul>
+  </section>
+</Guide>
+
+<style>
+  .h-box {
+    font-size: 1.15rem;
+  }
+
+  .points {
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .fit {
+    display: grid;
+    gap: 0.5rem 2rem;
+  }
+
+  @media (min-width: 640px) {
+    .fit {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .fit h3 {
+    margin-top: 0;
+  }
+
+  .fit ul {
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+</style>

@@ -1,0 +1,78 @@
+---
+// A dark panel for swe's forced lines. Two kinds, never mixed:
+//   format  — the line shape, rendered from anchored quotes in swe.json (the
+//             exact text swe asks for; check:swe fails if the source moves).
+//             <placeholders> are dimmed: they are what the agent fills in.
+//   example — the same lines filled with made-up values, labeled as such on
+//             the panel itself (DESIGN.md Voice: filled examples say "example").
+// Guide pages may use dark panels only for kerby output or swe line formats.
+import swe from '../../data/swe.json';
+import { anchor } from '../../data/swe-prose';
+
+type Props =
+  | { kind: 'format'; ids: string[]; caption?: string }
+  | { kind: 'example'; lines: string[]; caption?: string };
+
+const props = Astro.props;
+const lines = props.kind === 'format' ? props.ids.map(anchor) : props.lines;
+const sources =
+  props.kind === 'format'
+    ? [...new Set(props.ids.map((id) => swe.anchors.find((a) => a.id === id)!.file.split('/').pop()))]
+    : [];
+const head =
+  props.kind === 'format' ? `format · copied from ${sources.join(', ')}` : 'example · the values are made up';
+
+// Split each line into text and <placeholder> runs so placeholders can dim.
+const runs = (line: string) => line.split(/(<[^<>]+>)/g).filter(Boolean);
+---
+
+<figure class={`lines ${props.kind}`}>
+  <figcaption class="head">{head}</figcaption>
+  <pre>{lines.map((line, i) => (
+    <>{i > 0 && '\n'}{props.kind === 'format'
+      ? runs(line).map((r) => (r.startsWith('<') ? <span class="ph">{r}</span> : r))
+      : line}</>
+  ))}</pre>
+  {props.caption && <p class="caption">{props.caption}</p>}
+</figure>
+
+<style>
+  .lines {
+    margin: 1.5rem 0;
+    background: var(--panel-bg);
+    color: var(--panel-text);
+    border: 1px solid var(--structure);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .head {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--panel-dim);
+    padding: 0.6rem 1.1rem;
+    border-bottom: 1px solid var(--structure);
+  }
+
+  pre {
+    margin: 0;
+    padding: 1rem 1.1rem;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .ph {
+    color: var(--panel-dim);
+  }
+
+  .caption {
+    margin: 0;
+    padding: 0.75rem 1.1rem;
+    border-top: 1px solid var(--structure);
+    color: var(--panel-dim);
+    font-size: 0.9rem;
+  }
+</style>

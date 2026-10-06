@@ -1,0 +1,47 @@
+---
+// How a rule is held. The words carry the meaning; the single terracotta dot
+// on "hook-enforced" is a status mark, never the only signal.
+interface Props {
+  kind: 'hook' | 'partly' | 'instructions';
+}
+const LABEL = {
+  hook: 'Hook-enforced',
+  partly: 'Partly hook-enforced',
+  instructions: 'Instructions only',
+} as const;
+const { kind } = Astro.props;
+---
+
+<span class={`tag ${kind}`}>{LABEL[kind]}</span>
+
+<style>
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--structure);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.15rem 0.5rem;
+    white-space: nowrap;
+  }
+
+  .hook::before,
+  .partly::before {
+    content: '';
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+  }
+
+  .hook::before {
+    background: var(--accent);
+  }
+
+  .partly::before {
+    border: 1.5px solid var(--accent);
+  }
+</style>

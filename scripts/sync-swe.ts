@@ -4,6 +4,7 @@
 //
 //   bun scripts/sync-swe.ts           write src/data/swe.json
 //   bun scripts/sync-swe.ts --check   rebuild in memory, fail on any difference
+//   … --check --drift                 same, ignoring source_sha / kerby_version
 //
 // The pin: $KERBY_REF if set (CI and drift.yml set it), else the KERBY_REF:
 // line in .github/workflows/deploy.yml — one pin for check:copy and this.
@@ -47,6 +48,18 @@ const ANCHORS: { id: string; file: string; quote: string }[] = [
   { id: 'gates-full', file: `${SWE}/references/quality-gates.md`, quote: '| **Full** | Cross-cutting changes, dependency updates, public API changes | Standard + E2E (if applicable) + manual spot-check |' },
   { id: 'warning-opinionated', file: `${SWE}/README.md`, quote: 'This rulebook is **deliberately, aggressively opinionated.**' },
   { id: 'warning-token-cost', file: `${SWE}/README.md`, quote: 'there is a real input-token cost' },
+  { id: 'format-rulebook', file: 'skills/kerby/SKILL.md', quote: 'rulebook: <id>@<version> (<origin>) — source: explicit | pinned | intent | detected | chosen' },
+  { id: 'prime-directive', file: `${SWE}/BOOTSTRAP.md`, quote: 'Clarity over cleverness. Safety over speed. Never leave the repo broken.' },
+  { id: 'iron-law', file: `${SWE}/BOOTSTRAP.md`, quote: 'No completion claims without fresh evidence.' },
+  { id: 'do-not-merge', file: `${SWE}/BOOTSTRAP.md`, quote: 'Do NOT merge — leave for human review' },
+  { id: 'commit-types', file: `${SWE}/BOOTSTRAP.md`, quote: 'one of `feat` `fix` `chore` `docs` `refactor` `test` `perf` `build` `ci`' },
+  { id: 'quick-task-fit', file: `${SWE}/BOOTSTRAP.md`, quote: 'no new logic/refactor, ≤~50 LOC, no schema/contract changes' },
+  { id: 'high-stakes-migrations', file: `${SWE}/BOOTSTRAP.md`, quote: '**Schema migrations:**' },
+  { id: 'high-stakes-auth', file: `${SWE}/BOOTSTRAP.md`, quote: '**Authentication / authorization:**' },
+  { id: 'high-stakes-payments', file: `${SWE}/BOOTSTRAP.md`, quote: '**Payments / billing:**' },
+  { id: 'high-stakes-infra', file: `${SWE}/BOOTSTRAP.md`, quote: '**Infrastructure:**' },
+  { id: 'high-stakes-ci', file: `${SWE}/BOOTSTRAP.md`, quote: '**CI/CD:**' },
+  { id: 'high-stakes-traffic', file: `${SWE}/BOOTSTRAP.md`, quote: '**Production-traffic-shaping values:**' },
 ];
 
 function skip(why: string): never {
@@ -156,7 +169,15 @@ function diff(a: unknown, b: unknown, path = ''): string[] {
   return [`${path || '(root)'}: committed ${JSON.stringify(a)} ≠ source ${JSON.stringify(b)}`];
 }
 
+// --drift (used by .github/workflows/drift.yml against kerby main): ignore the
+// fields that only say WHICH commit was read — they always differ from a newer
+// commit — and report only changes the guide pages actually show.
+const PROVENANCE = process.argv.includes('--drift') ? ['source_sha', 'kerby_version'] : [];
 const committed = existsSync(OUT) ? await Bun.file(OUT).json() : {};
+for (const k of PROVENANCE) {
+  delete committed[k];
+  delete (data as Record<string, unknown>)[k];
+}
 const problems = diff(committed, data);
 if (problems.length) {
   for (const p of problems) console.error(`FAIL  ${p}`);

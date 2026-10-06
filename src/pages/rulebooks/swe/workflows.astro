@@ -1,0 +1,270 @@
+---
+import Guide from '../../../layouts/Guide.astro';
+import Lines from '../../../components/guide/Lines.astro';
+import swe from '../../../data/swe.json';
+import { ROUTES, anchor, plain } from '../../../data/swe-prose';
+import { url } from '../../../lib/url';
+
+const { planThreshold, approvalGrade } = swe.numbers;
+
+// The canonical complexity ladder, parsed from its anchored table rows.
+const LADDER = ['ladder-low', 'ladder-med', 'ladder-high', 'ladder-critical'].map((id) => {
+  const [band, indicators, approach] = anchor(id)
+    .split('|')
+    .map((c) => c.trim().replace(/\*\*/g, ''))
+    .filter(Boolean);
+  const [, from, to] = band.match(/\((\d+)–(\d+)\)/)!.map(Number);
+  return { band, name: band.split(' ')[0], from, to, indicators, approach };
+});
+
+const HIGH_STAKES = [
+  'high-stakes-migrations',
+  'high-stakes-auth',
+  'high-stakes-payments',
+  'high-stakes-infra',
+  'high-stakes-ci',
+  'high-stakes-traffic',
+].map((id) => plain(id).replace(/:$/, ''));
+
+// Example tasks. Grades are made up, and the panel says so. What follows from
+// a grade — full plan, approval stop — is computed from swe.json's numbers.
+type Scenario = {
+  id: string;
+  label: string;
+  grade: number;
+  route: string;
+  trigger: string;
+  why: string;
+  lines: string[];
+  after: string;
+};
+const SCENARIOS: Scenario[] = [
+  {
+    id: 'task-typo',
+    label: 'Fix a typo',
+    grade: 1,
+    route: 'quick-task',
+    trigger: 'one-word typo in README',
+    why: 'Documentation, one file, no logic. It passes the quick-task fit check.',
+    lines: ['rung: 5 — a one-line change', 'plan: README.md — fix "recieve" to "receive" — re-read the line', '…', 'skipped: none'],
+    after: 'It still works on a branch, commits, and writes a log entry.',
+  },
+  {
+    id: 'task-bug',
+    label: 'Fix a bug',
+    grade: 3,
+    route: 'bugfix',
+    trigger: 'cart total adds tax twice',
+    why: 'A bug takes the bugfix route: reproduce it, find the cause, write a failing test, then fix.',
+    lines: [
+      'rung: 6 — minimum fix at the root cause',
+      'plan: src/cart/total.ts, total.test.ts — apply tax once to the subtotal — the new failing test passes',
+      'INTENT: code does add tax per line and again per order; the failing check/task expects tax once per order; the spec (README/docs/docstring) says tax applies once, to the subtotal',
+      '…',
+      'skipped: none',
+    ],
+    after: 'The test is written first and fails. Then the fix makes it pass.',
+  },
+  {
+    id: 'task-auth',
+    label: 'Change login',
+    grade: 5,
+    route: 'feature',
+    trigger: 'session change in auth code',
+    why: 'Auth is a high-stakes path, so the change takes the full feature route even though it is small.',
+    lines: [
+      'rung: 3 — the framework has a session option',
+      'plan: src/auth/session.ts, LoginForm, session tests — 30-day session when "remember me" is ticked — session tests pass',
+      'smallest: a "remember me" box that sets a longer session',
+      'deferring: none',
+    ],
+    after: 'When the agent edits src/auth/, a hook reminds it that this path needs the full workflow.',
+  },
+  {
+    id: 'task-feature',
+    label: 'Build a feature',
+    grade: 7,
+    route: 'feature',
+    trigger: 'new endpoint, UI and tests',
+    why: 'Several files and design decisions. The grade reaches the approval stop.',
+    lines: [
+      'rung: 6 — no existing export to reuse',
+      'plan: api/reports, ReportsPage, export tests — CSV export of the current report view — export test and a manual download',
+      'smallest: one CSV export of the current view',
+      'deferring: Excel format, scheduled exports',
+      '… your approval, then the work …',
+      'outcome: download current view — match',
+      'skipped: Excel format, scheduled exports — add when a user asks for them',
+    ],
+    after: 'The agent shows the full plan and waits. Code starts only after your yes.',
+  },
+];
+---
+
+<Guide
+  title="Workflows"
+  description="The six routes in kerby's swe rulebook, the 1–10 complexity grade, and what happens to a typo, a bug, an auth change and a feature.">
+  <section aria-labelledby="top">
+    <h1 id="top">Workflows</h1>
+    <p class="lead">Every task gets a grade and a route. The two together decide how much process it gets.</p>
+    <p>
+      The <strong>route</strong> comes from the kind of task. The <strong>grade</strong>, from 1 to 10,
+      says how big it is. The grade decides how much planning the route needs and whether the agent stops
+      for your approval.
+    </p>
+  </section>
+
+  <section aria-labelledby="routes">
+    <h2 id="routes">The {swe.routes.length} routes</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th scope="col">Route</th><th scope="col">When</th><th scope="col">What happens</th></tr>
+        </thead>
+        <tbody>
+          {swe.routes.map((r) => (
+            <tr>
+              <td><span class="chip">{r}</span></td>
+              <td>{ROUTES[r].when}</td>
+              <td>{ROUTES[r].steps}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <h3>When a small change still gets the full route</h3>
+    <p>
+      quick-task needs two things at once: a grade below {planThreshold}, and a change that passes the
+      fit check — {plain('quick-task-fit')}. If either fails, the task takes feature, or bugfix for a bug.
+    </p>
+    <p>Changes to these kinds of files always take feature or bugfix, even a one-line change:</p>
+    <ul class="stakes">
+      {HIGH_STAKES.map((h) => <li>{h}</li>)}
+    </ul>
+    <p class="small">
+      The reason: on these paths, a one-character change can take down production. The size of the diff
+      says nothing about the risk.
+    </p>
+  </section>
+
+  <section aria-labelledby="grade">
+    <h2 id="grade">The 1–10 grade</h2>
+    <p>
+      From grade {planThreshold}, the agent writes a full plan with expected results. From grade
+      {' '}{approvalGrade}, it stops and waits for your approval. A project can move the plan line in
+      agent-context.yaml. The approval line is fixed. When a task sits between two grades, the agent picks
+      the higher one.
+    </p>
+
+    <div class="ladder" aria-hidden="true">
+      <div class="cells">
+        {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+          <span class={`cell${n >= approvalGrade ? ' approval' : n >= planThreshold ? ' planned' : ''}`}>{n}</span>
+        ))}
+      </div>
+      <div class="bands">
+        {LADDER.map((b) => (
+          <span style={`grid-column: ${b.from} / ${b.to + 1}`}>{b.name}</span>
+        ))}
+      </div>
+      <div class="marks">
+        <span class="mark" style={`left: ${(planThreshold - 1) * 10}%`}>From {planThreshold}: full plan</span>
+        <span class="mark approval" style={`left: ${(approvalGrade - 1) * 10}%`}>From {approvalGrade}: stops for your approval</span>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <caption class="small">The grade table, copied from workflows/feature.md</caption>
+        <thead>
+          <tr><th scope="col">Grade</th><th scope="col">Looks like</th><th scope="col">What the agent does</th></tr>
+        </thead>
+        <tbody>
+          {LADDER.map((b) => (
+            <tr><td>{b.band}</td><td>{b.indicators}</td><td>{b.approach}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="tasks">
+    <h2 id="tasks">Pick a task</h2>
+    <p>
+      Four example tasks and what swe does with each. The lines follow swe’s real formats. The grades and
+      file names are made up. A “…” marks the work between the first lines and the final report.
+    </p>
+
+    <div class="picker" data-picker="Example tasks">
+      {SCENARIOS.map((s) => {
+        const planned = s.grade >= planThreshold;
+        const stops = s.grade >= approvalGrade;
+        return (
+          <div class="choice" data-choice data-label={s.label} id={s.id}>
+            <h3>{s.label}</h3>
+            <p>{s.why}</p>
+            <dl class="facts">
+              <dt>route</dt>
+              <dd><span class="chip">{s.route}</span></dd>
+              <dt>grade</dt>
+              <dd>{s.grade} (example)</dd>
+              <dt>planning</dt>
+              <dd>{planned ? 'A full plan with expected results and test cases' : 'One plan line'}</dd>
+              <dt>approval</dt>
+              <dd>{stops ? 'Stops and waits for your yes' : `No stop (below ${approvalGrade})`}</dd>
+            </dl>
+            <Lines
+              kind="example"
+              lines={[`complexity: ${s.grade} (trigger: ${s.trigger}) → route: ${s.route}`, ...s.lines]}
+            />
+            <p>{s.after}</p>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+
+  <section aria-labelledby="next-h">
+    <h2 id="next-h">Read next</h2>
+    <ul class="next">
+      <li><a href={url('rulebooks/swe/lifecycle/')}><strong>Lifecycle</strong><span>The 13 steps every route passes through.</span></a></li>
+      <li><a href={url('rulebooks/swe/hooks/')}><strong>Hooks</strong><span>The few rules a hook can enforce.</span></a></li>
+    </ul>
+  </section>
+</Guide>
+
+<style>
+  .stakes {
+    columns: 2 14rem;
+    column-gap: 2rem;
+    padding-left: 1.1rem;
+  }
+
+  .stakes li {
+    margin-bottom: 0.3rem;
+  }
+
+  .bands {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 3px;
+    margin-top: 0.35rem;
+  }
+
+  .bands span {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding-top: 0.25rem;
+    text-align: center;
+  }
+
+  caption {
+    caption-side: bottom;
+    text-align: left;
+    padding-top: 0.5rem;
+  }
+</style>

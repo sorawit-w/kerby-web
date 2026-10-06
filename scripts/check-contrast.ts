@@ -38,7 +38,8 @@ const PAIRINGS: [string, string, number, string][] = [
   ['structure', 'surface', 4.5, 'labels on surface'],
   ['panel-text', 'panel-bg', 4.5, 'terminal text'],
   ['accent-on-dark', 'panel-bg', 4.5, 'BLOCKED/WARNING keyword'],
-  ['panel-dim', 'panel-bg', 4.5, 'typed command chrome'],
+  ['panel-dim', 'panel-bg', 4.5, 'typed command chrome; guide panel heads and <placeholders>'],
+  ['text', 'border', 4.5, 'selected text (::selection)'],
   ['border', 'bg', 1.2, 'decorative border (advisory floor)'],
 ];
 
