@@ -206,6 +206,7 @@
 
 .guide table {
   width: 100%;
+  min-width: 34rem;
   border-collapse: collapse;
   font-size: 0.95rem;
 }
@@ -616,5 +617,18 @@
   .stepnav a,
   .guide button.btn {
     transition: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .guide .table-wrap::before {
+    content: 'Scroll to read the full table →';
+    display: block;
+    position: sticky;
+    left: 0;
+    width: fit-content;
+    margin-bottom: .75rem;
+    color: var(--muted);
+    font-size: .8rem;
   }
 }

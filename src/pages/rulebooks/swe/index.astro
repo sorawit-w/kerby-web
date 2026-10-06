@@ -387,12 +387,14 @@ const INSTRUCTION_RULES = [
   /* swe → kerby → agent. The connector is a 1px structure line, not a glyph. */
   .flow {
     display: grid;
-    grid-template-columns: 1fr 1.25rem 1fr 1.25rem 1fr;
+    grid-template-columns: minmax(0, 1fr) 1.25rem minmax(0, 1fr) 1.25rem minmax(0, 1fr);
     align-items: stretch;
     margin: 1.5rem 0 0.75rem;
   }
 
   .flow .node {
+    min-width: 0;
+    overflow-wrap: anywhere;
     border: 1px solid var(--border);
     border-radius: 6px;
     background: var(--surface);

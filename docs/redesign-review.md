@@ -1,0 +1,56 @@
+# Guarded-path redesign review
+
+The site explains how SWE changes an agent’s work through conditions, evidence, responsibility, and an explicit response when a condition is unmet. The current mascot, stack, URLs, legacy anchors, and pinned rulebook semantics remain.
+
+Source revision: `3c750e205dda90fc242c6063a1323ce8ff94bc29` (SWE 2.13.2, Kerby 10.2.2).
+
+## Completed phases
+
+- [x] Route/anchor inventory and typed illustrative story with anchored sources.
+- [x] Shared shell, navigation, checkpoint vocabulary, responsive design system.
+- [x] Homepage and complete illustrative settings-persistence walkthrough.
+- [x] All five SWE guide pages redesigned without dropping reference coverage.
+- [x] Pinned-source PR validation, regression cases, browser review, and screenshots.
+
+## Automated evidence
+
+`bun run check` passes: eight regression tests (19 assertions), seven built routes, internal links/fragments, legacy anchors, illustrative story/source references, contrast, flat-design discipline, asset budgets, three byte-exact transcripts, and 59 synchronized source anchors. Source checks executed against the pinned revision.
+
+A separate build with `--base /kerby-web` passes site and transcript checks. PR CI repeats both configurations and requires available source data. Main/manual deployment triggers remain unchanged. Independent Gitleaks review of the implementation commit found no leaks.
+
+## Browser evidence and limits
+
+- All seven routes inspected at 375, 768, and 1440 pixels; no page-level horizontal overflow, broken images, or duplicate main headings found. Lifecycle also checked at 320 pixels.
+- Final desktop/mobile screenshots below reflect the production build.
+- Keyboard task selection, example configuration, copy feedback, visible focus, and horizontally scrollable tables checked. Clipboard feedback succeeded; clipboard bytes were not independently verified through the browser bridge.
+- Deep links select the relevant enhanced example and place lifecycle content below the sticky navigation.
+- Script-blocking CSP fixtures expose all overview/workflow examples and the complete walkthrough without JavaScript.
+- Forced reduced-motion fixtures retain selection while disabling animation. This is a fixture check, not a native operating-system preference test.
+- Doubled root text size checked on home, overview, and walkthrough; a small overview overflow was corrected. Native browser 200% zoom was not directly exercised.
+- Semantic headings, regions, labels, and reading order inspected. A spoken screen-reader session and a comprehension study were not performed.
+
+## Screenshots
+
+| Page | Desktop (1440px) | Mobile (375px) |
+|---|---|---|
+| Home | [Desktop](redesign-screenshots/home-desktop.png) | [Mobile](redesign-screenshots/home-mobile.png) |
+| SWE overview | [Desktop](redesign-screenshots/overview-desktop.png) | [Mobile](redesign-screenshots/overview-mobile.png) |
+| Lifecycle | [Desktop](redesign-screenshots/lifecycle-desktop.png) | [Mobile](redesign-screenshots/lifecycle-mobile.png) |
+| Workflows | [Desktop](redesign-screenshots/workflows-desktop.png) | [Mobile](redesign-screenshots/workflows-mobile.png) |
+| Bug walkthrough | [Desktop](redesign-screenshots/walkthrough-desktop.png) | [Mobile](redesign-screenshots/walkthrough-mobile.png) |
+| Hooks | [Desktop](redesign-screenshots/hooks-desktop.png) | [Mobile](redesign-screenshots/hooks-mobile.png) |
+| Reference | [Desktop](redesign-screenshots/reference-desktop.png) | [Mobile](redesign-screenshots/reference-mobile.png) |
+
+## Manual review
+
+Run `bun run dev`. Follow “Follow a bug fix” from the homepage. At each checkpoint, identify the condition, evidence, responsibility, and response to failure. In Verify, follow the held branch back to investigation. Confirm the report remains explicitly illustrative.
+
+Review the guide’s hooks table and genuine transcripts: a WARNING prefix in the secret-scan transcript still accompanies a blocking pre-commit result. Example configuration describes an example, never a detected machine state. Routine bug work does not introduce an invented approval pause.
+
+Use keyboard navigation and native 200% zoom, reduced-motion preferences, and a screen reader for an additional assistive-technology review. These are remaining manual checks, not claimed automated coverage.
+
+## Intent and outcome
+
+INTENT: code does transcript-first promotion with broad enforcement claims; the task expects a guarded path with explicit conditions and responsibilities; the spec in DESIGN.md describes the old transcript-first design.
+
+The approved redesign replaces that old design premise. No engine or SWE rule changes, new mascot artwork, or live execution claims were introduced. Rollback is a revert of the single redesign PR; no migration is required.
