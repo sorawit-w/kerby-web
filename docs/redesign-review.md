@@ -83,3 +83,7 @@ Updated homepage metadata and design guidance. Full checks pass with pinned-sour
 ## Compact hero example
 
 Replaced the hero's condition/check/consequence definition list with a short command-to-blocked-outcome sequence. The panel is explicitly labeled as one SWE Git-hook example and states the installation requirement. Editorial explanation uses ordinary page styling; the exact animated transcripts remain in the linked hook-check section. Updated homepage screenshots. Full checks pass; desktop visual review and 375px overflow check completed.
+
+## Visual designer pass on the hero example
+
+Two independent design agents identified the rail/arrow/divider collision and inconsistent text insets. Replaced that construction with one light outlined frame and two consistently padded rows, plus an SVG stop icon and explicit “Blocked before execution” label. Installation context stays outside the frame. A follow-up desktop screenshot review found no material visual issue; mobile rendering was also inspected at 375px with no horizontal overflow. Full checks pass. Homepage screenshots refreshed.
