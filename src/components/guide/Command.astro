@@ -44,23 +44,28 @@ const { ids, title } = Astro.props;
     rows.forEach((row) => {
       const code = row.querySelector('code')!;
       const text = code.textContent!.trim();
-      const button = el('button', { type: 'button', class: 'copy', 'aria-label': `Copy ${text}` }, 'Copy');
+      const button = el('button', { type: 'button', class: 'copy', 'aria-label': `Copy ${text}` });
+      const label = el('span', { class: 'copy-label' }, 'Copy');
+      button.append(el('span', { class: 'copy-mark', 'aria-hidden': 'true' }, '✓'), label);
       let timer: ReturnType<typeof setTimeout>;
-      button.addEventListener('click', async () => {
+      button.addEventListener('click', async (event) => {
         clearTimeout(timer);
+        button.removeAttribute('data-copied');
+        // A keyboard press (detail 0) shows the mark at once, without the fade.
+        button.toggleAttribute('data-instant', event.detail === 0);
         try {
           await navigator.clipboard.writeText(text);
-          button.textContent = 'Copied';
+          label.textContent = 'Copied';
           button.setAttribute('data-copied', '');
           live.textContent = `Copied ${text}`;
         } catch {
           // Clipboard refused: select the command so the reader can copy it by hand.
           window.getSelection()!.selectAllChildren(code);
-          button.textContent = 'Selected';
+          label.textContent = 'Selected';
           live.textContent = `${text} is selected. Copy it with your keyboard.`;
         }
         timer = setTimeout(() => {
-          button.textContent = 'Copy';
+          label.textContent = 'Copy';
           button.removeAttribute('data-copied');
           live.textContent = '';
         }, 1600);
@@ -140,5 +145,27 @@ const { ids, title } = Astro.props;
   li :global(.copy[data-copied]) {
     color: var(--text);
     border-color: var(--accent);
+  }
+
+  /* The checkmark takes no space at rest, so the button keeps today's width. */
+  li :global(.copy-mark) {
+    display: none;
+    margin-right: 0.35rem;
+  }
+
+  li :global(.copy[data-copied] .copy-mark) {
+    display: inline;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    li :global(.copy[data-copied]:not([data-instant]) .copy-mark) {
+      animation: copy-mark var(--motion-feedback) linear;
+    }
+  }
+
+  @keyframes copy-mark {
+    from {
+      opacity: 0;
+    }
   }
 </style>

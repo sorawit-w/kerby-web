@@ -22,4 +22,10 @@
   --font-display: 'Schibsted Grotesk Variable', sans-serif;
   --font-body: 'Geist', sans-serif;
   --font-mono: 'JetBrains Mono Variable', monospace;
+
+  /* Motion: short, ease-out, enter slower than return. Hover only. */
+  --motion-feedback: 120ms;
+  --motion-enter: 160ms;
+  --motion-return: 100ms;
+  --motion-ease: cubic-bezier(0.23, 1, 0.32, 1);
 }
