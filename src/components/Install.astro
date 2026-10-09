@@ -1,17 +1,20 @@
 ---
 // Install — literal zone: no persona, no wit (VOICE.md zoning).
+// Commands come from guide/Command.astro: one row per command, each read from
+// kerby's README (check:swe), with a Copy button where the clipboard exists.
+import Command from './guide/Command.astro';
+
 const README = 'https://github.com/sorawit-w/kerby#readme';
 ---
 
 <section id="install" aria-labelledby="install-heading">
   <h2 id="install-heading">Install</h2>
 
-  <pre class="cmd"><code>/plugin marketplace add sorawit-w/kerby
-/plugin install kerby@kerby</code></pre>
+  <Command ids={['install-marketplace', 'install-plugin']} />
 
   <p>Or via the cross-platform CLI:</p>
 
-  <pre class="cmd"><code>npx skills add sorawit-w/kerby</code></pre>
+  <Command ids={['install-cli']} />
 
   <p>
     Then: <code>/kerby</code> loads the rules into the session. <code>/kerby status</code> checks
@@ -22,15 +25,6 @@ const README = 'https://github.com/sorawit-w/kerby#readme';
 </section>
 
 <style>
-  .cmd {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 1rem 1.25rem;
-    overflow-x: auto;
-    font-size: 0.9rem;
-  }
-
   code {
     font-family: var(--font-mono);
   }
