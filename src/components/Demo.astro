@@ -59,7 +59,12 @@ const parts = TRANSCRIPTS.map((t, i) => {
     ))}
   </div>
 
-  <p class="underline-note">No tone to argue with. The gate is open or it isn't.</p>
+  <div class="below">
+    <p class="underline-note">No tone to argue with. The gate is open or it isn't.</p>
+    <!-- Pause control (WCAG 2.2.2). Holds its space while invisible, so
+         verdicts.js shows it without a layout shift. -->
+    <button type="button" class="demo-toggle" aria-label="Pause the terminal animation">Pause</button>
+  </div>
 </section>
 
 <script src="../scripts/verdicts.js"></script>
@@ -158,5 +163,43 @@ const parts = TRANSCRIPTS.map((t, i) => {
   .underline-note {
     color: var(--muted);
     font-size: 0.95rem;
+  }
+
+  .below {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  /* As quiet as the Copy button. Hidden (space kept) until the loop runs. */
+  .demo-toggle {
+    flex: none;
+    visibility: hidden;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--secondary);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.3rem 0.7rem;
+    cursor: pointer;
+  }
+
+  .demo-toggle:hover {
+    color: var(--text);
+    border-color: var(--structure);
+  }
+
+  .demo-toggle.is-ready {
+    visibility: visible;
+  }
+
+  /* Reduced motion: nothing moves, so there is nothing to pause. */
+  @media (prefers-reduced-motion: reduce) {
+    .demo-toggle {
+      display: none;
+    }
   }
 </style>

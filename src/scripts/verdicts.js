@@ -1,12 +1,14 @@
-// The page's only script (brief L6/§7): the verdict cycle.
+// The verdict cycle (brief L6/§7). The landing page's other script is the
+// Copy buttons on the install commands (guide/Command.astro).
 // command typed at ~35ms/char → 300ms pause → verdict lines fade in one at a
 // time (80ms stagger, 150ms opacity) → hold 4s → fade out 200ms → next.
 //
 // CLS 0 by construction: every frame's content is pre-rendered invisible and
 // revealed with opacity only — no layout writes after play() starts. The
 // block cursor is a background paint on the next unrevealed character.
-// Pauses while document.hidden; no-op under reduced motion (the CSS static
-// stack is the reduced-motion rendering).
+// Waits while the tab is hidden, the panel is off-screen, or the reader
+// pressed Pause (WCAG 2.2.2); a paused frame simply stays where it is.
+// No-op under reduced motion (the CSS static stack is that rendering).
 
 const TYPE_MS = 35;
 const CMD_PAUSE_MS = 300;
@@ -19,14 +21,28 @@ function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+let paused = false;
+let offscreen = false;
+let waiters = [];
+
+function blocked() {
+  return document.hidden || paused || offscreen;
+}
+
+// Release every wait once nothing blocks the cycle any more.
+function wake() {
+  if (blocked()) return;
+  const ready = waiters;
+  waiters = [];
+  ready.forEach((r) => r());
+}
+
 async function whileVisible(ms) {
   await sleep(ms);
-  while (document.hidden) {
-    await new Promise((r) =>
-      document.addEventListener('visibilitychange', r, { once: true }),
-    );
-  }
+  while (blocked()) await new Promise((r) => waiters.push(r));
 }
+
+document.addEventListener('visibilitychange', wake);
 
 function span(className, text) {
   const el = document.createElement('span');
@@ -54,6 +70,27 @@ function init() {
   anim.className = 'transcript anim';
   anim.style.visibility = 'visible';
   stack.append(anim);
+
+  // Stop while the panel is scrolled out of view.
+  new IntersectionObserver(([entry]) => {
+    offscreen = !entry.isIntersecting;
+    wake();
+  }).observe(stack.closest('.terminal'));
+
+  const toggle = document.querySelector('#demo .demo-toggle');
+  toggle.classList.add('is-ready');
+  toggle.addEventListener('click', () => {
+    paused = !paused;
+    const action = paused ? 'Play' : 'Pause';
+    toggle.textContent = action;
+    toggle.setAttribute('aria-label', `${action} the terminal animation`);
+    // Paused mid fade-out: show the frame, not an empty panel.
+    if (paused) {
+      anim.style.transition = '';
+      anim.style.opacity = '1';
+    }
+    wake();
+  });
 
   async function play({ cmd, kw, rest }) {
     // Pre-render the full frame invisible — reveals below are opacity-only.
