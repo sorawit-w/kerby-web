@@ -140,6 +140,23 @@ terracotta "hook-enforced" dot, the hooks-switch knob, and the swimlane marks on
 Browser surfaces: keyboard focus is a 2px terracotta outline at 2px offset (a mark, not a
 fill). Selected text sits on the `border` color with `on-surface` text.
 
+## Motion
+
+Motion is feedback, never decoration, and nothing moves at rest except the verdict cycle.
+Timing tokens live in `tokens.css`: `--motion-feedback` 120ms, `--motion-enter` 160ms,
+`--motion-return` 100ms, on one ease-out curve (`--motion-ease`). Only transform and opacity
+animate.
+
+- Link arrows (`.arrow`) step 3px toward where they lead on mouse hover: right for →, down
+  for ↓. 160ms out, 100ms back. Not on keyboard focus, touch, or reduced motion.
+- Copy buttons show a ✓ beside "Copied" that fades in over 120ms; a keyboard press shows it
+  at once. At rest the mark takes no space, so the button keeps its width.
+- The verdict cycle has a Pause/Play control under the panel (WCAG 2.2.2), styled as quietly
+  as a Copy button. It holds its space before the script shows it, so the page does not
+  shift. The cycle also waits while the panel is off-screen or the tab is hidden.
+- Reduced motion shows final states at once: no cycle (the three verdicts read as a list),
+  no Pause control, no arrow movement, no fade.
+
 ## Do's and Don'ts
 
 - Do keep terracotta a mark: keyword, underline, or dot. Never a fill.
@@ -148,7 +165,8 @@ fill). Selected text sits on the `border` color with `on-surface` text.
   use more, only for kerby output or swe line formats.
 - Do add any new fg/bg pairing to `scripts/check-contrast.ts` before shipping it.
 - Do write every internal URL base-aware; when Astro's `base` is set, `check:discipline`
-  rejects root-absolute paths that escape it.
+  rejects root-absolute paths that escape it, and `check:site` fails any link or #fragment
+  that does not resolve, including deep links listed in `scripts/legacy-anchors.json`.
 - Don't introduce a second accent, a second radius, or a third body weight.
 - Don't stage product output that is not real; transcripts are byte-copied from the kerby README.
 
