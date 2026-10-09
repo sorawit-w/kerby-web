@@ -4,8 +4,9 @@
 // One row per command, never a multi-line block: pasting two slash commands
 // as one message would not run both. Styled like the landing install block —
 // light surface, because these are the reader's input, not kerby's output.
-// scripts/guide.js adds a Copy button to each row when the clipboard API
-// exists; without it the command is plain, selectable text.
+// The script below adds a Copy button to each row when the clipboard API
+// exists; without it the command is plain, selectable text. Astro renders it
+// once per page, however many Command blocks the page has.
 import { command } from '../../data/swe-prose';
 
 interface Props {
@@ -25,6 +26,51 @@ const { ids, title } = Astro.props;
     ))}
   </ul>
 </div>
+
+<script>
+  function el(tag: string, attrs: Record<string, string> = {}, text?: string) {
+    const node = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    if (text != null) node.textContent = text;
+    return node;
+  }
+
+  // Copy buttons for command rows. Only where the clipboard API exists;
+  // otherwise the command stays plain, selectable text.
+  function copyRows(rows: Element[]) {
+    if (!rows.length || !window.isSecureContext || !navigator.clipboard?.writeText) return;
+    const live = el('p', { class: 'visually-hidden', 'aria-live': 'polite' });
+    document.body.append(live);
+    rows.forEach((row) => {
+      const code = row.querySelector('code')!;
+      const text = code.textContent!.trim();
+      const button = el('button', { type: 'button', class: 'copy', 'aria-label': `Copy ${text}` }, 'Copy');
+      let timer: ReturnType<typeof setTimeout>;
+      button.addEventListener('click', async () => {
+        clearTimeout(timer);
+        try {
+          await navigator.clipboard.writeText(text);
+          button.textContent = 'Copied';
+          button.setAttribute('data-copied', '');
+          live.textContent = `Copied ${text}`;
+        } catch {
+          // Clipboard refused: select the command so the reader can copy it by hand.
+          window.getSelection()!.selectAllChildren(code);
+          button.textContent = 'Selected';
+          live.textContent = `${text} is selected. Copy it with your keyboard.`;
+        }
+        timer = setTimeout(() => {
+          button.textContent = 'Copy';
+          button.removeAttribute('data-copied');
+          live.textContent = '';
+        }, 1600);
+      });
+      row.append(button);
+    });
+  }
+
+  copyRows([...document.querySelectorAll('[data-copy-row]')]);
+</script>
 
 <style>
   .command {

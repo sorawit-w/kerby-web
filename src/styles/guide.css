@@ -5,15 +5,7 @@
 
 /* --- shell --------------------------------------------------------------- */
 
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
+/* .visually-hidden lives in global.css: the landing page needs it too. */
 
 .skip {
   position: absolute;

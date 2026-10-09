@@ -38,6 +38,16 @@ pre,
   font-family: var(--font-mono);
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 /* Browser surfaces carry the design too: a terracotta focus ring (a mark,
    not a fill) and a warm selection instead of the system blue. */
 :focus-visible {
