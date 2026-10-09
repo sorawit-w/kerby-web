@@ -227,6 +227,7 @@ const INSTRUCTION_RULES = [
       </li>
     </ul>
     <p><a href={page('lifecycle/')}>See all {STEPS.length} steps, from install to the final report</a></p>
+    <p><a href={page('bug-walkthrough/')}>Follow one bug fix through these rules</a></p>
   </section>
 
   <section aria-labelledby="blocks">
@@ -349,6 +350,7 @@ const INSTRUCTION_RULES = [
     <ul class="next">
       <li><a href={page('lifecycle/')}><strong>Lifecycle</strong><span>What swe does at each of {STEPS.length} steps, from install to the final report.</span></a></li>
       <li><a href={page('workflows/')}><strong>Workflows</strong><span>The {swe.routes.length} routes, the 1–{swe.numbers.maxGrade} grade, and what happens to your kind of task.</span></a></li>
+      <li><a href={page('bug-walkthrough/')}><strong>Bug walkthrough</strong><span>One made-up bug, from report to review, step by step.</span></a></li>
       <li><a href={page('hooks/')}><strong>Hooks</strong><span>Each hook: what it stops, what it misses, and how to turn it off.</span></a></li>
       <li><a href={page('reference/')}><strong>Reference</strong><span>Commands, the files swe keeps, and a glossary.</span></a></li>
     </ul>
@@ -357,11 +359,11 @@ const INSTRUCTION_RULES = [
 
 <style>
   .h-box {
-    font-size: 1.15rem;
+    font-size: 1.0824em; /* em: stays above body text on desktop (global.css) */
   }
 
   .frame {
-    font-size: 1.1rem;
+    font-size: 1.0353em;
   }
 
   /* swe → kerby → agent. The connector is a 1px structure line, not a glyph. */
@@ -385,7 +387,7 @@ const INSTRUCTION_RULES = [
 
   .flow h3 {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 1.0353em;
   }
 
   .flow .node > p {
@@ -428,7 +430,7 @@ const INSTRUCTION_RULES = [
   .picker h4 {
     margin: 0 0 0.5rem;
     font-family: var(--font-display);
-    font-size: 1.1rem;
+    font-size: 1.0353em;
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;

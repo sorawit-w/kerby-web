@@ -26,6 +26,10 @@ const BASE = 'skills/kerby/rulebooks/base';
 // whitespace collapsed). Pages render these strings; they never retype them.
 // Add an anchor here when a page needs a new number, format or quotation.
 const ANCHORS: { id: string; file: string; quote: string }[] = [
+  // The bug walkthrough's source links (pages/rulebooks/swe/bug-walkthrough.astro).
+  { id: 'walkthrough-reproduce', file: `${SWE}/workflows/bugfix.md`, quote: 'Document the reproduction: what you did, what happened, what should have happened.' },
+  { id: 'walkthrough-regression', file: `${SWE}/workflows/bugfix.md`, quote: 'Write a failing test that captures the bug (the test MUST fail before your fix)' },
+  { id: 'walkthrough-finish', file: `${SWE}/workflows/bugfix.md`, quote: '**Manual verification instructions provided**' },
   { id: 'format-complexity', file: `${SWE}/BOOTSTRAP.md`, quote: 'complexity: <N> (trigger: <≤8-word reason>) → route: <investigate | new-project | adopt-existing | feature | bugfix | quick-task>' },
   { id: 'format-rung', file: `${SWE}/BOOTSTRAP.md`, quote: 'rung: <N> — <≤8-word reason>' },
   { id: 'format-plan', file: `${SWE}/BOOTSTRAP.md`, quote: 'plan: <files> — <change> — <check>' },

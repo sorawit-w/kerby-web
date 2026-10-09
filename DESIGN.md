@@ -29,7 +29,7 @@ typography:
     lineHeight: 1.6
   body-md:
     fontFamily: Geist
-    fontSize: 17px            # 1.0625rem on a 16px root; weight not declared (Geist 400 and 500 are the only files loaded)
+    fontSize: 17px            # 1.0625rem on a 16px root; 19px (1.1875rem) at 900px and wider; weight not declared (Geist 400 and 500 are the only files loaded)
     lineHeight: 1.6
   body-sm:
     fontFamily: Geist
@@ -111,9 +111,12 @@ pixel values above are the resolved sizes.
 - **Display (h1, h2, tagline):** Schibsted Grotesk Variable. h1 at 3.25rem, 1.15 leading.
   h2 takes the browser default size. Neither heading declares a weight, so both render at
   the browser default bold. The tagline uses the display face at 1.35rem.
-- **Body (body-md, body-sm):** Geist at 1.0625rem, 1.6 leading. Only the 400 and 500 files
-  are loaded; the only explicit weight declarations are 500 on CTA labels and 700 on
-  card names and panel keywords.
+- **Body (body-md, body-sm):** Geist at 1.0625rem, 1.6 leading; 1.1875rem (19px) at 900px
+  and wider, so lines in the 44rem column stay near 77 characters instead of ~86 (WCAG
+  1.4.8 asks for 80 or fewer). Text that must stay above body size on guide pages (h3,
+  blockquote, the overview's framing lines) is set in em, so it grows with body. Only the
+  400 and 500 files are loaded; the only explicit weight declarations are 500 on CTA labels
+  and 700 on card names and panel keywords.
 - **Mono (label-sm, mono-panel):** JetBrains Mono Variable. The eyebrow label at 12px
   with 0.08em tracking. The transcript at 14px with 1.55 leading. Keywords inside the
   panel are bold.
@@ -124,7 +127,9 @@ Single column, 44rem max width, centered. Sections carry 3.5rem vertical and 1.2
 horizontal padding; vertical padding grows to 4.5rem at 720px and wider. Two sections
 override that: the hero is tightened to 2rem top and 1.25rem bottom so the first lines of
 the transcript land in the first desktop screenful, and the demo section sits at 0.5rem
-top so it reads as the hero's continuation. Supporting hero copy narrows to 34rem. Cards go
+top so it reads as the hero's continuation. At 900px and wider the terminal panel steps
+out of the column to 48.25rem, centered, so the longest byte-copied verdict line fits
+without scrolling sideways. Supporting hero copy narrows to 34rem. Cards go
 two-up at 720px. There is no formal spacing scale: the front matter lists the values that recur or set
 the section rhythm (0.25, 0.5, 1, 1.25, 1.5, 2, 3.5, 4.5rem), and components also use
 0.35, 0.6, 0.75, 1.1, 1.2, and 1.75rem where the layout needed it.
@@ -134,11 +139,30 @@ the section rhythm (0.25, 0.5, 1, 1.25, 1.5, 2, 3.5, 4.5rem), and components als
 One radius: 6px, on CTAs, cards, the install block, and the terminal panel. No other
 radius exists on the page. The one exception is a status dot, which is a circle: the
 terracotta "hook-enforced" dot, the hooks-switch knob, and the swimlane marks on the guide pages
-(terracotta in the hooks lane, `secondary` elsewhere; a ring means "sometimes"). Borders are
+(terracotta in the hooks lane, `secondary` elsewhere; a ring means "sometimes"). Size every
+circle in whole pixels (7, 10, 14px): a circle sized in a fraction of a pixel, such as
+0.65rem, is drawn up to 8% out of round, so it reads as an oval. Borders are
 1px; a few guide controls use 1.5px to mark the active state. No shadows, no gradients.
 
 Browser surfaces: keyboard focus is a 2px terracotta outline at 2px offset (a mark, not a
 fill). Selected text sits on the `border` color with `on-surface` text.
+
+## Motion
+
+Motion is feedback, never decoration, and nothing moves at rest except the verdict cycle.
+Timing tokens live in `tokens.css`: `--motion-feedback` 120ms, `--motion-enter` 160ms,
+`--motion-return` 100ms, on one ease-out curve (`--motion-ease`). Only transform and opacity
+animate.
+
+- Link arrows (`.arrow`) step 3px toward where they lead on mouse hover: right for →, down
+  for ↓. 160ms out, 100ms back. Not on keyboard focus, touch, or reduced motion.
+- Copy buttons show a ✓ beside "Copied" that fades in over 120ms; a keyboard press shows it
+  at once. At rest the mark takes no space, so the button keeps its width.
+- The verdict cycle has a Pause/Play control under the panel (WCAG 2.2.2), styled as quietly
+  as a Copy button. It holds its space before the script shows it, so the page does not
+  shift. The cycle also waits while the panel is off-screen or the tab is hidden.
+- Reduced motion shows final states at once: no cycle (the three verdicts read as a list),
+  no Pause control, no arrow movement, no fade.
 
 ## Do's and Don'ts
 
@@ -148,7 +172,8 @@ fill). Selected text sits on the `border` color with `on-surface` text.
   use more, only for kerby output or swe line formats.
 - Do add any new fg/bg pairing to `scripts/check-contrast.ts` before shipping it.
 - Do write every internal URL base-aware; when Astro's `base` is set, `check:discipline`
-  rejects root-absolute paths that escape it.
+  rejects root-absolute paths that escape it, and `check:site` fails any link or #fragment
+  that does not resolve, including deep links listed in `scripts/legacy-anchors.json`.
 - Don't introduce a second accent, a second radius, or a third body weight.
 - Don't stage product output that is not real; transcripts are byte-copied from the kerby README.
 

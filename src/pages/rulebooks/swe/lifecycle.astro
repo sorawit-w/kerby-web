@@ -169,10 +169,11 @@ const PHASES = STEPS.reduce<{ name: string; steps: number[] }[]>((acc, step, i) 
     padding: 0.55rem 0;
   }
 
+  /* Whole pixels: a circle sized in a fraction of a pixel is drawn as an oval. */
   .swim .mark {
     display: inline-block;
-    width: 0.65rem;
-    height: 0.65rem;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     vertical-align: middle;
   }

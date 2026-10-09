@@ -32,8 +32,9 @@ const { kind } = Astro.props;
   .hook::before,
   .partly::before {
     content: '';
-    width: 0.45rem;
-    height: 0.45rem;
+    /* Whole pixels: a circle sized in a fraction of a pixel is drawn as an oval. */
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
   }
 

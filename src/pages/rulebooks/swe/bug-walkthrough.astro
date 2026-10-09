@@ -1,0 +1,79 @@
+---
+import Guide from '../../../layouts/Guide.astro';
+import Lines from '../../../components/guide/Lines.astro';
+import { SCENARIO, WALK, sourceLink } from '../../../data/bug-walkthrough';
+import { fill, plain } from '../../../data/swe-prose';
+import swe from '../../../data/swe.json';
+import { url } from '../../../lib/url';
+
+const intentLine = fill('format-intent', [
+  'not save the preference, only hold it in memory',
+  'the saved preference to survive a refresh',
+  'saved settings survive a refresh',
+]);
+const planLine = fill('format-plan', [
+  'SettingsForm.tsx, SettingsForm.test.tsx',
+  'save the preference to the existing store',
+  'save, recreate the page, read the value back',
+]);
+const bugfix = `https://github.com/${swe.source_repo}/blob/${swe.source_sha}/skills/kerby/rulebooks/swe/workflows/bugfix.md`;
+---
+
+<Guide
+  title="Bug walkthrough"
+  description="One made-up settings bug, followed from report to review the way an agent using kerby's swe rulebook would handle it.">
+  <section aria-labelledby="top">
+    <h1 id="top">Bug walkthrough</h1>
+    <p class="lead">One bug, from report to review, the way an agent following swe handles it.</p>
+    <blockquote>“{SCENARIO}”</blockquote>
+    <p class="small">
+      An illustrative example, not a captured run: the app, files and results are made up. Each step
+      links the swe rule it follows, at the pinned version.
+    </p>
+
+    <div class="stepper">
+      <ol class="steps">
+        {WALK.map((s, i) => (
+          <li class="step" id={s.id}>
+            <h3><span class="num">{i + 1}</span>{s.stage}</h3>
+            <p><strong>Ready when:</strong> {s.condition}</p>
+            <p>{s.action}</p>
+            <p class="evidence">Example: {s.evidence}</p>
+            {s.id === 'explain' && <Lines kind="example" lines={[intentLine]} />}
+            {s.id === 'plan' && <Lines kind="example" lines={[planLine]} />}
+            <p>
+              <strong>If not:</strong> {s.unmet}
+              {s.id === 'verify' && <> <a href="#explain">Back to Explain</a>.</>}
+            </p>
+            <p class="small">
+              Source:{' '}
+              {s.sources.map((src, j) => (
+                <>{j > 0 && ' · '}<a href={sourceLink(src.id)} title={plain(src.id)}>{src.label}</a></>
+              ))}
+            </p>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <p>
+      Then it is your turn: read the change and its evidence, and merge it if you agree.{' '}
+      <a href={`${bugfix}#6-finish`}>The full bugfix workflow</a> lists everything the agent must
+      hand over.
+    </p>
+  </section>
+
+  <section aria-labelledby="next-h">
+    <h2 id="next-h">Read next</h2>
+    <ul class="next">
+      <li><a href={url('rulebooks/swe/workflows/')}><strong>Workflows</strong><span>How other kinds of task change the route and the plan.</span></a></li>
+      <li><a href={url('rulebooks/swe/hooks/')}><strong>Hooks</strong><span>The few steps a hook can check for you.</span></a></li>
+    </ul>
+  </section>
+</Guide>
+
+<style>
+  .evidence {
+    color: var(--secondary);
+  }
+</style>

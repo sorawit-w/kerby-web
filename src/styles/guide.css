@@ -5,15 +5,7 @@
 
 /* --- shell --------------------------------------------------------------- */
 
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
+/* .visually-hidden lives in global.css: the landing page needs it too. */
 
 .skip {
   position: absolute;
@@ -127,8 +119,10 @@
   text-wrap: balance;
 }
 
+/* em, not rem: these stay above body text when it grows on desktop
+   (global.css). 1.0824em = the former 1.15rem at the 17px body. */
 .guide h3 {
-  font-size: 1.15rem;
+  font-size: 1.0824em;
   margin: 2rem 0 0.5rem;
   text-wrap: balance;
 }
@@ -194,7 +188,7 @@
 .guide blockquote {
   margin: 0 0 0.75rem;
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: 1.1294em; /* the former 1.2rem at the 17px body; see .guide h3 */
   line-height: 1.45;
   color: var(--text);
 }
@@ -316,8 +310,9 @@
   position: absolute;
   top: 0.15rem;
   left: 0.15rem;
-  width: 0.85rem;
-  height: 0.85rem;
+  /* Whole pixels: a circle sized in a fraction of a pixel is drawn as an oval. */
+  width: 14px;
+  height: 14px;
   background: var(--structure);
   border-radius: 50%;
   transition: transform 180ms cubic-bezier(0.23, 1, 0.32, 1);

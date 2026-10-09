@@ -48,7 +48,7 @@ const AUTHORING = 'https://github.com/sorawit-w/kerby/blob/main/docs/AUTHORING-R
           <a class="card-link" href={r.guide}>
             <span class="card-name mono">{r.name}</span>
             <span class="card-line">{r.line}</span>
-            <span class="card-cta">Read the guide →</span>
+            <span class="card-cta">Read the guide <span class="arrow" aria-hidden="true">→</span></span>
           </a>
         ) : (
           <div class="card-body">
@@ -63,7 +63,7 @@ const AUTHORING = 'https://github.com/sorawit-w/kerby/blob/main/docs/AUTHORING-R
 
   <p class="closing">
     The engine is finished machinery. The next rulebook is a folder you write.
-    {' '}<a href={AUTHORING}>Write a rulebook →</a>
+    {' '}<a href={AUTHORING}>Write a rulebook <span class="arrow" aria-hidden="true">→</span></a>
   </p>
 </section>
 

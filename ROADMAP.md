@@ -17,7 +17,9 @@ Status legend: [ ] planned · [~] in progress · [x] done
 - [x] `check:copy` byte-fidelity gate
 
 ### Phase 3 — Animation
-- [x] Verdict-cycle animation (the page's only script), reduced-motion static fallback, CLS 0
+- [x] Verdict-cycle animation, reduced-motion static fallback, CLS 0
+- [x] Pause control (WCAG 2.2.2) and off-screen pause for the verdict cycle
+- [x] Copy buttons on the landing install commands (shared with the swe guide)
 
 ### Phase 4 — Meta & polish
 - [x] OG image, favicons, meta description, robots.txt

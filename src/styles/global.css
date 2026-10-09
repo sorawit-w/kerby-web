@@ -15,6 +15,15 @@ body {
   line-height: 1.6;
 }
 
+/* Desktop: larger text in the same 44rem column keeps lines near 77
+   characters (17px gives ~86, over WCAG 1.4.8's 80). Text that must stay
+   above body size is set in em, so it grows with this. */
+@media (min-width: 900px) {
+  body {
+    font-size: 1.1875rem;
+  }
+}
+
 h1,
 h2,
 h3 {
@@ -36,6 +45,39 @@ code,
 pre,
 .mono {
   font-family: var(--font-mono);
+}
+
+/* Link arrows step 3px toward where they lead, on mouse hover only: never on
+   keyboard focus, touch, or reduced motion, where they simply stay put. */
+.arrow {
+  display: inline-block;
+  /* inline-block drops the parent's underline; take it back so the link looks unchanged. */
+  text-decoration: inherit;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .arrow {
+    transition: transform var(--motion-return) var(--motion-ease);
+  }
+
+  a:hover:not(:focus-visible) .arrow {
+    transform: translateX(3px);
+    transition-duration: var(--motion-enter);
+  }
+
+  a:hover:not(:focus-visible) .arrow-down {
+    transform: translateY(3px);
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* Browser surfaces carry the design too: a terracotta focus ring (a mark,
