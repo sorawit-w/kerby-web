@@ -1,10 +1,7 @@
 # STATUS — kerby-web
 
-**Position:** Branch `feat/pr14-takeaways` takes five things from Codex's PR #14 into the
-current design, which stays as it is: a Pause control for the demo (and off-screen pause),
-Copy buttons on the landing install commands, motion tokens with hover/copy feedback, a bug
-walkthrough page in the swe guide (/rulebooks/swe/bug-walkthrough/), and `check:site`.
-Waiting on Kiang's manual test, then review. PR #14 stays open by Kiang's choice.
+**Position:** The landing page and the swe guide (overview, lifecycle, workflows, bug
+walkthrough, hooks, reference) are done. Nothing is in progress.
 
 ## What keeps it true
 - `bun run check` runs the tests and check:swe: every number, id, tier, command and quoted
