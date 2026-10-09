@@ -90,6 +90,20 @@ const parts = TRANSCRIPTS.map((t, i) => {
     overflow-x: auto;
   }
 
+  /* Desktop: the panel steps out of the text column, centered, so the longest
+     byte-copied verdict line (83 chars) fits without scrolling sideways. */
+  @media (min-width: 900px) {
+    .terminal {
+      margin-inline: calc((100% - 48.25rem) / 2);
+    }
+
+    /* The Pause button lines up with the panel's right edge; the note stays
+       in the text column. */
+    .below {
+      margin-inline-end: calc((100% - 48.25rem) / 2);
+    }
+  }
+
   .transcripts {
     display: grid;
   }

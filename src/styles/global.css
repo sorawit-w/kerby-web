@@ -15,6 +15,15 @@ body {
   line-height: 1.6;
 }
 
+/* Desktop: larger text in the same 44rem column keeps lines near 77
+   characters (17px gives ~86, over WCAG 1.4.8's 80). Text that must stay
+   above body size is set in em, so it grows with this. */
+@media (min-width: 900px) {
+  body {
+    font-size: 1.1875rem;
+  }
+}
+
 h1,
 h2,
 h3 {
