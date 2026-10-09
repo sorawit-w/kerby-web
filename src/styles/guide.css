@@ -310,8 +310,9 @@
   position: absolute;
   top: 0.15rem;
   left: 0.15rem;
-  width: 0.85rem;
-  height: 0.85rem;
+  /* Whole pixels: a circle sized in a fraction of a pixel is drawn as an oval. */
+  width: 14px;
+  height: 14px;
   background: var(--structure);
   border-radius: 50%;
   transition: transform 180ms cubic-bezier(0.23, 1, 0.32, 1);

@@ -139,7 +139,9 @@ the section rhythm (0.25, 0.5, 1, 1.25, 1.5, 2, 3.5, 4.5rem), and components als
 One radius: 6px, on CTAs, cards, the install block, and the terminal panel. No other
 radius exists on the page. The one exception is a status dot, which is a circle: the
 terracotta "hook-enforced" dot, the hooks-switch knob, and the swimlane marks on the guide pages
-(terracotta in the hooks lane, `secondary` elsewhere; a ring means "sometimes"). Borders are
+(terracotta in the hooks lane, `secondary` elsewhere; a ring means "sometimes"). Size every
+circle in whole pixels (7, 10, 14px): a circle sized in a fraction of a pixel, such as
+0.65rem, is drawn up to 8% out of round, so it reads as an oval. Borders are
 1px; a few guide controls use 1.5px to mark the active state. No shadows, no gradients.
 
 Browser surfaces: keyboard focus is a 2px terracotta outline at 2px offset (a mark, not a
