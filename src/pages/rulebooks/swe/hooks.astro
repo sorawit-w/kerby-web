@@ -14,6 +14,11 @@ const all = [
 ].sort((a, b) => (a.from === b.from ? ORDER[a.tier as keyof typeof ORDER] - ORDER[b.tier as keyof typeof ORDER] : a.from === 'base' ? -1 : 1));
 
 const count = (tier: string) => all.filter((h) => h.tier === tier).length;
+
+// The checks git's own pre-commit hook runs, from each check's git_hook field.
+const gitHook = [...swe.base.checks, ...swe.checks]
+  .filter((c) => 'git_hook' in c && c.git_hook === 'pre-commit')
+  .map((c) => HOOKS[(c as { enforcer: string }).enforcer.split('/').pop()!].name);
 ---
 
 <Guide
@@ -105,9 +110,16 @@ const count = (tier: string) => all.filter((h) => h.tier === tier).length;
       cannot see <code>git add x && git commit</code> in one command, an alias, or a path in a variable.
     </p>
     <p>
-      /kerby install also offers the same scan as a git pre-commit hook. git hands that hook the real
-      staged files, so those cases are covered. It lives in your clone only — git never shares hooks with
-      teammates — and <code>git commit --no-verify</code> skips it for one commit.
+      /kerby install also offers a git pre-commit hook. git hands that hook the real staged files, so
+      those cases are covered. It runs these checks:
+    </p>
+    <ul>
+      {gitHook.map((name) => <li>{name}</li>)}
+    </ul>
+    <p>
+      One answer at install covers all of them, so a check you declined earlier still runs here. The hook
+      lives in your clone only — git never shares hooks with teammates — and
+      {' '}<code>git commit --no-verify</code> skips it for one commit.
     </p>
   </section>
 

@@ -98,6 +98,26 @@ const ANCHORS: { id: string; file: string; quote: string }[] = [
     quote: 'id = "intent-gate-on-behavior-change"\nkind = "prose"\nbody = "references/intent-gate.md"\nenforcement = "behavioral"\nseverity = "block"\ntoken_cost = "low"',
   },
   { id: 'toml-audit', file: `${SWE}/rulebook.toml`, quote: 'name = "audit"\nbody = "commands/audit.md"' },
+  // The git pre-commit hook runs every check that declares git_hook, in one file.
+  { id: 'git-hook-one-answer', file: 'skills/kerby/SKILL.md', quote: 'One answer covers every check listed; a check you declined in Phase 2 still runs here.' },
+  // UI and design work (pages/rulebooks/swe/workflows.astro#design). A reference,
+  // not a [[check]], so swe.json has no data for it: every rule the section
+  // restates is anchored here. The four job rows are anchored whole, so a new
+  // skill pick or threshold upstream fails this gate.
+  { id: 'design-bootstrap', file: `${SWE}/BOOTSTRAP.md`, quote: 'For UI work with no root `DESIGN.md`, look for a spec in another folder or under another name before inventing any' },
+  { id: 'design-location', file: `${SWE}/references/design-md.md`, quote: 'If the root has none, look for the spec elsewhere before inventing tokens' },
+  { id: 'design-ask', file: `${SWE}/references/design-md.md`, quote: '**Any spec found outside the root, even just one** → name each one and ask which, if any, governs the UI you are changing. Do not decide from its folder or name' },
+  { id: 'design-path', file: `${SWE}/references/design-md.md`, quote: "Give the skill the spec's path explicitly. Most design skills look only for a root `DESIGN.md`." },
+  { id: 'design-authority', file: `${SWE}/references/design-md.md`, quote: 'its YAML front matter IS the canonical design contract' },
+  { id: 'design-no-invent', file: `${SWE}/references/design-md.md`, quote: '**DO NOT** invent alternative tokens, palettes, or scales when generating UI.' },
+  { id: 'design-no-override', file: `${SWE}/references/design-md.md`, quote: '**DO NOT** silently override a token because the surrounding code uses a different value — flag the drift instead' },
+  { id: 'design-token-commit', file: `${SWE}/references/design-md.md`, quote: 'A token change goes into the spec in the same commit as the code.' },
+  { id: 'design-one-editor', file: `${SWE}/references/design-md.md`, quote: 'When design skills work on a UI task, split the work by job. Only one skill changes a given surface.' },
+  { id: 'design-job-author', file: `${SWE}/references/design-md.md`, quote: '| Make the change | `impeccable` (`document` writes the spec from existing code; then `critique` → `polish`) | The only skill that edits this surface |' },
+  { id: 'design-job-direction', file: `${SWE}/references/design-md.md`, quote: '| Check direction | `taste-skill`, read-only (`inspect.mjs --app`, `lint.mjs`) | Measures and reports; does not edit the surface |' },
+  { id: 'design-job-colors', file: `${SWE}/references/design-md.md`, quote: "| Check signal colors | the `dataviz` skill's palette validator, read-only; without it, any color-blind simulation that reports a color difference (ΔE) | Only when the work touches colors. Check the status and accent colors as one set (for example accent, ok, warn, bad, new) in light and dark. A pair whose color-blind difference (protan, deutan or tritan) is below ΔE 8 in OKLab ×100, or whose normal-vision difference is below 15, goes back to the author as a finding, even when icons and words also carry the meaning |" },
+  { id: 'design-job-render', file: `${SWE}/references/design-md.md`, quote: "| Verify the render | `screenwright`'s read-only **mode V** (verify-only): axe in light and dark, screenshots at desktop and phone width, the 320px reflow pass, print | After the last edit; a read-only check may follow. Mode V never edits — findings go back to the author. Its other modes paint and fix, so they are not the verifier. 0 axe violations is necessary, not sufficient |" },
+  { id: 'design-picks', file: `${SWE}/references/design-md.md`, quote: "The table names jobs; the skill names are today's picks. If a default is not installed, use what is, and keep the same split." },
 ];
 
 function skip(why: string): never {

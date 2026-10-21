@@ -102,6 +102,7 @@ const PHASES = STEPS.reduce<{ name: string; steps: number[] }[]>((acc, step, i) 
             {s.body.map((p) => <p>{p}</p>)}
             {s.commands?.map((c) => <Command title={c.title} ids={c.ids} />)}
             {s.lines && <Lines kind="format" ids={s.lines} caption={s.caption} />}
+            {s.more && <p><a href={url(s.more.href)}>{s.more.label} <span class="arrow" aria-hidden="true">→</span></a></p>}
             <p class="small">Source: {s.source}</p>
           </li>
         ))}

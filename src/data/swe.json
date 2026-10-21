@@ -1,8 +1,8 @@
 {
   "source_repo": "sorawit-w/kerby",
-  "source_sha": "3c750e205dda90fc242c6063a1323ce8ff94bc29",
-  "version": "2.13.2",
-  "kerby_version": "10.2.2",
+  "source_sha": "712ec8c63b7e65c37fa61e98fd57e1709e0370dd",
+  "version": "2.18.0",
+  "kerby_version": "10.7.0",
   "description": "Coding guardrails: clarity over cleverness, safety over speed, never leave the repo broken — nothing unproven passes the gate.",
   "numbers": {
     "planThreshold": 4,
@@ -157,7 +157,8 @@
       "enforcer": "hooks/status-provenance-check.sh",
       "event": "PreToolUse",
       "matcher": "Bash",
-      "gap": "fails open, visibly, when the guard script is missing; `git commit` reached through `git -C` or `cd … &&` is not recognised",
+      "git_hook": "pre-commit",
+      "gap": "fails open, visibly, when the guard script is missing; the PreToolUse door reads command text and scans the cwd repo, so a wrapper (`env`, `bash -c`), a git alias, or a `-C`/`cd` target in another repo is caught only by the git door; the git door is skipped by `git commit --no-verify` and is absent until install Phase 3 is accepted in that clone",
       "severity": "block"
     }
   ],
@@ -606,6 +607,81 @@
       "id": "toml-audit",
       "file": "skills/kerby/rulebooks/swe/rulebook.toml",
       "quote": "name = \"audit\"\nbody = \"commands/audit.md\""
+    },
+    {
+      "id": "git-hook-one-answer",
+      "file": "skills/kerby/SKILL.md",
+      "quote": "One answer covers every check listed; a check you declined in Phase 2 still runs here."
+    },
+    {
+      "id": "design-bootstrap",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "For UI work with no root `DESIGN.md`, look for a spec in another folder or under another name before inventing any"
+    },
+    {
+      "id": "design-location",
+      "file": "skills/kerby/rulebooks/swe/references/design-md.md",
+      "quote": "If the root has none, look for the spec elsewhere before inventing tokens"
+    },
+    {
+      "id": "design-ask",
+      "file": "skills/kerby/rulebooks/swe/references/design-md.md",
+      "quote": "**Any spec found outside the root, even just one** → name each one and ask which, if any, governs the UI you are changing. Do not decide from its folder or name"
+    },
+    {
+      "id": "design-path",
+      "file": "skills/kerby/rulebooks/swe/references/design-md.md",
+      "quote": "Give the skill the spec's path explicitly. Most design skills look only for a root `DESIGN.md`."
+    },
+    {
+      "id": "design-authority",
+      "file": "skills/kerby/rulebooks/swe/references/design-md.md",
+      "quote": "its YAML front matter IS the canonical design contract"
+    },
+    {
+      "id": "design-no-invent",
+      "file": "skills/kerby/rulebooks/swe/references/design-md.md",
+      "quote": "**DO NOT** invent alternative tokens, palettes, or scales when generating UI."
+    },
+    {
+      "id": "design-no-override",
+      "file": "skills/kerby/rulebooks/swe/references/design-md.md",
+      "quote": "**DO NOT** silently override a token because the surrounding code uses a different value — flag the drift instead"
+    },
+    {
+      "id": "design-token-commit",
+      "file": "skills/kerby/rulebooks/swe/references/design-md.md",
+      "quote": "A token change goes into the spec in the same commit as the code."
+    },
+    {
+      "id": "design-one-editor",
+      "file": "skills/kerby/rulebooks/swe/references/design-md.md",
+      "quote": "When design skills work on a UI task, split the work by job. Only one skill changes a given surface."
+    },
+    {
+      "id": "design-job-author",
+      "file": "skills/kerby/rulebooks/swe/references/design-md.md",
+      "quote": "| Make the change | `impeccable` (`document` writes the spec from existing code; then `critique` → `polish`) | The only skill that edits this surface |"
+    },
+    {
+      "id": "design-job-direction",
+      "file": "skills/kerby/rulebooks/swe/references/design-md.md",
+      "quote": "| Check direction | `taste-skill`, read-only (`inspect.mjs --app`, `lint.mjs`) | Measures and reports; does not edit the surface |"
+    },
+    {
+      "id": "design-job-colors",
+      "file": "skills/kerby/rulebooks/swe/references/design-md.md",
+      "quote": "| Check signal colors | the `dataviz` skill's palette validator, read-only; without it, any color-blind simulation that reports a color difference (ΔE) | Only when the work touches colors. Check the status and accent colors as one set (for example accent, ok, warn, bad, new) in light and dark. A pair whose color-blind difference (protan, deutan or tritan) is below ΔE 8 in OKLab ×100, or whose normal-vision difference is below 15, goes back to the author as a finding, even when icons and words also carry the meaning |"
+    },
+    {
+      "id": "design-job-render",
+      "file": "skills/kerby/rulebooks/swe/references/design-md.md",
+      "quote": "| Verify the render | `screenwright`'s read-only **mode V** (verify-only): axe in light and dark, screenshots at desktop and phone width, the 320px reflow pass, print | After the last edit; a read-only check may follow. Mode V never edits — findings go back to the author. Its other modes paint and fix, so they are not the verifier. 0 axe violations is necessary, not sufficient |"
+    },
+    {
+      "id": "design-picks",
+      "file": "skills/kerby/rulebooks/swe/references/design-md.md",
+      "quote": "The table names jobs; the skill names are today's picks. If a default is not installed, use what is, and keep the same split."
     }
   ]
 }

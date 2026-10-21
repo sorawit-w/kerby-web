@@ -14,6 +14,8 @@ export type Step = {
   lines?: string[];
   caption?: string;
   commands?: { title: string; ids: string[] }[];
+  // A guide page that explains this step further (path under the site base).
+  more?: { href: string; label: string };
   // Who acts in this step, for the swimlane: 'always', or 'sometimes'.
   lanes: Partial<Record<Lane, 'always' | 'sometimes'>>;
   source: string;
@@ -40,7 +42,7 @@ export const STEPS: Step[] = [
     lanes: { you: 'always', kerby: 'always' },
     body: [
       'Add kerby to your agent once per machine. Then run /kerby install once in each repo. It asks before every change it makes.',
-      'First it adds one line to your agent file — CLAUDE.md, AGENTS.md, AI-CONTEXT.md or .cursorrules — so each session loads the rules. Then it shows the hooks in a table and asks: all, choose, or none. Last, it offers a git pre-commit hook that scans for secrets inside git itself.',
+      'First it adds one line to your agent file — CLAUDE.md, AGENTS.md, AI-CONTEXT.md or .cursorrules — so each session loads the rules. Then it shows the hooks in a table and asks: all, choose, or none. Last, it offers a git pre-commit hook, so the secret scan and other commit checks also run inside git itself.',
     ],
     commands: [
       { title: 'Once per machine, in Claude Code:', ids: ['install-marketplace', 'install-plugin'] },
@@ -70,7 +72,9 @@ export const STEPS: Step[] = [
     body: [
       `Before any work, the agent reads what the project already knows: agent-context.yaml, the status and log in .kerby/, the knowledge base, CONTEXT.md, DESIGN.md, your agent file, and the last ${recentCommits} commits.`,
       'If agent-context.yaml is missing, the agent creates it.',
+      'For UI work with no DESIGN.md at the root, it looks for a design spec in other folders and under other names before it invents any token.',
     ],
+    more: { href: 'rulebooks/swe/workflows/#design', label: 'How swe handles UI and design work' },
     source: 'BOOTSTRAP.md § 2',
   },
   {
