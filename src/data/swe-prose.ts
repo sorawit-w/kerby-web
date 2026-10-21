@@ -43,8 +43,8 @@ export const HOOKS: Record<string, HookProse> = {
     does:
       'Stops a commit when .kerby/STATUS.md states a version, a commit SHA, or a PR or issue number. STATUS.md says where the work stands. Git and the log already record what happened.',
     gaps:
-      'If its guard script is missing, it lets the commit through and says so. A commit started with git -C or after cd … && is not recognised.',
-    off: 'No variable turns it off. Decline it at install.',
+      'It reads the commit command as text, and it checks the repo you are in. A wrapper such as env or bash -c, a git alias, or a commit in another repo named with -C or cd is not seen. The git pre-commit hook covers those. If its guard script is missing, it lets the commit through and says so.',
+    off: 'No variable turns it off. Decline it at install. Its part in the git pre-commit hook goes only if you decline that whole hook.',
   },
   'warn-env-read.sh': {
     stops: 'Nothing. It reminds the agent not to print .env secrets.',

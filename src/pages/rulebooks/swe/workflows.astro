@@ -5,6 +5,7 @@ import swe from '../../../data/swe.json';
 import { ROUTES, anchor, fill, plain } from '../../../data/swe-prose';
 import { url } from '../../../lib/url';
 import { STEPS } from '../../../data/lifecycle';
+import { sourceLink } from '../../../data/bug-walkthrough';
 
 const { planThreshold, approvalGrade, maxGrade } = swe.numbers;
 
@@ -26,6 +27,20 @@ const HIGH_STAKES = [
   'high-stakes-ci',
   'high-stakes-traffic',
 ].map((id) => plain(id).replace(/:$/, ''));
+
+// Design jobs, parsed from the anchored rows of design-md.md § Design skills.
+// The job and the skill come from the row; the plain words are ours. A new
+// pick upstream changes the row, so check:swe fails instead of showing an old name.
+const DESIGN_JOBS = [
+  { id: 'design-job-author', does: 'The only skill that edits this surface.' },
+  { id: 'design-job-direction', does: 'Measures and reports. It does not edit.' },
+  { id: 'design-job-colors', does: 'Only when the work changes colors. Checks the signal colors as one set (below).' },
+  { id: 'design-job-render', does: 'Runs after the last edit: light and dark, desktop and phone width. It never edits; findings go back to the author. For screenwright this is mode V only, because its other modes edit.' },
+].map(({ id, does }) => {
+  const [job, picks] = anchor(id).split('|').map((c) => c.trim()).filter(Boolean);
+  return { job, pick: picks.match(/`([^`]+)`/)![1], does };
+});
+const [, colorBlindMin, normalMin] = anchor('design-job-colors').match(/below ΔE (\d+) .*?below (\d+)/)!;
 
 // Example tasks. Grades and file names are made up, and the panel says so.
 // Every line is fill()-ed from swe's anchored format, so a format change
@@ -254,6 +269,61 @@ const EXAMPLE_FORMATS = [
         );
       })}
     </div>
+  </section>
+
+  <section aria-labelledby="design">
+    <h2 id="design">UI and design work</h2>
+    <p>
+      When a task changes UI, styling or design tokens, swe adds four rules. They come from
+      {' '}<a href={sourceLink('design-authority')}>references/design-md.md</a>.
+    </p>
+
+    <h3>Find the spec, and ask which one governs</h3>
+    <p>
+      The spec is the file that holds the project’s design tokens, usually DESIGN.md at the repo root. If
+      the root has none, the agent looks in other folders and under other names before it invents any
+      token. When it finds a spec outside the root, it names each one and asks you which one, if any,
+      governs the UI it is changing. It does not decide from the folder or the file name.
+    </p>
+    <p>It then gives that path to each design skill it uses, because most of them look only at the root.</p>
+
+    <h3>The spec’s tokens are the authority</h3>
+    <p>
+      The tokens in the spec — colors, type, spacing, radius — are the contract. The agent does not invent
+      other tokens. When nearby code uses a different value, it does not copy it quietly. It tells you about
+      the difference. A token change goes into the spec in the same commit as the code.
+    </p>
+
+    <h3>One skill edits, the others check</h3>
+    <p>
+      Design skills are split by job. Only one skill edits a given surface. The others read and report back
+      to it. The render is checked after the last edit.
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th scope="col">Job</th><th scope="col">Today’s pick</th><th scope="col">What it may do</th></tr>
+        </thead>
+        <tbody>
+          {DESIGN_JOBS.map((j) => (
+            <tr><td>{j.job}</td><td><span class="chip">{j.pick}</span></td><td>{j.does}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="small">
+      The jobs are the rule. The skill names are today’s picks, and they change. If a pick is not installed,
+      the agent uses one that is and keeps the same split.
+    </p>
+
+    <h3>Check signal colors as one set</h3>
+    <p>
+      Signal colors carry a state, such as ok, warn and bad, plus the accent. Each color can pass on its own
+      while two of them still look the same to a color-blind reader. So when the work changes colors, they
+      are checked together, in light and in dark. A pair whose color-blind difference is below ΔE
+      {' '}{colorBlindMin}, or whose normal difference is below {normalMin}, goes back to the author. This holds
+      even when an icon or a word also shows the meaning.
+    </p>
   </section>
 
   <section aria-labelledby="next-h">
