@@ -682,6 +682,21 @@
       "id": "design-picks",
       "file": "skills/kerby/rulebooks/swe/references/design-md.md",
       "quote": "The table names jobs; the skill names are today's picks. If a default is not installed, use what is, and keep the same split."
+    },
+    {
+      "id": "ladder-native",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "3. **Native?** The runtime/framework/platform provides it → use it."
+    },
+    {
+      "id": "ladder-installed-dep",
+      "file": "skills/kerby/rulebooks/swe/BOOTSTRAP.md",
+      "quote": "4. **Installed dep?** A dependency already in the project does it → reuse it (don't add a new one — install approval still applies)."
+    },
+    {
+      "id": "animation-library-ladder",
+      "file": "skills/kerby/rulebooks/swe/references/external-resources.md",
+      "quote": "Which animation library to use is the decision ladder's call (BOOTSTRAP § 1b), exactly as for any other package — never this skill's, and never because the skill is installed."
     }
   ]
 }

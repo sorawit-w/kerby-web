@@ -277,6 +277,14 @@ const EXAMPLE_FORMATS = [
       When a task changes UI, styling or design tokens, swe adds four rules. They come from
       {' '}<a href={sourceLink('design-authority')}>references/design-md.md</a>.
     </p>
+    <p>
+      Animation has no rule of its own. The <a href={sourceLink('ladder-native')}>decision ladder</a> picks
+      the animation library like any other package: first what the platform already does, such as CSS
+      transitions, View Transitions or CSS scroll-driven animations; then an animation library the project
+      already depends on; and only then a new library, which you must approve before it is installed. An
+      installed animation skill, such as the <a href={sourceLink('animation-library-ladder')}>GSAP skills</a>,
+      is not a reason to use its library.
+    </p>
 
     <h3>Find the spec, and ask which one governs</h3>
     <p>
