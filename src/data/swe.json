@@ -1,8 +1,8 @@
 {
   "source_repo": "sorawit-w/kerby",
-  "source_sha": "712ec8c63b7e65c37fa61e98fd57e1709e0370dd",
-  "version": "2.18.0",
-  "kerby_version": "10.7.0",
+  "source_sha": "51690e4af3a46dc55b0ef5d6d6bf8069b6207129",
+  "version": "2.19.0",
+  "kerby_version": "10.8.0",
   "description": "Coding guardrails: clarity over cleverness, safety over speed, never leave the repo broken — nothing unproven passes the gate.",
   "numbers": {
     "planThreshold": 4,

@@ -19,7 +19,7 @@ jobs:
     # precise source; bumping this SHA is the deliberate "re-copy" moment.
     env:
       KERBY_REPO: ${{ github.workspace }}/.kerby-src
-      KERBY_REF: 712ec8c63b7e65c37fa61e98fd57e1709e0370dd
+      KERBY_REF: 51690e4af3a46dc55b0ef5d6d6bf8069b6207129
     steps:
       - name: Checkout
         uses: actions/checkout@v4
