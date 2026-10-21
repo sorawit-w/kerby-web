@@ -118,6 +118,10 @@ const ANCHORS: { id: string; file: string; quote: string }[] = [
   { id: 'design-job-colors', file: `${SWE}/references/design-md.md`, quote: "| Check signal colors | the `dataviz` skill's palette validator, read-only; without it, any color-blind simulation that reports a color difference (ΔE) | Only when the work touches colors. Check the status and accent colors as one set (for example accent, ok, warn, bad, new) in light and dark. A pair whose color-blind difference (protan, deutan or tritan) is below ΔE 8 in OKLab ×100, or whose normal-vision difference is below 15, goes back to the author as a finding, even when icons and words also carry the meaning |" },
   { id: 'design-job-render', file: `${SWE}/references/design-md.md`, quote: "| Verify the render | `screenwright`'s read-only **mode V** (verify-only): axe in light and dark, screenshots at desktop and phone width, the 320px reflow pass, print | After the last edit; a read-only check may follow. Mode V never edits — findings go back to the author. Its other modes paint and fix, so they are not the verifier. 0 axe violations is necessary, not sufficient |" },
   { id: 'design-picks', file: `${SWE}/references/design-md.md`, quote: "The table names jobs; the skill names are today's picks. If a default is not installed, use what is, and keep the same split." },
+  // The section's animation paragraph: the ladder picks the library, never an installed skill.
+  { id: 'ladder-native', file: `${SWE}/BOOTSTRAP.md`, quote: '3. **Native?** The runtime/framework/platform provides it → use it.' },
+  { id: 'ladder-installed-dep', file: `${SWE}/BOOTSTRAP.md`, quote: "4. **Installed dep?** A dependency already in the project does it → reuse it (don't add a new one — install approval still applies)." },
+  { id: 'animation-library-ladder', file: `${SWE}/references/external-resources.md`, quote: "Which animation library to use is the decision ladder's call (BOOTSTRAP § 1b), exactly as for any other package — never this skill's, and never because the skill is installed." },
 ];
 
 function skip(why: string): never {
